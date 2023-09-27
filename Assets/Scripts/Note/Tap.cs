@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using Note;
 
-public class Tap : Note, IPointerDownHandler
+public class Tap : NoteBase, IPointerDownHandler
 {
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -15,11 +16,15 @@ public class Tap : Note, IPointerDownHandler
         }
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        type = NoteType.Tap;
+    }
+
     // Start is called before the first frame update
     protected override void Start()
     {
-        is_active = false;
-        Drop();
     }
 
     // Update is called once per frame

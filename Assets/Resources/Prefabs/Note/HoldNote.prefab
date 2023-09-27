@@ -154,7 +154,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is_active: 0
-  start_x: 0
 --- !u!1 &1298617818930897789
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,4 +284,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba1edc9912fc40641b5d42f60a9bc653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  note: {fileID: 0}
+  note: {fileID: 9109747086345400136}

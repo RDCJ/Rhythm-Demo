@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using Note;
+using Music;
 
-public class Slide : Note, IPointerMoveHandler, IPointerDownHandler, IPointerUpHandler
+public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointerUpHandler
 {
     public enum SlideDirection
     {
@@ -48,16 +50,30 @@ public class Slide : Note, IPointerMoveHandler, IPointerDownHandler, IPointerUpH
         Debug.Log("slide up");
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        if (direciton == SlideDirection.Left)
+            type = NoteType.LeftSlide;
+        else
+            type = NoteType.RightSlide;
+    }
+
     // Start is called before the first frame update
     protected override void Start()
     {
-        is_down = false;
-        Drop();
+        
     }
 
     // Update is called once per frame
     protected override void Update()
     {
         
+    }
+
+    public override void Init(NoteCfg _cfg)
+    {
+        base.Init(_cfg);
+        is_down = false;
     }
 }

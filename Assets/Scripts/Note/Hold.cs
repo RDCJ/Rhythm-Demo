@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using Note;
+using Music;
 
-public class Hold : Note, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     bool is_holding;
-    float hold_max_duration;
     float start_time;
     float end_time;
 
@@ -44,15 +45,13 @@ public class Hold : Note, IPointerDownHandler, IPointerUpHandler, IPointerExitHa
     protected override void Awake()
     {
         base.Awake();
-        
+        type = NoteType.Hold;
     }
 
     // Start is called before the first frame update
     protected override void Start()
     {
-        is_holding = false;
-        Resize();
-        Drop();
+        
     }
 
     // Update is called once per frame
@@ -61,10 +60,17 @@ public class Hold : Note, IPointerDownHandler, IPointerUpHandler, IPointerExitHa
         
     }
 
+    public override void Init(NoteCfg _cfg)
+    {
+        base.Init(_cfg);
+        is_holding = false;
+        Resize();
+    }
+
     private void Resize()
     {
         float x = rectTransform.sizeDelta.x;
-        float y = hold_max_duration * 100;
+        float y = (float)cfg.duration * GameConst.drop_speed;
         rectTransform.sizeDelta = new Vector2(x, y);
     }
 
