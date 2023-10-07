@@ -11,7 +11,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     public AudioClip audioClip;
     public RawImage _rawImage;
     Slider slider;
-    private const int origin_width = 1400;
+    private const int origin_width = 1500;
     private RectTransform scroll_content_rect;
     private RectTransform slide_area_rect;
 
