@@ -60,6 +60,11 @@ public class GameMgr : MonoBehaviour
         text = transform.Find("Text").GetComponent<Text>();
         pause_btn.onClick.AddListener(Pause);
         continue_btn.onClick.AddListener(Continue);
+
+        Debug.Log(Application.dataPath);
+        Debug.Log(Application.streamingAssetsPath);
+        Debug.Log(Application.temporaryCachePath);
+        Debug.Log(Application.persistentDataPath);
     }
 
     // Start is called before the first frame update
@@ -97,7 +102,7 @@ public class GameMgr : MonoBehaviour
     {
         current_note_idx = 0;
         game_status = GameStatus.Init;
-        music_cfg = MusicCfg.GetCfg(MusicCfg.GetCfgNameByID(music_id));
+        music_cfg = MusicCfg.GetCfg(music_id);
         text.gameObject.SetActive(true);
         level = _level;
         if (!music_cfg.composition.Keys.Contains(level))

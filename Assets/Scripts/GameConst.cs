@@ -11,8 +11,8 @@ public class GameConst
 
 public class FileConst
 {
-    public static string resources_path = "Assets/Resources/";
-    public static string music_data_path = "Assets/Resources/MusicsData/";
+    public static string resources_path = Application.dataPath + "/Resources/";
+    public static string music_data_path = "MusicsData/";
 
     public static string tap_prefab_path = "Prefabs/Note/TapNote";
     public static string leftslide_prefab_path = "Prefabs/Note/SlideLeftNote";

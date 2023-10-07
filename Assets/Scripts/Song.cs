@@ -19,7 +19,8 @@ namespace Music
         public static MusicCfg GetCfg(string file_name)
         {
             string path = FileConst.music_data_path + file_name;
-            string js = File.ReadAllText(path);
+            TextAsset textAsset = Resources.Load<TextAsset>(path);
+            string js = textAsset.text;
             GameMgr.Instance.text.text = js;
             return JsonMapper.ToObject<MusicCfg>(js);
         }
