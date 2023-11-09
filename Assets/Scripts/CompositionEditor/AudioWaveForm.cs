@@ -6,6 +6,18 @@ using UnityEngine.EventSystems;
 
 public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
 {
+    #region Singleton
+    private AudioWaveForm() { }
+    private static AudioWaveForm instance;
+    public static AudioWaveForm Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+    #endregion
+
     public float width_scale;
     public AudioSource audioSource;
     public AudioClip audioClip;
@@ -34,7 +46,10 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         audioClip = audioSource.clip;
     }
 
-    // 传入一个AudioClip 会将AudioClip上挂载的音频文件生成频谱到一张Texture2D上
+    /// <summary>
+    /// 将AudioClip上挂载的音频文件生成频谱到一张Texture2D上
+    /// </summary>
+    /// <returns></returns>
     public Texture2D BakeAudioWaveform()
     {
         Vector2 new_size = new Vector2(origin_width * width_scale, 200);
@@ -112,7 +127,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     private void Update()
     {
         if (audioSource.isPlaying)
-            slider.value = audioSource.time / audioSource.clip.length;
+            slider.value = this.GetCurrentAudioTimeNormalize;
     }
 
     public void WidthUp()
@@ -127,6 +142,9 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         _rawImage.texture = BakeAudioWaveform();
     }
 
+    /// <summary>
+    /// 从光标所处的位置开始播放音乐
+    /// </summary>
     public void Play()
     {
         if (!audioSource.isPlaying)
@@ -142,9 +160,35 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
             audioSource.Pause();
     }
 
+    /// <summary>
+    /// 暂停音乐，将光标移到鼠标点击的位置
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerDown(PointerEventData eventData)
     {
         Pause();
         ((IPointerDownHandler)slider).OnPointerDown(eventData);
+    }
+
+    /// <summary>
+    /// 获取音乐当前播放的时刻
+    /// </summary>
+    public float GetCurrentAudioTime
+    {
+        get
+        {
+            return audioSource.time;
+        }
+    }
+
+    /// <summary>
+    /// 获取归一化后的音乐当前播放的时刻
+    /// </summary>
+    public float GetCurrentAudioTimeNormalize
+    {
+        get
+        {
+            return audioSource.time / audioSource.clip.length;
+        }
     }
 }
