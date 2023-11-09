@@ -28,6 +28,7 @@ public class CompositionDisplay : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
         note_scroll_view = transform.Find("GameManager/NoteScrollView").GetComponent<ScrollRect>();
         content_trans = note_scroll_view.transform.Find("Viewport/Content").GetComponent<RectTransform>();
         scroll_height = note_scroll_view.GetComponent<RectTransform>().sizeDelta.y;
@@ -45,7 +46,7 @@ public class CompositionDisplay : MonoBehaviour
         float audio_time = AudioWaveForm.Instance.GetCurrentAudioTimeNormalize;
         Vector3 content_pos = content_trans.localPosition;
         float content_height = content_trans.sizeDelta.y;
-        content_pos.y = - scroll_height + (content_height + scroll_height) * audio_time;
+        content_pos.y = - scroll_height + content_height - content_height * audio_time;
         content_trans.localPosition = content_pos;
     }
 }

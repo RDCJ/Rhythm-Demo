@@ -29,6 +29,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
 
     private void Awake()
     {
+        instance = this;
         slider = this.GetComponent<Slider>();
         scroll_content_rect = transform.parent.GetComponent<RectTransform>();
         slide_area_rect = transform.Find("Handle Slide Area").GetComponent<RectTransform>();
@@ -177,7 +178,15 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     {
         get
         {
-            return audioSource.time;
+            return slider.value * audioSource.clip.length;
+        }
+    }
+
+    public float GetAudioLength
+    {
+        get
+        {
+            return audioSource.clip.length;
         }
     }
 
