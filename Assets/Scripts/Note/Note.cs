@@ -32,10 +32,12 @@ namespace Note
             rectTransform = this.GetComponent<RectTransform>();
             judgeTigger_rect = transform.Find("JudgeTrigger").GetComponent<RectTransform>();
         }
+
         protected virtual void Start()
         {
 
         }
+
         protected virtual void Update()
         {
 

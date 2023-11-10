@@ -28,6 +28,7 @@ public class NoteEditor : MonoBehaviour
     Button create_btn;
     Button delete_btn;
 
+    public int current_index;
     NoteCfg current_note_cfg;
 
     public void Awake()
@@ -42,7 +43,7 @@ public class NoteEditor : MonoBehaviour
         delete_btn = transform.Find("delete_btn").GetComponent<Button>();
         set_time_btn = transform.Find("set_time_btn").GetComponent<Button>();
 
-        apply_btn.onClick.AddListener(() => { ChangeNote(); });
+        apply_btn.onClick.AddListener(() => { ResetNote(); });
         create_btn.onClick.AddListener(() => { CreateNote(); });
         delete_btn.onClick.AddListener(() => {  DeleteNote(); });
 
@@ -50,8 +51,19 @@ public class NoteEditor : MonoBehaviour
             note_time.SetTime(new Times(AudioWaveForm.Instance.GetCurrentAudioTime));
         });
 
+        note_selection.onValueChanged.AddListener((int value) => {
+            Debug.Log("select " + value);
+            hold_time.gameObject.SetActive(value == (int)NoteType.Hold);
+        });
+
         LoadNoteSeletion();
+        current_index = -1;
         current_note_cfg = new NoteCfg();
+    }
+
+    private void Start()
+    {
+        hold_time.gameObject.SetActive(note_selection.value == (int)NoteType.Hold);
     }
 
     /// <summary>
@@ -81,22 +93,58 @@ public class NoteEditor : MonoBehaviour
         {
             hold_time.gameObject.SetActive(false);
         }
-        
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void CreateNote()
     {
-
+        ToCfg();
+        current_index = CompositionDisplay.Instance.CreateNewNote(current_note_cfg);
     }
 
-    public void ChangeNote()
-    {
-
-    }
-
+    /// <summary>
+    /// 删除当前选中的note
+    /// </summary>
     public void DeleteNote()
     {
-
+        if (current_index != -1)
+        {
+            CompositionDisplay.Instance.DeleteNote(current_index);
+            current_index = -1;
+        }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public void ResetNote()
+    {
+        if (current_index != -1)
+        {
+            DeleteNote();
+            CreateNote();
+        }
+    }
+
+    
+
+    public void LoadNote(int index, NoteCfg cfg) 
+    {
+        current_index = index;
+        current_note_cfg = cfg;
+        RefreshEditor();
+    }
+
+    private void ToCfg()
+    {
+        current_note_cfg = new NoteCfg();
+        current_note_cfg.note_type = note_selection.value;
+        current_note_cfg.position_x = note_position.value;
+        current_note_cfg.time = note_time.times.ToSec();
+        current_note_cfg.duration = 0;
+        if (current_note_cfg.note_type == (int)NoteType.Hold)
+            current_note_cfg.duration = hold_time.times.ToSec();
+    }
 }

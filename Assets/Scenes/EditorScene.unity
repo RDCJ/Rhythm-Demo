@@ -947,6 +947,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c9c82ddd8bc0a84da053411af60987e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tap_prefab: {fileID: 314885612496031348, guid: e49a6c8d85d750a4caf8989ed6b4f145, type: 3}
+  leftslide_prefab: {fileID: 6651025700057596905, guid: ea15520cd4774a34aa3a44ce505f8d23, type: 3}
+  rightslide_prefab: {fileID: 2699101731482346705, guid: c41720c6a8dc0254fbcbcb0c4a6003e6, type: 3}
+  hold_prefab: {fileID: 1933572642246112251, guid: 538c2eaa826df9940a26cd51465e8cf9, type: 3}
 --- !u!1 &317453932
 GameObject:
   m_ObjectHideFlags: 0
@@ -2218,6 +2222,7 @@ GameObject:
   - component: {fileID: 738299307}
   - component: {fileID: 738299306}
   - component: {fileID: 738299304}
+  - component: {fileID: 738299308}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: Untagged
@@ -2297,6 +2302,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 738299302}
   m_CullTransparentMesh: 1
+--- !u!114 &738299308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738299302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a067202f4604dd6489c852d7339f113d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &751979680
 GameObject:
   m_ObjectHideFlags: 0
@@ -2611,6 +2628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652f56158bf395e45b7cfa98f86ee7a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  current_index: 0
 --- !u!1 &876006798
 GameObject:
   m_ObjectHideFlags: 0

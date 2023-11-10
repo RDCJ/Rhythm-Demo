@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
 {
@@ -22,10 +23,11 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     public AudioSource audioSource;
     public AudioClip audioClip;
     public RawImage _rawImage;
-    Slider slider;
     private const int origin_width = 1500;
     private RectTransform scroll_content_rect;
     private RectTransform slide_area_rect;
+    Slider slider;
+
 
     private void Awake()
     {
@@ -40,7 +42,18 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     {
         LoadAudio();
         _rawImage.texture = BakeAudioWaveform();
+        // 光标移动时调整播放进度
+        RegisterSliderValueChange((float value) => {
+            audioSource.time = slider.value * audioSource.clip.length;
+        });
     }
+
+    private void Update()
+    {
+        if (audioSource.isPlaying)
+            slider.value = this.GetCurrentAudioTimeNormalize;
+    }
+
 
     public void LoadAudio()
     {
@@ -125,12 +138,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         return texture;
     }
 
-    private void Update()
-    {
-        if (audioSource.isPlaying)
-            slider.value = this.GetCurrentAudioTimeNormalize;
-    }
-
+    
     public void WidthUp()
     {
         width_scale += 0.2f;
@@ -149,10 +157,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     public void Play()
     {
         if (!audioSource.isPlaying)
-        {
-            audioSource.time = slider.value * audioSource.clip.length;
             audioSource.Play();
-        }
     }
     
     public void Pause()
@@ -171,23 +176,22 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         ((IPointerDownHandler)slider).OnPointerDown(eventData);
     }
 
+    public bool GetAudioIsPlaying
+    {
+        get => audioSource.isPlaying;
+    }
+
     /// <summary>
     /// 获取音乐当前播放的时刻
     /// </summary>
     public float GetCurrentAudioTime
     {
-        get
-        {
-            return slider.value * audioSource.clip.length;
-        }
+        get => slider.value * audioSource.clip.length;
     }
 
     public float GetAudioLength
     {
-        get
-        {
-            return audioSource.clip.length;
-        }
+        get => audioSource.clip.length;
     }
 
     /// <summary>
@@ -195,9 +199,11 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     /// </summary>
     public float GetCurrentAudioTimeNormalize
     {
-        get
-        {
-            return audioSource.time / audioSource.clip.length;
-        }
+        get => audioSource.time / audioSource.clip.length;
+    }
+
+    public void RegisterSliderValueChange(Action<float> func)
+    {
+        this.slider.onValueChanged.AddListener((float value) => func(value));
     }
 }

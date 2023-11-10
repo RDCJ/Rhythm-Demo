@@ -10,7 +10,6 @@ public class MusicCtrl : MonoBehaviour
     Button pause_btn;
     Button width_up_btn;
     Button width_down_btn;
-    AudioWaveForm wave_form;
     Text time_txt;
 
     private void Awake()
@@ -20,16 +19,20 @@ public class MusicCtrl : MonoBehaviour
         width_up_btn = transform.Find("btn/width_up_btn").GetComponent<Button>();
         width_down_btn = transform.Find("btn/width_down_btn").GetComponent<Button>();
         time_txt = transform.Find("time").GetComponent<Text>();
-        wave_form = transform.Find("Scroll View/Viewport/Content/wave_form").GetComponent<AudioWaveForm>();
+       
 
-        play_btn.onClick.AddListener(() => { wave_form.Play(); });
-        pause_btn.onClick.AddListener(() => { wave_form.Pause(); });
-        width_up_btn.onClick.AddListener(() => { wave_form.WidthUp(); });
-        width_down_btn.onClick.AddListener(() => { wave_form.WidthDown(); });
+        play_btn.onClick.AddListener(() => { AudioWaveForm.Instance.Play(); });
+        pause_btn.onClick.AddListener(() => { AudioWaveForm.Instance.Pause(); });
+        width_up_btn.onClick.AddListener(() => { AudioWaveForm.Instance.WidthUp(); });
+        width_down_btn.onClick.AddListener(() => { AudioWaveForm.Instance.WidthDown(); });
+
+        
     }
 
-    private void Update()
+    private void Start()
     {
-        time_txt.text = new Times(wave_form.GetCurrentAudioTime) + " / " + new Times(wave_form.GetAudioLength);
+        AudioWaveForm.Instance.RegisterSliderValueChange((float value) => {
+            time_txt.text = new Times(AudioWaveForm.Instance.GetCurrentAudioTime) + " / " + new Times(AudioWaveForm.Instance.GetAudioLength);
+        });
     }
 }
