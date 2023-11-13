@@ -32,7 +32,6 @@ public class GameMgr : MonoBehaviour
     Transform judge_line;
     Button pause_btn;
     Button continue_btn;
-    public Text text;
 
     private MusicCfg music_cfg;
     private List<NoteCfg> composition;
@@ -57,7 +56,6 @@ public class GameMgr : MonoBehaviour
         judge_line = transform.Find("judge_line");
         pause_btn = transform.Find("pause_btn").GetComponent<Button>();
         continue_btn = transform.Find("continue_btn").GetComponent<Button>();
-        text = transform.Find("Text").GetComponent<Text>();
         pause_btn.onClick.AddListener(Pause);
         continue_btn.onClick.AddListener(Continue);
 
@@ -103,7 +101,6 @@ public class GameMgr : MonoBehaviour
         current_note_idx = 0;
         game_status = GameStatus.Init;
         music_cfg = MusicCfg.GetCfg(music_id);
-        text.gameObject.SetActive(true);
         level = _level;
         if (!music_cfg.composition.Keys.Contains(level))
         {
