@@ -148,6 +148,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     public void WidthDown()
     {
         width_scale -= 0.2f;
+        width_scale = Math.Max(width_scale, 0.1f);
         _rawImage.texture = BakeAudioWaveform();
     }
 

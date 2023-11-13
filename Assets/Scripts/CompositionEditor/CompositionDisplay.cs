@@ -93,6 +93,7 @@ public class CompositionDisplay : MonoBehaviour
         int index = notes.Count - 1;
         editorNote.Set(index, cfg);
         PaintNote(index);
+        Debug.Log("create note: " + cfg.note_type + " time: " + cfg.time);
         return index;
     }
 
@@ -110,14 +111,14 @@ public class CompositionDisplay : MonoBehaviour
         NoteCfg cfg = notes[index].cfg;
 
         float x = window_size.x * (float)cfg.position_x;
-        float y = drop_speed * (float)cfg.time;
+        float y = drop_speed * (float)cfg.time - content_trans.sizeDelta.y;
         if (cfg.note_type == (int)Note.NoteType.Hold)
         {
             Vector2 sizeDelta = trans.sizeDelta;
             sizeDelta.y = (float)cfg.duration * drop_speed;
             trans.sizeDelta = sizeDelta;
 
-            y += sizeDelta.y / 2.0f;
+            y += sizeDelta.y * trans.localScale.y / 2.0f;
         }
         trans.localPosition = new Vector3(x, y, 0);
     }
