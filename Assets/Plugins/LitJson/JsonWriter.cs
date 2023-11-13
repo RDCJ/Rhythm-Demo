@@ -458,5 +458,10 @@ namespace LitJson
 
             context.ExpectingValue = true;
         }
+
+        public void ClearExpectingValue()
+        {
+            context.ExpectingValue = false;
+        }
     }
 }

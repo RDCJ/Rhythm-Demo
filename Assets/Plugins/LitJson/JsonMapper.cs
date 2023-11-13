@@ -703,7 +703,7 @@ namespace LitJson
                     writer.TextWriter.Write (((IJsonWrapper) obj).ToJson ());
                 else
                     ((IJsonWrapper) obj).ToJson (writer);
-
+                writer.ClearExpectingValue();
                 return;
             }
 

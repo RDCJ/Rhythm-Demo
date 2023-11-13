@@ -111,9 +111,7 @@ public class GameMgr : MonoBehaviour
         }
         else
         {
-            composition.Clear();
-            for (int i = 0; i < music_cfg.composition[level].Count; i++)
-                composition.Add(JsonUtility.FromJson<NoteCfg>(music_cfg.composition[level][i].ToJson()));
+            music_cfg.GetCompostion(ref composition, _level);
             note_count = composition.Count;
         }
         game_status = GameStatus.Running;
