@@ -30,8 +30,7 @@ public class CompositionDisplay : MonoBehaviour
     private float scroll_height;
     private Vector2 window_size;
 
-    // 配置
-    private MusicCfg music_cfg;
+    
     private List<EditorNote> notes;
 
     private float drop_speed = GameConst.drop_speed;
@@ -70,6 +69,11 @@ public class CompositionDisplay : MonoBehaviour
         content_trans.localPosition = content_pos;
     }
 
+    /// <summary>
+    /// 根据cfg创建note
+    /// </summary>
+    /// <param name="cfg"></param>
+    /// <returns></returns>
     public int CreateNewNote(NoteCfg cfg)
     {
         GameObject new_note = null;
@@ -135,5 +139,17 @@ public class CompositionDisplay : MonoBehaviour
         ClearNote();
         foreach (var cfg in cfgs)
             CreateNewNote(cfg);
+    }
+
+    public List<NoteCfg> GetComposition()
+    {
+        List<NoteCfg> composition = new(notes.Count);
+        foreach (var note in notes)
+        {
+            if (note != null)
+                composition.Add(note.cfg);
+        }
+            
+        return composition;
     }
 }

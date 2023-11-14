@@ -40,7 +40,7 @@ public class GameMgr : MonoBehaviour
     {
         get => game_status;
     }
-    public string level;
+    public string difficulty;
     public Action pause_action;
     public Action continue_action;
 
@@ -96,55 +96,23 @@ public class GameMgr : MonoBehaviour
             game_status = GameStatus.NoteEnd;
     }
 
-    public void Init(string music_id, string _level)
+    public void Init(string music_id, string _difficulty)
     {
         current_note_idx = 0;
         game_status = GameStatus.Init;
         music_cfg = MusicCfg.GetCfg(music_id);
-        level = _level;
-        if (!music_cfg.composition.Keys.Contains(level))
+        difficulty = _difficulty;
+        if (!music_cfg.composition.Keys.Contains(difficulty))
         {
-            Debug.Log("Level: " + _level + " is invalid");
+            Debug.Log("difficulty: " + _difficulty + " is invalid");
         }
         else
         {
-            music_cfg.GetCompostion(ref composition, _level);
+            composition = music_cfg.GetComposition(_difficulty);
             note_count = composition.Count;
         }
         game_status = GameStatus.Running;
         current_time = 0;
-    }
-
-    private IEnumerator Running()
-    {
-        if (note_count > 0)
-        {
-            game_status = GameStatus.Running;
-            int note_idx = 0;
-            double current_time = 0;
-            double next_drop_time = composition[note_idx].time - drop_time;
-
-            while (note_idx < note_count)
-            {
-                if (game_status != GameStatus.Running)
-                    yield return new WaitWhile(() => game_status != GameStatus.Running);
-
-                while (note_idx < note_count && current_time >= next_drop_time)
-                {
-                    Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
-                    Note.NoteType type = (Note.NoteType)composition[note_idx].note_type;
-                    Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
-                    new_note.Init(composition[note_idx]);
-                    new_note.Drop();
-                    note_idx++;
-                    if (note_idx < note_count)
-                        next_drop_time = composition[note_idx].time - drop_time;
-                }
-                current_time += Time.deltaTime;
-                yield return null;
-            }
-        }
-        game_status = GameStatus.NoteEnd;
     }
 
     private void Pause()

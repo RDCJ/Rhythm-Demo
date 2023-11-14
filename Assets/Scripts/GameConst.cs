@@ -12,6 +12,13 @@ public class GameConst
     public static float basic_score = 900000;
     public static float combo_score = 100000;
 
+    public static Dictionary<int, string> DifficultyIndex = new()
+    {
+        {0, "Easy"},
+        {1, "Normal"},
+        {2, "Hard"}
+    };
+
     public static Dictionary<ScoreMgr.ScoreLevel, float> score_factory = new()
     {
         { ScoreMgr.ScoreLevel.perfect, 1},

@@ -16,7 +16,16 @@ namespace Music
         public double time;
         public JsonData composition;
 
-        public MusicCfg() { }
+        public MusicCfg() {
+            composition = new JsonData();
+        }
+
+        public MusicCfg(int music_id)
+        {
+            this.music_id = music_id.ToString();
+            music_name = MusicResMgr.MusicIndex2Name[music_id];
+            composition = new JsonData();
+        }
 
         public static MusicCfg GetCfg(string file_name)
         {
@@ -31,8 +40,13 @@ namespace Music
             string path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path, file_name);
             if (!path.EndsWith(".json"))
                 path = path + ".json";
-            string js = File.ReadAllText(path);
-            return JsonMapper.ToObject<MusicCfg>(js);
+            if (Directory.Exists(path))
+            {
+                string js = File.ReadAllText(path);
+                return JsonMapper.ToObject<MusicCfg>(js);
+            }
+            else
+                return new MusicCfg(int.Parse(file_name));
         }
 
         public static string GetCfgNameByID(string id)
@@ -51,32 +65,39 @@ namespace Music
             return null;
         }
 
-        public bool GetCompostion(ref List<NoteCfg> output, string level)
+        public List<NoteCfg> GetComposition(string difficulty)
         {
-            if (composition[level] == null)
-                return false;
-            output.Clear();
-            for (int i = 0; i < composition[level].Count; i++)
-                output.Add(JsonMapper.ToObject<NoteCfg>(composition[level][i].ToJson()));
-            return true;
+            List<NoteCfg> output = new List<NoteCfg>();
+            if (composition.Keys.Contains(difficulty) && composition[difficulty] != null)
+            {
+                for (int i = 0; i < composition[difficulty].Count; i++)
+                    output.Add(JsonMapper.ToObject<NoteCfg>(composition[difficulty][i].ToJson()));
+            }
+            return output;
         }
 
-        public void CompositionSerialize(ref List<NoteCfg> input, string level)
+        public void CompositionSerialize(ref List<NoteCfg> input, string difficulty)
         {
+            if (input.Count == 0) return;
             List<NoteCfg> listDeep = new List<NoteCfg>();
             for (var i = 0; i < input.Count; i++)
                 listDeep.Add(new NoteCfg(input[i]));
 
+            listDeep.Sort((x, y) =>x.time.CompareTo(y.time));
+
             if (composition == null)
                 composition = new JsonData();
-            composition[level] = new JsonData();
-            composition[level].SetJsonType(JsonType.Array);
+            composition[difficulty] = new JsonData();
+            composition[difficulty].SetJsonType(JsonType.Array);
             foreach (var note_cfg in listDeep)
             {
-                composition[level].Add(note_cfg.ToJsonData());
+                composition[difficulty].Add(note_cfg.ToJsonData());
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Save()
         {
             string folder_path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path);

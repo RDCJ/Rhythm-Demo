@@ -40,8 +40,6 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     // Start is called before the first frame update
     void Start()
     {
-        LoadAudio();
-        _rawImage.texture = BakeAudioWaveform();
         // 光标移动时调整播放进度
         RegisterSliderValueChange((float value) => {
             audioSource.time = slider.value * audioSource.clip.length;
@@ -55,9 +53,11 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     }
 
 
-    public void LoadAudio()
+    public void LoadAudio(int index)
     {
-        audioClip = audioSource.clip;
+        audioClip = MusicResMgr.GetMusic(index);
+        audioSource.clip = audioClip;
+        _rawImage.texture = BakeAudioWaveform();
     }
 
     /// <summary>
@@ -157,6 +157,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     /// </summary>
     public void Play()
     {
+        if (audioSource.clip == null) return;
         if (!audioSource.isPlaying)
             audioSource.Play();
     }
