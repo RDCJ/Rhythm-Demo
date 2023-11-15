@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
+public class AudioWaveForm : MonoBehaviour, IPointerDownHandler, IEventListener
 {
     #region Singleton
     private AudioWaveForm() { }
@@ -40,9 +40,9 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     // Start is called before the first frame update
     void Start()
     {
-        // 光标移动时调整播放进度
-        RegisterSliderValueChange((float value) => {
-            audioSource.time = slider.value * audioSource.clip.length;
+        RegisterEvent();
+        slider.onValueChanged.AddListener((float value) => {
+            EditorEventMgr.Instance.Dispatch((int)EditorEventMgr.EventID.WaveFormSliderValueChange, value);
         });
     }
 
@@ -52,6 +52,15 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
             slider.value = this.GetCurrentAudioTimeNormalize;
     }
 
+
+    public void RegisterEvent()
+    {
+        EditorEventMgr.Instance.AddListener((int)EditorEventMgr.EventID.MusicPlay, this);
+        EditorEventMgr.Instance.AddListener((int)EditorEventMgr.EventID.MusicPause, this);
+        EditorEventMgr.Instance.AddListener((int)EditorEventMgr.EventID.WaveFormWidthUp, this);
+        EditorEventMgr.Instance.AddListener((int)EditorEventMgr.EventID.WaveFormWidthDown, this);
+        EditorEventMgr.Instance.AddListener((int)EditorEventMgr.EventID.WaveFormSliderValueChange, this);
+    }
 
     public void LoadAudio(int index)
     {
@@ -204,8 +213,27 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         get => audioSource.time / audioSource.clip.length;
     }
 
-    public void RegisterSliderValueChange(Action<float> func)
+    public void HandleEvent(int event_id, params object[] args)
     {
-        this.slider.onValueChanged.AddListener((float value) => func(value));
+        switch ((EditorEventMgr.EventID)event_id)
+        {
+            case EditorEventMgr.EventID.MusicPlay:
+                Play();
+                break;
+            case EditorEventMgr.EventID.MusicPause:
+                Pause();
+                break;
+            case EditorEventMgr.EventID.WaveFormWidthUp:
+                WidthUp();
+                break;
+            case EditorEventMgr.EventID.WaveFormWidthDown:
+                WidthDown();
+                break;
+            case EditorEventMgr.EventID.WaveFormSliderValueChange:
+                // 光标移动时调整播放进度
+                float value = (float)args[0];
+                audioSource.time = value * audioSource.clip.length;
+                break;
+        }
     }
 }

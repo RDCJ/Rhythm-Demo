@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Music;
 
-public class CompositionDisplay : MonoBehaviour
+public class CompositionDisplay : MonoBehaviour, IEventListener
 {
     #region Singleton
     private CompositionDisplay() { }
@@ -48,7 +48,7 @@ public class CompositionDisplay : MonoBehaviour
     void Start()
     {
         window_size = GameWindow.Instance.WindowSize();
-        AudioWaveForm.Instance.RegisterSliderValueChange(UpdatePosition);
+        EditorEventMgr.Instance.AddListener((int)EditorEventMgr.EventID.WaveFormSliderValueChange, this);
     }
 
     // Update is called once per frame
@@ -151,5 +151,16 @@ public class CompositionDisplay : MonoBehaviour
         }
             
         return composition;
+    }
+
+    public void HandleEvent(int event_id, params object[] args)
+    {
+        switch ((EditorEventMgr.EventID)event_id)
+        {
+            case EditorEventMgr.EventID.WaveFormSliderValueChange:
+                float value = (float)args[0];
+                UpdatePosition(value);
+                break;
+        }
     }
 }

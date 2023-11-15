@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class EffectPlayer : MonoBehaviour
+public class EffectPlayer : MonoBehaviour, IEventListener
 {
     #region Singleton
     private EffectPlayer() { }
@@ -27,6 +27,11 @@ public class EffectPlayer : MonoBehaviour
     private void Awake()
     {
         instance = this;
+    }
+
+    private void OnEnable()
+    {
+        TestEventMgr.Instance.AddListener((int)TestEventMgr.EventId.PlaySmile, this);
     }
 
     public void PlayEffect(ScoreMgr.ScoreLevel level, Vector3 position)
@@ -54,11 +59,21 @@ public class EffectPlayer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            PlayEffect(ScoreMgr.ScoreLevel.perfect, new Vector3(500, 500, 0));
+            TestEventMgr.Instance.Dispatch((int)TestEventMgr.EventId.PlaySmile, ScoreMgr.ScoreLevel.perfect, new Vector3(500, 500, 0));
         }
         else if (Input.GetMouseButtonDown(1))
         {
-            PlayEffect(ScoreMgr.ScoreLevel.bad, new Vector3(800, 500, 0));
+            TestEventMgr.Instance.Dispatch((int)TestEventMgr.EventId.PlaySmile, ScoreMgr.ScoreLevel.bad, new Vector3(500, 500, 0));
+        }
+    }
+
+    public void HandleEvent(int event_id, params object[] args)
+    {
+        if (event_id == (int)TestEventMgr.EventId.PlaySmile)
+        {
+            ScoreMgr.ScoreLevel l = (ScoreMgr.ScoreLevel)args[0];
+            Vector3 v = (Vector3)args[1];
+            PlayEffect(l, v);
         }
     }
 }
