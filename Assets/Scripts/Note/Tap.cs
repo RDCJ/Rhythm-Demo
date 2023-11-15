@@ -12,7 +12,8 @@ public class Tap : NoteBase, IPointerDownHandler
         if (is_active)
         {
             Debug.Log("tap");
-            Destroy(this.gameObject);
+            ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.perfect);
+            NotePoolManager.Instance.ReturnObject(this);
         }
     }
 

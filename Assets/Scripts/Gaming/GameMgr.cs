@@ -20,34 +20,37 @@ public class GameMgr : MonoBehaviour
     }
     #endregion
 
-    public enum GameStatus
-    {
-        Init,
-        Running,
-        Pause,
-        NoteEnd,
-        MusicEnd
-    }
 
     Transform judge_line;
     Button pause_btn;
     Button continue_btn;
+    Button restart_btn;
+    Button back_btn;
+    AudioSource audioSource;
+    ScoreMgr scoreMgr;
+    GameObject pause_panel;
 
     private MusicCfg music_cfg;
     private List<NoteCfg> composition;
-    private GameStatus game_status;
-    public GameStatus GetGameStatus
-    {
-        get => game_status;
-    }
+
+    public string music_id;
     public string difficulty;
     public Action pause_action;
     public Action continue_action;
 
-    private int current_note_idx;
-    private int note_count;
-    private double current_time;
-    private float drop_time = (Screen.height - GameConst.judge_line_y) / GameConst.drop_speed;
+    public int current_note_idx;
+    public int note_count;
+    public double current_time;
+    public float drop_duration = (Screen.height - GameConst.judge_line_y) / GameConst.drop_speed;
+
+    #region statemachine
+    public StateMachine stateMachine;
+    public InitState initState;
+    public PlayingState playingState;
+    public PauseState pauseState;
+    public ScoreState scoreState;
+    public RestartState restartState;
+    #endregion
 
     private void Awake()
     {
@@ -55,78 +58,102 @@ public class GameMgr : MonoBehaviour
         composition = new List<NoteCfg>();
         judge_line = transform.Find("judge_line");
         pause_btn = transform.Find("pause_btn").GetComponent<Button>();
-        continue_btn = transform.Find("continue_btn").GetComponent<Button>();
-        pause_btn.onClick.AddListener(Pause);
-        continue_btn.onClick.AddListener(Continue);
+        pause_panel = transform.Find("pause_panel").gameObject;
+        continue_btn = pause_panel.transform.Find("continue_btn").GetComponent<Button>();
+        restart_btn = pause_panel.transform.Find("restart_btn").GetComponent<Button>();
+        back_btn = pause_panel.transform.Find("back_btn").GetComponent<Button>();
 
-        Debug.Log(Application.dataPath);
-        Debug.Log(Application.streamingAssetsPath);
-        Debug.Log(Application.temporaryCachePath);
-        Debug.Log(Application.persistentDataPath);
+        audioSource = transform.Find("music").GetComponent<AudioSource>();
+        scoreMgr = transform.Find("score_mgr").GetComponent<ScoreMgr>();
+
+        stateMachine = new StateMachine();
+        initState = new InitState(this, stateMachine);
+        playingState = new PlayingState(this, stateMachine);
+        pauseState = new PauseState(this, stateMachine);
+        scoreState = new ScoreState(this, stateMachine);
+        restartState = new RestartState(this, stateMachine);
+
+        pause_btn.onClick.AddListener(()=> {
+            stateMachine.ChangeState(pauseState);        
+        });
+        continue_btn.onClick.AddListener(()=> {
+            stateMachine.ChangeState(playingState);
+        });
+        restart_btn.onClick.AddListener(() => {
+            stateMachine.ChangeState(restartState);
+        });
+        back_btn.onClick.AddListener(() =>{
+            Destroy(this.gameObject);
+        });
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        pause_btn.gameObject.SetActive(true);
-        continue_btn.gameObject.SetActive(false);
-        Init("1", "easy");
-        
-       // StartCoroutine(Running());
+        music_id = "1";
+        difficulty = "Easy";
+
+        stateMachine.Init(initState);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (game_status == GameStatus.Running && current_note_idx < note_count)
-        {
-            current_time += Time.deltaTime;
-            double next_drop_time = composition[current_note_idx].time - drop_time;
-            if (current_time >= next_drop_time)
-            {
-                Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
-                Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
-                Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
-                new_note.Init(composition[current_note_idx]);
-                new_note.Drop();
-                current_note_idx++;
-            }
-        }
-        if (current_note_idx >= note_count)
-            game_status = GameStatus.NoteEnd;
+        stateMachine.CurrentState.FrameUpdate();
     }
 
-    public void Init(string music_id, string _difficulty)
+    #region logic function
+    public void Init()
     {
+        current_time = 0;
         current_note_idx = 0;
-        game_status = GameStatus.Init;
-        music_cfg = MusicCfg.GetCfg(music_id);
-        difficulty = _difficulty;
+        pause_btn.gameObject.SetActive(true);
+        music_cfg = MusicCfg.GetCfgFromEditor(music_id);
+
         if (!music_cfg.composition.Keys.Contains(difficulty))
         {
-            Debug.Log("difficulty: " + _difficulty + " is invalid");
+            Debug.Log("difficulty: " + difficulty + " is invalid");
         }
         else
         {
-            composition = music_cfg.GetComposition(_difficulty);
+            audioSource.clip = MusicResMgr.GetMusic(int.Parse(music_id));
+            audioSource.time = 0;
+            audioSource.Pause();
+
+            composition = music_cfg.GetComposition(difficulty);
             note_count = composition.Count;
+
+            scoreMgr.Init(note_count);
         }
-        game_status = GameStatus.Running;
-        current_time = 0;
     }
 
-    private void Pause()
+    public void DropNote()
     {
-        game_status = GameStatus.Pause;
-        pause_btn.gameObject.SetActive(false);
-        continue_btn.gameObject.SetActive(true);
+        current_time = audioSource.time;
+        double next_drop_time = composition[current_note_idx].time - drop_duration;
+        if (current_time >= next_drop_time)
+        {
+            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
+            Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
+            Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
+            new_note.Init(composition[current_note_idx]);
+            new_note.Drop();
+            current_note_idx++;
+        }
+    }
+
+    public void Pause()
+    {
+        audioSource.Pause();
+        pause_panel.SetActive(true);
         pause_action?.Invoke();
     }
-    private void Continue()
+
+    public void Continue()
     {
-        game_status = GameStatus.Running;
-        pause_btn.gameObject.SetActive(true);
-        continue_btn.gameObject.SetActive(false);
+        audioSource.Play();
+        pause_panel.SetActive(false);
         continue_action?.Invoke();
     }
+    #endregion
 }

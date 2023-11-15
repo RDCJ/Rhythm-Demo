@@ -101,7 +101,10 @@ namespace Note
 
         public virtual void Miss() { }
 
-        public void ReturnPool()
+        /// <summary>
+        /// ×¢Ïú·½·¨
+        /// </summary>
+        public void OnReturnPool()
         {
             GameMgr.Instance.pause_action -= Pause;
             GameMgr.Instance.continue_action -= Continue;

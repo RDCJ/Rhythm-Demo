@@ -1,0 +1,35 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayingState : GameBaseState
+{
+    public PlayingState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+    {
+    }
+
+    public override void EnterState()
+    {
+        base.EnterState();
+        gameMgr.Continue();
+    }
+
+    public override void ExitState()
+    {
+        base.ExitState();
+    }
+
+    public override void FrameUpdate()
+    {
+        base.FrameUpdate();
+        if (gameMgr.current_note_idx < gameMgr.note_count)
+        {
+            gameMgr.DropNote();
+        }
+    }
+
+    public override void PhysicsUpdate()
+    {
+        base.PhysicsUpdate();
+    }
+}

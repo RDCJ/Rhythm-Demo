@@ -136,6 +136,7 @@ public class CompositionDisplay : MonoBehaviour
 
     public void LoadComposition(List<NoteCfg> cfgs)
     {
+        window_size = GameWindow.Instance.WindowSize();
         ClearNote();
         foreach (var cfg in cfgs)
             CreateNewNote(cfg);

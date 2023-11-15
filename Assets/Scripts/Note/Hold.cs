@@ -26,7 +26,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             is_holding = false;
             end_time = Time.time;
             Debug.Log("Hold end " + end_time);
-            Destroy(this.gameObject);
+            NotePoolManager.Instance.ReturnObject(this);
         }
 
     }
@@ -38,7 +38,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             is_holding = false;
             end_time = Time.time;
             Debug.Log("Hold end " + end_time);
-            Destroy(this.gameObject);
+            NotePoolManager.Instance.ReturnObject(this);
         }
     }
 

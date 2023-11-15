@@ -28,7 +28,11 @@ public class ObjectPool : MonoBehaviour
             AddNewObj();
         return this;
     }
-        
+
+    /// <summary>
+    /// 根据activeInHierarchy返回一个未使用的object，不存在则创建一个新的
+    /// </summary>
+    /// <returns></returns>
     public GameObject GetObject()
     {
         foreach (GameObject obj in pool)
@@ -59,6 +63,9 @@ public class ObjectPool : MonoBehaviour
         obj.SetActive(false);
     }
 
+    /// <summary>
+    /// 回收pool中所有object
+    /// </summary>
     public virtual void Reload()
     {
         for (int i = 0; i < pool_size; ++i)

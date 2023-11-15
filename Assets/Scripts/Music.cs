@@ -37,10 +37,10 @@ namespace Music
 
         public static MusicCfg GetCfgFromEditor(string file_name)
         {
-            string path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path, file_name);
+            string path = Application.persistentDataPath + "/" + FileConst.music_data_path + file_name;
             if (!path.EndsWith(".json"))
                 path = path + ".json";
-            if (Directory.Exists(path))
+            if (File.Exists(path))
             {
                 string js = File.ReadAllText(path);
                 return JsonMapper.ToObject<MusicCfg>(js);

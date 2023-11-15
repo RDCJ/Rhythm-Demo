@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScoreMgr : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class ScoreMgr : MonoBehaviour
         }
     }
     #endregion
+    Text score_txt;
 
     float score;
     float accuracy;
@@ -37,6 +39,7 @@ public class ScoreMgr : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        score_txt = this.transform.Find("score_txt").GetComponent<Text>();
     }
 
     
@@ -56,6 +59,7 @@ public class ScoreMgr : MonoBehaviour
     public void Init(int note_count)
     {
         score = 0;
+        score_txt.text = score.ToString().PadLeft(7, '0');
         accuracy = 0;
         this.note_count = note_count;
         basic_score_once = GameConst.basic_score / note_count;
@@ -90,6 +94,7 @@ public class ScoreMgr : MonoBehaviour
         float combo_score = current_combo * combo_score_point;
 
         score += basic_score + combo_score;
+        score_txt.text = ((int)score).ToString().PadLeft(7, '0');
     }
 
     public float GetAccuracy()

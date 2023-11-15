@@ -35,9 +35,12 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
 
-            Destroy(this.gameObject);
+            NotePoolManager.Instance.ReturnObject(this);
             if ((slide_direction.x < 0) == (direciton == SlideDirection.Left))
+            {
+                ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.perfect);
                 Debug.Log("sliding right " + eventData.position);
+            }
             else
                 Debug.Log("sliding wrong" + eventData.position);
         }

@@ -46,18 +46,27 @@ public class NotePoolManager : MonoBehaviour
         return pools[type].GetObject();
     }
 
-    
 
-    public void ReturnObject(GameObject obj)
+    /// <summary>
+    /// 回收object
+    /// </summary>
+    /// <param name="note"></param>
+    public void ReturnObject(Note.NoteBase note)
     {
-        Note.NoteType type = obj.GetComponent<Note.NoteBase>().Type;
-        obj.GetComponent<Note.NoteBase>().ReturnPool();
-        pools[type].ReturnObject(obj);
+        Note.NoteType type = note.Type;
+        note.OnReturnPool();
+        pools[type].ReturnObject(note.gameObject);
     }
 
+    /// <summary>
+    /// 回收所有object
+    /// </summary>
     public void Reload()
     {
         foreach (KeyValuePair<Note.NoteType, ObjectPool> pool in pools)
-            pool.Value.Reload();
+            foreach (var obj in pool.Value.pool)
+            {
+                ReturnObject(obj.GetComponent<Note.NoteBase>());
+            }
     }
 }
