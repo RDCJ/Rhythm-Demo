@@ -25,7 +25,8 @@ public class GameWindow : MonoBehaviour
     public Vector2 WindowSize()
     {
         Vector2 size = rect.sizeDelta;
-        Vector3 scale = rect.localScale;
-        return new Vector2(size.x * scale.x, size.y * scale.y);
+        return size;
+/*        Vector3 scale = rect.localScale;
+        return new Vector2(size.x * scale.x, size.y * scale.y);*/
     }
 }
