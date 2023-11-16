@@ -9,14 +9,29 @@ using Music;
 public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     bool is_holding;
-    float start_time;
-    float end_time;
+    double start_time;
+    double end_time;
+    ScoreMgr.ScoreLevel start_judge_level;
+    ScoreMgr.ScoreLevel end_judge_level;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        is_holding = true;
-        start_time = Time.time;
-        Debug.Log("Hold start " + start_time);
+        if (this.is_active)
+        {
+            is_holding = true;
+            start_time = GameMgr.Instance.current_time;
+            Debug.Log("Hold start " + start_time);
+
+            start_judge_level = ScoreMgr.JudgeClickTime(start_time, cfg.time); ;
+            
+            if (start_judge_level == ScoreMgr.ScoreLevel.bad)
+            {
+                float x = this.transform.position.x;
+                float y = JudgeLine.Instance.transform.position.y;
+                EffectPlayer.Instance.PlayEffect(start_judge_level, new Vector3(x, y, 0));
+                NotePoolManager.Instance.ReturnObject(this);
+            }
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -24,9 +39,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (is_holding)
         {
             is_holding = false;
-            end_time = Time.time;
             Debug.Log("Hold end " + end_time);
-            NotePoolManager.Instance.ReturnObject(this);
+            EndJudge();
         }
 
     }
@@ -36,9 +50,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (is_holding)
         {
             is_holding = false;
-            end_time = Time.time;
             Debug.Log("Hold end " + end_time);
-            NotePoolManager.Instance.ReturnObject(this);
+            EndJudge();
         }
     }
 
@@ -74,5 +87,27 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         rectTransform.sizeDelta = new Vector2(x, y);
     }
 
+
+    private void EndJudge()
+    {
+        end_time = GameMgr.Instance.current_time;
+        end_judge_level = ScoreMgr.JudgeClickTime(end_time, cfg.time + cfg.duration);
+
+        ScoreMgr.ScoreLevel level;
+        if (start_judge_level == ScoreMgr.ScoreLevel.perfect && end_judge_level == ScoreMgr.ScoreLevel.perfect)
+            level = ScoreMgr.ScoreLevel.perfect;
+        else if (start_judge_level == ScoreMgr.ScoreLevel.bad || end_judge_level == ScoreMgr.ScoreLevel.bad)
+            level = ScoreMgr.ScoreLevel.bad;
+        else
+            level = ScoreMgr.ScoreLevel.good;
+
+        float x = this.transform.position.x;
+        float y = JudgeLine.Instance.transform.position.y;
+
+        ScoreMgr.Instance.AddScore(level);
+        EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
+
+        NotePoolManager.Instance.ReturnObject(this);
+    }
 
 }

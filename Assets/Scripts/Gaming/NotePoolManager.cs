@@ -43,7 +43,9 @@ public class NotePoolManager : MonoBehaviour
 
     public GameObject GetObject(Note.NoteType type)
     {
-        return pools[type].GetObject();
+        GameObject obj = pools[type].GetObject();
+        obj.transform.SetAsFirstSibling();
+        return obj;
     }
 
 

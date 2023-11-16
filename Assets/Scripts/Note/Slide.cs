@@ -16,11 +16,12 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
     public SlideDirection direciton;
 
     private bool is_down;
+    private bool is_slided;
     private Vector2 down_position;
     
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (is_active)
+        if (this.is_active)
         {
             is_down = true;
             down_position = eventData.position;
@@ -30,21 +31,31 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        if (is_down)
+        if (is_down && !is_slided)
         {
+            is_slided = true;
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
+            ScoreMgr.ScoreLevel level;
+            float x = this.transform.position.x;
+            float y = JudgeLine.Instance.transform.position.y;
 
-            NotePoolManager.Instance.ReturnObject(this);
             if ((slide_direction.x < 0) == (direciton == SlideDirection.Left))
             {
-                ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.perfect);
+                level = ScoreMgr.JudgeClickTime(GameMgr.Instance.current_time, cfg.time);
                 Debug.Log("sliding right " + eventData.position);
             }
             else
-                Debug.Log("sliding wrong" + eventData.position);
+            {
+                level = ScoreMgr.ScoreLevel.bad;
+                Debug.Log("sliding wrong " + eventData.position);
+            }
+                
+            ScoreMgr.Instance.AddScore(level);
+            EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
+
+            NotePoolManager.Instance.ReturnObject(this);
         }
-            
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -62,21 +73,10 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
             type = NoteType.RightSlide;
     }
 
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        
-    }
-
     public override void Init(NoteCfg _cfg)
     {
         base.Init(_cfg);
         is_down = false;
+        is_slided = false;
     }
 }

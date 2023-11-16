@@ -49,16 +49,4 @@ public class EffectPlayer : MonoBehaviour
         new_effect.GetComponent<CanvasGroup>().DOFade(0, effect_time);
         Destroy(new_effect, effect_time);
     }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            PlayEffect(ScoreMgr.ScoreLevel.perfect, new Vector3(500, 500, 0));
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            PlayEffect(ScoreMgr.ScoreLevel.bad, new Vector3(800, 500, 0));
-        }
-    }
 }

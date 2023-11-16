@@ -22,10 +22,7 @@ public class PlayingState : GameBaseState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-        if (gameMgr.current_note_idx < gameMgr.note_count)
-        {
-            gameMgr.DropNote();
-        }
+        gameMgr.DropNote();
     }
 
     public override void PhysicsUpdate()

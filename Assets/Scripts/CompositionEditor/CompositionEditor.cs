@@ -28,6 +28,7 @@ public class CompositionEditor : MonoBehaviour
     Text cfg_panel_time;
     Dropdown difficulty;
     Button save_btn;
+    Button close_btn;
 
     string current_difficulty;
 
@@ -42,6 +43,7 @@ public class CompositionEditor : MonoBehaviour
         cfg_panel_time = music_cfg_panel.Find("time").GetComponent<Text>();
         difficulty = music_cfg_panel.Find("difficulty").GetComponent<Dropdown>();
         save_btn = music_cfg_panel.Find("save_btn").GetComponent<Button>();
+        close_btn = transform.Find("close_btn").GetComponent<Button>();
 
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
@@ -59,6 +61,9 @@ public class CompositionEditor : MonoBehaviour
         difficulty.onValueChanged.AddListener(this.ChangeDifficulty);
 
         save_btn.onClick.AddListener(this.SaveMusicCfg);
+        close_btn.onClick.AddListener(() => {
+            Destroy(this.gameObject);
+        });
     }
 
     // Start is called before the first frame update

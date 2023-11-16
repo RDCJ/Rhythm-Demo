@@ -138,7 +138,8 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         return texture;
     }
 
-    
+
+    #region control function
     public void WidthUp()
     {
         width_scale += 0.2f;
@@ -150,6 +151,32 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         width_scale -= 0.2f;
         width_scale = Math.Max(width_scale, 0.1f);
         _rawImage.texture = BakeAudioWaveform();
+    }
+
+    public void AudioSpeedUp()
+    {
+        float x = audioSource.pitch;
+        audioSource.pitch = MathF.Min(x + 0.05f, 2);
+    }
+
+    public void AudioSpeedDown()
+    {
+        float x = audioSource.pitch;
+        audioSource.pitch = MathF.Max(x - 0.05f, 0.1f);
+    }
+
+    public void TimeBack()
+    {
+        float x = audioSource.time;
+        audioSource.time = MathF.Max(x - 0.01f, 0);
+        slider.value = this.GetCurrentAudioTimeNormalize;
+    }
+
+    public void TimeForward()
+    {
+        float x = audioSource.time;
+        audioSource.time = MathF.Min(x + 0.01f, audioSource.clip.length);
+        slider.value = this.GetCurrentAudioTimeNormalize;
     }
 
     /// <summary>
@@ -168,6 +195,8 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
             audioSource.Pause();
     }
 
+    #endregion
+
     /// <summary>
     /// 暂停音乐，将光标移到鼠标点击的位置
     /// </summary>
@@ -176,6 +205,11 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     {
         Pause();
         ((IPointerDownHandler)slider).OnPointerDown(eventData);
+    }
+
+    public float GetAudioPitch
+    {
+        get => audioSource.pitch;
     }
 
     public bool GetAudioIsPlaying
@@ -208,4 +242,5 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     {
         this.slider.onValueChanged.AddListener((float value) => func(value));
     }
+
 }

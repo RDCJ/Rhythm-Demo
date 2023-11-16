@@ -107,4 +107,21 @@ public class ScoreMgr : MonoBehaviour
         }
         return (float)current_weight / total_weight;
     }
+
+    /// <summary>
+    /// ÅÐ¶¨
+    /// </summary>
+    /// <param name="click_time"></param>
+    /// <param name="ref_time"></param>
+    /// <returns></returns>
+    public static ScoreLevel JudgeClickTime(double click_time, double ref_time)
+    {
+        double delta = System.Math.Abs(click_time - ref_time);
+        if (delta <= GameConst.perfect_interval)
+            return ScoreLevel.perfect;
+        else if (delta <= GameConst.good_interval)
+            return ScoreLevel.good;
+        else
+            return ScoreLevel.bad;
+    }
 }

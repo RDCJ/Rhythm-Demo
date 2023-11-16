@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class JudgeLine : MonoBehaviour
 {
+    #region Singleton
+    private JudgeLine() { }
+    private static JudgeLine instance;
+    public static JudgeLine Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+    #endregion
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

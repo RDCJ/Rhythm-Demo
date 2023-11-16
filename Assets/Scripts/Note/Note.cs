@@ -19,13 +19,12 @@ namespace Note
         public NoteType Type
         { get => type; private set => type = value; }
 
-        [HideInInspector] public bool is_active;
-
         protected Music.NoteCfg cfg;
         protected RectTransform rectTransform;
         protected RectTransform judgeTigger_rect;
 
         protected bool is_move;
+        [HideInInspector] protected bool is_active;
 
         protected virtual void Awake()
         {
@@ -40,7 +39,12 @@ namespace Note
 
         protected virtual void Update()
         {
-
+            if (is_move)
+            {
+                float x = rectTransform.position.x;
+                float y = rectTransform.position.y - Time.deltaTime * GameConst.drop_speed;
+                rectTransform.position = new Vector2(x, y);
+            }
         }
 
         public virtual void Init(Music.NoteCfg _cfg)
@@ -49,6 +53,8 @@ namespace Note
             is_active = false;
             cfg = _cfg;
             ResetPosition();
+            ResetJudgeTrigger();
+
         }
 
         public void Activate()
@@ -56,6 +62,7 @@ namespace Note
             is_active = true;
             OnActive();
         }
+
         protected virtual void OnActive()
         {
 
@@ -64,8 +71,21 @@ namespace Note
         protected void ResetPosition()
         {
             float x = (float)cfg.position_x * Screen.width;
-            float y = Screen.height + rectTransform.sizeDelta.y;
+            float y = Screen.height;
             rectTransform.position = new Vector2(x, y);
+        }
+
+        protected virtual void ResetJudgeTrigger()
+        {
+            Vector2 v = judgeTigger_rect.sizeDelta;
+            v.y = GameConst.drop_speed * GameConst.active_interval * 2;
+            judgeTigger_rect.sizeDelta = v;
+
+            BoxCollider2D collider = judgeTigger_rect.GetComponent<BoxCollider2D>();
+            if (collider != null)
+            {
+                collider.size = judgeTigger_rect.sizeDelta;
+            }
         }
 
         public virtual void Drop()
@@ -73,22 +93,8 @@ namespace Note
             is_move = true;
             GameMgr.Instance.pause_action += Pause;
             GameMgr.Instance.continue_action += Continue;
-            StartCoroutine(_Drop());
         }
 
-        private IEnumerator _Drop()
-        {
-            float x, y;
-            while (true)
-            {
-                if (!is_move)
-                    yield return new WaitWhile(() => !is_move);
-                x = rectTransform.position.x;
-                y = rectTransform.position.y - Time.deltaTime * GameConst.drop_speed;
-                rectTransform.position = new Vector2(x, y);
-                yield return null;
-            }
-        }
 
         public virtual void Pause()
         {
@@ -99,7 +105,10 @@ namespace Note
             is_move = true;
         }
 
-        public virtual void Miss() { }
+
+        public virtual void Miss() {
+            ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
+        }
 
         /// <summary>
         /// ×¢Ïú·½·¨

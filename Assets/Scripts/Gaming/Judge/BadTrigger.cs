@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Note;
 
-public class JudgeTigger : MonoBehaviour
+public class BadTrigger : MonoBehaviour
 {
     public NoteBase note;
     private void OnTriggerEnter2D(Collider2D collision)

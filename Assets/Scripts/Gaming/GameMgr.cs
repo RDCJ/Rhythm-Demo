@@ -29,6 +29,7 @@ public class GameMgr : MonoBehaviour
     AudioSource audioSource;
     ScoreMgr scoreMgr;
     GameObject pause_panel;
+    Text time_txt;
 
     private MusicCfg music_cfg;
     private List<NoteCfg> composition;
@@ -41,7 +42,7 @@ public class GameMgr : MonoBehaviour
     public int current_note_idx;
     public int note_count;
     public double current_time;
-    public float drop_duration = (Screen.height - GameConst.judge_line_y) / GameConst.drop_speed;
+    public float drop_duration;
 
     #region statemachine
     public StateMachine stateMachine;
@@ -62,6 +63,7 @@ public class GameMgr : MonoBehaviour
         continue_btn = pause_panel.transform.Find("continue_btn").GetComponent<Button>();
         restart_btn = pause_panel.transform.Find("restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("back_btn").GetComponent<Button>();
+        time_txt = transform.Find("time_txt").GetComponent<Text>();
 
         audioSource = transform.Find("music").GetComponent<AudioSource>();
         scoreMgr = transform.Find("score_mgr").GetComponent<ScoreMgr>();
@@ -92,13 +94,14 @@ public class GameMgr : MonoBehaviour
     {
         music_id = "1";
         difficulty = "Easy";
-
+        drop_duration = (Screen.height - GameConst.judge_line_y) / GameConst.drop_speed;
         stateMachine.Init(initState);
     }
 
     // Update is called once per frame
     void Update()
     {
+        time_txt.text = current_time.ToString("F3");
         stateMachine.CurrentState.FrameUpdate();
     }
 
@@ -130,15 +133,18 @@ public class GameMgr : MonoBehaviour
     public void DropNote()
     {
         current_time = audioSource.time;
-        double next_drop_time = composition[current_note_idx].time - drop_duration;
-        if (current_time >= next_drop_time)
+        if (current_note_idx < note_count)
         {
-            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
-            Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
-            Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
-            new_note.Init(composition[current_note_idx]);
-            new_note.Drop();
-            current_note_idx++;
+            double next_drop_time = composition[current_note_idx].time - drop_duration;
+            if (current_time >= next_drop_time)
+            {
+                Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
+                Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
+                Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
+                new_note.Init(composition[current_note_idx]);
+                new_note.Drop();
+                current_note_idx++;
+            }
         }
     }
 

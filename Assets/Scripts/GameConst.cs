@@ -5,8 +5,12 @@ using UnityEngine;
 
 public class GameConst
 {
-    public static float drop_speed = 500f;
-    public static float judge_line_y = 120f;
+    public static float drop_speed = 800f;
+    public static float judge_line_y = 180f;
+    
+    public static float perfect_interval = 0.04f;
+    public static float good_interval = 0.08f;
+    public static float active_interval = 0.18f;
 
     public static float total_score = 1000000;
     public static float basic_score = 900000;
