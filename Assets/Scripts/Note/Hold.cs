@@ -13,6 +13,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     double end_time;
     ScoreMgr.ScoreLevel start_judge_level;
     ScoreMgr.ScoreLevel end_judge_level;
+    RectTransform icon_rect;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -42,7 +43,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             Debug.Log("Hold end " + end_time);
             EndJudge();
         }
-
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -59,6 +59,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         base.Awake();
         type = NoteType.Hold;
+        icon_rect = transform.Find("icon").GetComponent<RectTransform>();
     }
 
     // Start is called before the first frame update
@@ -77,21 +78,31 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         base.Init(_cfg);
         is_holding = false;
-        Resize();
     }
 
-    private void Resize()
+    protected override void ResetPosition()
     {
-        float x = rectTransform.sizeDelta.x;
-        float y = (float)cfg.duration * GameConst.drop_speed;
-        rectTransform.sizeDelta = new Vector2(x, y);
+        float x = (float)cfg.position_x * Screen.width;
+        float y = Screen.height + icon_rect.sizeDelta.y / 2;
+        rectTransform.position = new Vector2(x, y);
+    }
+
+    protected override void Resize()
+    {
+        Vector2 v = rectTransform.sizeDelta;
+        v.y = GameConst.drop_speed * (GameConst.active_interval * 2 + (float)cfg.duration);
+        rectTransform.sizeDelta = v;
+        collider.size = rectTransform.sizeDelta;
+
+        v.y = GameConst.drop_speed * (float)cfg.duration;
+        icon_rect.sizeDelta = v;
     }
 
 
     private void EndJudge()
     {
         end_time = GameMgr.Instance.current_time;
-        end_judge_level = ScoreMgr.JudgeClickTime(end_time, cfg.time + cfg.duration);
+        end_judge_level = ScoreMgr.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
 
         ScoreMgr.ScoreLevel level;
         if (start_judge_level == ScoreMgr.ScoreLevel.perfect && end_judge_level == ScoreMgr.ScoreLevel.perfect)

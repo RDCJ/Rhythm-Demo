@@ -21,7 +21,7 @@ namespace Note
 
         protected Music.NoteCfg cfg;
         protected RectTransform rectTransform;
-        protected RectTransform judgeTigger_rect;
+        protected BoxCollider2D collider;
 
         protected bool is_move;
         [HideInInspector] protected bool is_active;
@@ -29,7 +29,7 @@ namespace Note
         protected virtual void Awake()
         {
             rectTransform = this.GetComponent<RectTransform>();
-            judgeTigger_rect = transform.Find("JudgeTrigger").GetComponent<RectTransform>();
+            collider = this.GetComponent<BoxCollider2D>();
         }
 
         protected virtual void Start()
@@ -52,41 +52,32 @@ namespace Note
             is_move = false;
             is_active = false;
             cfg = _cfg;
-            ResetPosition();
-            ResetJudgeTrigger();
 
+            Resize();
+            ResetPosition();
         }
 
-        public void Activate()
+        public virtual void Activate()
         {
             is_active = true;
-            OnActive();
         }
 
-        protected virtual void OnActive()
-        {
-
-        }
-
-        protected void ResetPosition()
+        protected virtual void ResetPosition()
         {
             float x = (float)cfg.position_x * Screen.width;
             float y = Screen.height;
             rectTransform.position = new Vector2(x, y);
         }
 
-        protected virtual void ResetJudgeTrigger()
-        {
-            Vector2 v = judgeTigger_rect.sizeDelta;
-            v.y = GameConst.drop_speed * GameConst.active_interval * 2;
-            judgeTigger_rect.sizeDelta = v;
 
-            BoxCollider2D collider = judgeTigger_rect.GetComponent<BoxCollider2D>();
-            if (collider != null)
-            {
-                collider.size = judgeTigger_rect.sizeDelta;
-            }
+        protected virtual void Resize()
+        {
+            Vector2 v = rectTransform.sizeDelta;
+            v.y = GameConst.drop_speed * GameConst.active_interval * 2;
+            rectTransform.sizeDelta = v;
+            collider.size = rectTransform.sizeDelta;
         }
+
 
         public virtual void Drop()
         {
@@ -117,6 +108,22 @@ namespace Note
         {
             GameMgr.Instance.pause_action -= Pause;
             GameMgr.Instance.continue_action -= Continue;
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag("JudgeLine"))
+            {
+                Activate();
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (collision.CompareTag("JudgeLine"))
+            {
+                Miss();
+            }
         }
     }
 }

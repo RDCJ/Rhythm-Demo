@@ -124,4 +124,16 @@ public class ScoreMgr : MonoBehaviour
         else
             return ScoreLevel.bad;
     }
+
+
+    public static ScoreLevel JudgeHoldEnd(double click_time, double ref_time)
+    {
+        double delta = ref_time - click_time;
+        if (delta <= GameConst.perfect_interval)
+            return ScoreLevel.perfect;
+        else if (delta <= GameConst.good_interval)
+            return ScoreLevel.good;
+        else
+            return ScoreLevel.bad;
+    }
 }
