@@ -20,13 +20,8 @@ public class NoteEditor : MonoBehaviour
     #endregion
 
     Dropdown note_selection;
-    Slider note_position;
-    TimeWidget note_time;
-    Button set_time_btn;
-    TimeWidget hold_time;
-    Button apply_btn;
-    Button create_btn;
-    Button delete_btn;
+    InputField hold_time;
+    InputField beatPerBar;
 
     public int current_index;
     NoteCfg current_note_cfg;
@@ -35,25 +30,16 @@ public class NoteEditor : MonoBehaviour
     {
         instance = this;
         note_selection = transform.Find("note_selection").GetComponent<Dropdown>();
-        note_position = transform.Find("note_position").GetComponent<Slider>();
-        note_time = transform.Find("note_time").GetComponent<TimeWidget>();
-        hold_time = transform.Find("hold_time").GetComponent<TimeWidget>();
-        apply_btn = transform.Find("apply_btn").GetComponent<Button>();
-        create_btn = transform.Find("create_btn").GetComponent<Button>();
-        delete_btn = transform.Find("delete_btn").GetComponent<Button>();
-        set_time_btn = transform.Find("set_time_btn").GetComponent<Button>();
+        hold_time = transform.Find("hold_time").GetComponent<InputField>();
+        beatPerBar = transform.Find("beatPerBar").GetComponent<InputField>();
 
-        apply_btn.onClick.AddListener(() => { ResetNote(); });
-        create_btn.onClick.AddListener(() => { CreateNote(); });
-        delete_btn.onClick.AddListener(() => {  DeleteNote(); });
-
-        set_time_btn.onClick.AddListener(() => {
-            note_time.SetTime(new Times(AudioWaveForm.Instance.GetCurrentAudioTime));
-        });
-
-        note_selection.onValueChanged.AddListener((int value) => {
+        note_selection.onValueChanged.AddListener((int value) =>
+        {
             Debug.Log("select " + value);
             hold_time.gameObject.SetActive(value == (int)NoteType.Hold);
+        });
+        beatPerBar.onValueChanged.AddListener((string value) => {
+            HorizontalGridLine.Instance.RefreshGridLine();
         });
 
         LoadNoteSeletion();
@@ -64,6 +50,14 @@ public class NoteEditor : MonoBehaviour
     private void Start()
     {
         hold_time.gameObject.SetActive(note_selection.value == (int)NoteType.Hold);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F))
+            CreateNote();
+        if (Input.GetKeyDown(KeyCode.Delete))
+            DeleteNote();
     }
 
     /// <summary>
@@ -82,14 +76,12 @@ public class NoteEditor : MonoBehaviour
     public void RefreshEditor()
     {
         note_selection.value = current_note_cfg.note_type;
-        note_position.value = (float)current_note_cfg.position_x;
-        note_time.SetTime(new Times((float)current_note_cfg.time));
         if (current_note_cfg.note_type == (int)NoteType.Hold)
         {
             hold_time.gameObject.SetActive(true);
-            hold_time.SetTime(new Times((float)current_note_cfg.duration));
+            hold_time.text = current_note_cfg.duration.ToString();
         }
-        else 
+        else
         {
             hold_time.gameObject.SetActive(false);
         }
@@ -128,9 +120,9 @@ public class NoteEditor : MonoBehaviour
         }
     }
 
-    
 
-    public void LoadNote(int index, NoteCfg cfg) 
+
+    public void LoadNote(int index, NoteCfg cfg)
     {
         current_index = index;
         current_note_cfg = cfg;
@@ -141,10 +133,25 @@ public class NoteEditor : MonoBehaviour
     {
         current_note_cfg = new NoteCfg();
         current_note_cfg.note_type = note_selection.value;
-        current_note_cfg.position_x = note_position.value;
-        current_note_cfg.time = note_time.times.ToSec();
+        current_note_cfg.position_x = 0.5;
+        current_note_cfg.time = AudioWaveForm.Instance.GetCurrentAudioTime;
         current_note_cfg.duration = 0;
         if (current_note_cfg.note_type == (int)NoteType.Hold)
-            current_note_cfg.duration = hold_time.times.ToSec();
+            current_note_cfg.duration = GetDuration;
+    }
+
+    public int GetNoteType
+    {
+        get => note_selection.value;
+    }
+
+    public float GetDuration
+    {
+        get => float.Parse(hold_time.text);
+    }
+
+    public int GetBeatPerBar
+    {
+        get => int.Parse(beatPerBar.text);
     }
 }

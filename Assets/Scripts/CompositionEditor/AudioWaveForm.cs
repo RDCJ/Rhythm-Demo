@@ -50,6 +50,14 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     {
         if (audioSource.isPlaying)
             slider.value = this.GetCurrentAudioTimeNormalize;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (!audioSource.isPlaying)
+                audioSource.Play();
+            else
+                audioSource.Pause();
+        }
     }
 
 
@@ -191,6 +199,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     
     public void Pause()
     {
+        if (audioSource.clip == null) return;
         if (audioSource.isPlaying)
             audioSource.Pause();
     }

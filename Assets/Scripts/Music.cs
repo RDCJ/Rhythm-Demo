@@ -14,6 +14,7 @@ namespace Music
         public string music_name;
         public string author;
         public double time;
+        public int BPM;
         public JsonData composition;
 
         public MusicCfg() {

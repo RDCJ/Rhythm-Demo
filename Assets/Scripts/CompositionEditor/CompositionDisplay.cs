@@ -29,17 +29,19 @@ public class CompositionDisplay : MonoBehaviour
     private RectTransform content_trans;
     private float scroll_height;
     private Vector2 window_size;
+    private HorizontalGridLine horizontal_grid_line;
 
     
     private List<EditorNote> notes;
 
-    private float drop_speed = GameConst.drop_speed;
+    private float drop_speed = GameConst.editor_drop_speed;
 
     private void Awake()
     {
         instance = this;
         note_scroll_view = transform.Find("GameManager/NoteScrollView").GetComponent<ScrollRect>();
         content_trans = note_scroll_view.transform.Find("Viewport/Content").GetComponent<RectTransform>();
+        horizontal_grid_line = content_trans.Find("horizontal_grid_line").GetComponent< HorizontalGridLine >();
         scroll_height = note_scroll_view.GetComponent<RectTransform>().sizeDelta.y;
         notes = new List<EditorNote>();
     }
@@ -54,7 +56,7 @@ public class CompositionDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
     }
 
     /// <summary>
@@ -136,6 +138,7 @@ public class CompositionDisplay : MonoBehaviour
 
     public void LoadComposition(List<NoteCfg> cfgs)
     {
+        horizontal_grid_line.RefreshGridLine();
         window_size = GameWindow.Instance.WindowSize();
         ClearNote();
         foreach (var cfg in cfgs)

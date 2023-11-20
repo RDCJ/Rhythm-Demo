@@ -27,6 +27,7 @@ public class CompositionEditor : MonoBehaviour
     InputField cfg_panel_author;
     Text cfg_panel_time;
     Dropdown difficulty;
+    InputField cfg_panel_bpm;
     Button save_btn;
     Button close_btn;
 
@@ -42,6 +43,7 @@ public class CompositionEditor : MonoBehaviour
         cfg_panel_author = music_cfg_panel.Find("author").GetComponent<InputField>();
         cfg_panel_time = music_cfg_panel.Find("time").GetComponent<Text>();
         difficulty = music_cfg_panel.Find("difficulty").GetComponent<Dropdown>();
+        cfg_panel_bpm = music_cfg_panel.Find("BPM").GetComponent<InputField>();
         save_btn = music_cfg_panel.Find("save_btn").GetComponent<Button>();
         close_btn = transform.Find("close_btn").GetComponent<Button>();
 
@@ -59,6 +61,11 @@ public class CompositionEditor : MonoBehaviour
             music_cfg.author = value;
         });
         difficulty.onValueChanged.AddListener(this.ChangeDifficulty);
+        cfg_panel_bpm.onValueChanged.AddListener((string value) =>
+        {
+            music_cfg.BPM = int.Parse(value);
+            HorizontalGridLine.Instance.RefreshGridLine();
+        });
 
         save_btn.onClick.AddListener(this.SaveMusicCfg);
         close_btn.onClick.AddListener(() => {
@@ -69,7 +76,8 @@ public class CompositionEditor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LoadMusic(1);
+        LoadMusic(2);
+        
     }
 
     // Update is called once per frame
@@ -89,6 +97,8 @@ public class CompositionEditor : MonoBehaviour
         cfg_panel_music_name.text = music_cfg.music_name;
         music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
         cfg_panel_time.text = music_cfg.time.ToString();
+        cfg_panel_bpm.text = music_cfg.BPM.ToString();
+
         // ¼ÓÔØÆ×Ãæ
         current_difficulty = GameConst.DifficultyIndex[0];
         List<NoteCfg> composition = music_cfg.GetComposition(current_difficulty);
@@ -111,5 +121,10 @@ public class CompositionEditor : MonoBehaviour
         List<NoteCfg> composition = CompositionDisplay.Instance.GetComposition();
         music_cfg.CompositionSerialize(ref composition, current_difficulty);
         music_cfg.Save();
+    }
+
+    public int GetBPM
+    {
+        get => music_cfg.BPM;
     }
 }
