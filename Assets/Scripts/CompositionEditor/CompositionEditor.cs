@@ -20,39 +20,45 @@ public class CompositionEditor : MonoBehaviour
 
     // 配置
     private MusicCfg music_cfg;
-    Button music_cfg_btn;
-    Transform music_cfg_panel;
-    Text cfg_panel_music_id;
+    
+    // component
     InputField cfg_panel_music_name;
     InputField cfg_panel_author;
-    Text cfg_panel_time;
     Dropdown difficulty;
     InputField cfg_panel_bpm;
+    InputField beatPerBar;
+
     Button save_btn;
     Button close_btn;
+
+    Transform music_select;
+    Dropdown music_list;
+    Button music_confirm_btn;
+
 
     string current_difficulty;
 
     private void Awake()
     {
         instance = this;
-        music_cfg_btn = transform.Find("music_cfg_btn").GetComponent<Button>();
-        music_cfg_panel = transform.Find("music_cfg_panel");
-        cfg_panel_music_id = music_cfg_panel.Find("music_id").GetComponent<Text>();
+        Transform music_cfg_panel = transform.Find("music_cfg_panel");
         cfg_panel_music_name = music_cfg_panel.Find("music_name").GetComponent<InputField>();
         cfg_panel_author = music_cfg_panel.Find("author").GetComponent<InputField>();
-        cfg_panel_time = music_cfg_panel.Find("time").GetComponent<Text>();
         difficulty = music_cfg_panel.Find("difficulty").GetComponent<Dropdown>();
         cfg_panel_bpm = music_cfg_panel.Find("BPM").GetComponent<InputField>();
-        save_btn = music_cfg_panel.Find("save_btn").GetComponent<Button>();
+        beatPerBar = music_cfg_panel.Find("beatPerBar").GetComponent<InputField>();
+
+        save_btn = transform.Find("save_btn").GetComponent<Button>();
         close_btn = transform.Find("close_btn").GetComponent<Button>();
+
+        music_select = transform.Find("music_select");
+        music_list = music_select.Find("music_list").GetComponent<Dropdown>();
+        music_confirm_btn = music_select.Find("confirm_btn").GetComponent<Button>();
 
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
-
-        music_cfg_btn.onClick.AddListener(() =>{
-            music_cfg_panel.gameObject.SetActive(true);
-        });
+        foreach (KeyValuePair<int, string> keyValue in MusicResMgr.MusicIndex2Name)
+            music_list.options.Add(new Dropdown.OptionData(keyValue.Value));
 
         cfg_panel_music_name.onValueChanged.AddListener((string value) => {
             music_cfg.music_name = value;
@@ -66,17 +72,25 @@ public class CompositionEditor : MonoBehaviour
             music_cfg.BPM = int.Parse(value);
             HorizontalGridLine.Instance.RefreshGridLine();
         });
+        beatPerBar.onValueChanged.AddListener((string value) => {
+            HorizontalGridLine.Instance.RefreshGridLine();
+        });
 
         save_btn.onClick.AddListener(this.SaveMusicCfg);
         close_btn.onClick.AddListener(() => {
             Destroy(this.gameObject);
+        });
+
+        music_confirm_btn.onClick.AddListener(() => {
+            LoadMusic(music_list.value + 1);
+            music_select.gameObject.SetActive(false);
         });
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        LoadMusic(2);
+        music_select.gameObject.SetActive(true);
         
     }
 
@@ -93,10 +107,8 @@ public class CompositionEditor : MonoBehaviour
 
         // 加载配置信息
         music_cfg = MusicCfg.GetCfgFromEditor(index.ToString());
-        cfg_panel_music_id.text = music_cfg.music_id;
         cfg_panel_music_name.text = music_cfg.music_name;
         music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
-        cfg_panel_time.text = music_cfg.time.ToString();
         cfg_panel_bpm.text = music_cfg.BPM.ToString();
 
         // 加载谱面
@@ -126,5 +138,10 @@ public class CompositionEditor : MonoBehaviour
     public int GetBPM
     {
         get => music_cfg.BPM;
+    }
+
+    public int GetBeatPerBar
+    {
+        get => int.Parse(beatPerBar.text);
     }
 }

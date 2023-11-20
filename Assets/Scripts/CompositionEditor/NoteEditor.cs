@@ -21,7 +21,7 @@ public class NoteEditor : MonoBehaviour
 
     Dropdown note_selection;
     InputField hold_time;
-    InputField beatPerBar;
+    
 
     public int current_index;
     NoteCfg current_note_cfg;
@@ -31,16 +31,14 @@ public class NoteEditor : MonoBehaviour
         instance = this;
         note_selection = transform.Find("note_selection").GetComponent<Dropdown>();
         hold_time = transform.Find("hold_time").GetComponent<InputField>();
-        beatPerBar = transform.Find("beatPerBar").GetComponent<InputField>();
+        
 
         note_selection.onValueChanged.AddListener((int value) =>
         {
             Debug.Log("select " + value);
             hold_time.gameObject.SetActive(value == (int)NoteType.Hold);
         });
-        beatPerBar.onValueChanged.AddListener((string value) => {
-            HorizontalGridLine.Instance.RefreshGridLine();
-        });
+        
 
         LoadNoteSeletion();
         current_index = -1;
@@ -148,10 +146,5 @@ public class NoteEditor : MonoBehaviour
     public float GetDuration
     {
         get => float.Parse(hold_time.text);
-    }
-
-    public int GetBeatPerBar
-    {
-        get => int.Parse(beatPerBar.text);
     }
 }

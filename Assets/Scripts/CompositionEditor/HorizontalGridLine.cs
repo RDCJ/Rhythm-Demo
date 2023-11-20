@@ -36,7 +36,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     public void RefreshGridLine()
     {
-        int beatPerBar = NoteEditor.Instance.GetBeatPerBar;
+        int beatPerBar = CompositionEditor.Instance.GetBeatPerBar;
         int BPM = CompositionEditor.Instance.GetBPM;
         if (beatPerBar > 0 && BPM > 0)
         {
