@@ -27,6 +27,7 @@ public class CompositionEditor : MonoBehaviour
     Dropdown difficulty;
     InputField cfg_panel_bpm;
     InputField beatPerBar;
+    Dropdown grid_density;
 
     Button save_btn;
     Button close_btn;
@@ -35,6 +36,7 @@ public class CompositionEditor : MonoBehaviour
     Dropdown music_list;
     Button music_confirm_btn;
 
+    Slider vertical_scale;
 
     string current_difficulty;
 
@@ -47,6 +49,7 @@ public class CompositionEditor : MonoBehaviour
         difficulty = music_cfg_panel.Find("difficulty").GetComponent<Dropdown>();
         cfg_panel_bpm = music_cfg_panel.Find("BPM").GetComponent<InputField>();
         beatPerBar = music_cfg_panel.Find("beatPerBar").GetComponent<InputField>();
+        grid_density = music_cfg_panel.Find("grid_density").GetComponent<Dropdown>();
 
         save_btn = transform.Find("save_btn").GetComponent<Button>();
         close_btn = transform.Find("close_btn").GetComponent<Button>();
@@ -54,6 +57,8 @@ public class CompositionEditor : MonoBehaviour
         music_select = transform.Find("music_select");
         music_list = music_select.Find("music_list").GetComponent<Dropdown>();
         music_confirm_btn = music_select.Find("confirm_btn").GetComponent<Button>();
+
+        vertical_scale = transform.Find("vertical_scale").GetComponent<Slider>();
 
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
@@ -76,6 +81,10 @@ public class CompositionEditor : MonoBehaviour
             HorizontalGridLine.Instance.RefreshGridLine();
         });
 
+        grid_density.onValueChanged.AddListener((int value) => {
+            HorizontalGridLine.Instance.RefreshGridLine();
+        });
+
         save_btn.onClick.AddListener(this.SaveMusicCfg);
         close_btn.onClick.AddListener(() => {
             Destroy(this.gameObject);
@@ -84,6 +93,11 @@ public class CompositionEditor : MonoBehaviour
         music_confirm_btn.onClick.AddListener(() => {
             LoadMusic(music_list.value + 1);
             music_select.gameObject.SetActive(false);
+        });
+
+        vertical_scale.onValueChanged.AddListener((float value) => {
+            HorizontalGridLine.Instance.RefreshHeight();
+            CompositionDisplay.Instance.RepaintAllNote();
         });
     }
 
@@ -143,5 +157,15 @@ public class CompositionEditor : MonoBehaviour
     public int GetBeatPerBar
     {
         get => int.Parse(beatPerBar.text);
+    }
+
+    public int GetGridDensity
+    {
+        get => grid_density.value;
+    }
+
+    public float GetVerticalScale
+    {
+        get => vertical_scale.value * 2.5f + 0.5f;
     }
 }

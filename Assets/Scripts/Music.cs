@@ -69,7 +69,7 @@ namespace Music
         public List<NoteCfg> GetComposition(string difficulty)
         {
             List<NoteCfg> output = new List<NoteCfg>();
-            if (composition.Keys.Contains(difficulty) && composition[difficulty] != null)
+            if (composition.Keys.Contains(difficulty) && composition[difficulty] != null && composition[difficulty].GetJsonType() == JsonType.Array)
             {
                 for (int i = 0; i < composition[difficulty].Count; i++)
                     output.Add(JsonMapper.ToObject<NoteCfg>(composition[difficulty][i].ToJson()));
@@ -79,7 +79,6 @@ namespace Music
 
         public void CompositionSerialize(ref List<NoteCfg> input, string difficulty)
         {
-            if (input.Count == 0) return;
             List<NoteCfg> listDeep = new List<NoteCfg>();
             for (var i = 0; i < input.Count; i++)
                 listDeep.Add(new NoteCfg(input[i]));

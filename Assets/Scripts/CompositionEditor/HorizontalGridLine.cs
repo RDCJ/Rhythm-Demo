@@ -27,6 +27,9 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     private RectTransform rect;
 
     private int BPM;
+    private int beatPerBar;
+    private int grid_density;
+    private int bar_count;
 
     private void Awake()
     {
@@ -38,9 +41,12 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     {
         int beatPerBar = CompositionEditor.Instance.GetBeatPerBar;
         int BPM = CompositionEditor.Instance.GetBPM;
+        int grid_density = CompositionEditor.Instance.GetGridDensity + 1;
         if (beatPerBar > 0 && BPM > 0)
         {
             this.BPM = BPM;
+            this.grid_density = grid_density;
+            this.beatPerBar = beatPerBar;
             // 清空
             for (int i = 0; i < transform.childCount; i++)
                 Destroy(transform.GetChild(i).gameObject);
@@ -49,31 +55,37 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             //
             float audio_time = AudioWaveForm.Instance.GetAudioLength;
             float bar_time = (float)(beatPerBar * 60.0 / BPM);
-            int bar_count = (int)Mathf.Ceil(audio_time / bar_time);
+            bar_count = (int)Mathf.Ceil(audio_time / bar_time);
 
             for (int i = 0; i < bar_count; i++)
             {
                 GameObject new_order_txt = Instantiate(bar_order_txt, bar_order_trans);
                 new_order_txt.GetComponent<Text>().text = "# " + (i + 1).ToString();
 
-                for (int j = 0; j < beatPerBar; j++)
+                for (int j = 0; j < beatPerBar * grid_density; j++)
                 {
                     GameObject new_line = Instantiate(horizontal_line, transform);
                     if (j == 0)
                         new_line.GetComponent<Image>().color = Color.green;
+                    else if (j % grid_density == 0)
+                        new_line.GetComponent<Image>().color = new Color(1, 1, 1, 0.8f);
                     else
-                        new_line.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+                        new_line.GetComponent<Image>().color = new Color(1, 1, 1, 0.3f);
                 }
             }
-            // 设置高度
-            Vector2 v = rect.sizeDelta;
-            v.y = (float)(bar_count * GameConst.editor_drop_speed * (beatPerBar * 60.0 / BPM));
-            rect.sizeDelta = v;
-            bar_order_trans.sizeDelta = v;
+            RefreshHeight();
         }
         else
             Debug.Log("arguement error");
-        
+    }
+
+    // 设置高度
+    public void RefreshHeight()
+    {
+        Vector2 v = rect.sizeDelta;
+        v.y = (float)(bar_count * GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale * (beatPerBar * 60.0 / BPM));
+        rect.sizeDelta = v;
+        bar_order_trans.sizeDelta = v;
     }
 
 
@@ -103,6 +115,6 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             }
             else break;
         }
-        return index * 60.0f / this.BPM;
+        return index * 60.0f / this.BPM / this.grid_density;
     }
 }

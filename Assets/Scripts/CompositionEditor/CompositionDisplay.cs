@@ -34,8 +34,6 @@ public class CompositionDisplay : MonoBehaviour
     
     private List<EditorNote> notes;
 
-    private float drop_speed = GameConst.editor_drop_speed;
-
     private void Awake()
     {
         instance = this;
@@ -64,6 +62,7 @@ public class CompositionDisplay : MonoBehaviour
     /// </summary>
     private void UpdatePosition(float audio_time)
     {
+        float drop_speed = GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale;
         audio_time *= AudioWaveForm.Instance.GetAudioLength;
         Vector3 content_pos = content_trans.localPosition;
         float content_height = content_trans.sizeDelta.y;
@@ -116,6 +115,7 @@ public class CompositionDisplay : MonoBehaviour
         RectTransform trans = notes[index].GetComponent<RectTransform>();
         NoteCfg cfg = notes[index].cfg;
 
+        float drop_speed = GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale;
         float x = window_size.x * (float)cfg.position_x;
         float y = drop_speed * (float)cfg.time - content_trans.sizeDelta.y;
         if (cfg.note_type == (int)Note.NoteType.Hold)
@@ -127,6 +127,12 @@ public class CompositionDisplay : MonoBehaviour
             y += sizeDelta.y * trans.localScale.y / 2.0f;
         }
         trans.localPosition = new Vector3(x, y, 0);
+    }
+
+    public void RepaintAllNote()
+    {
+        for (int i = 0; i < notes.Count; i++)
+            PaintNote(i);
     }
 
     public void ClearNote()
