@@ -2,19 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InitState : GameBaseState
+public class PrepareState: GameBaseState
 {
-    public InitState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+    public PrepareState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
     {
-
     }
 
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter InitState");
-        gameMgr.Init();
-        stateMachine.ChangeState(gameMgr.prepareState);
+        Debug.Log("enter PrepareState");
     }
 
     public override void ExitState()
@@ -25,6 +22,14 @@ public class InitState : GameBaseState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
+        if (gameMgr.current_time >= 0)
+        {
+            stateMachine.ChangeState(gameMgr.playingState);
+        }
+        else
+        {
+            gameMgr.DropNote();
+        }
     }
 
     public override void PhysicsUpdate()

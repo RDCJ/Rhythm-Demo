@@ -74,16 +74,16 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         
     }
 
-    public override void Init(NoteCfg _cfg)
+    public override void Init(NoteCfg _cfg, float delta_time)
     {
-        base.Init(_cfg);
+        base.Init(_cfg, delta_time);
         is_holding = false;
     }
 
-    protected override void ResetPosition()
+    protected override void ResetPosition(float delta_time)
     {
         float x = (float)cfg.position_x * Screen.width;
-        float y = Screen.height + icon_rect.sizeDelta.y / 2;
+        float y = Screen.height + icon_rect.sizeDelta.y / 2 + delta_time * GameConst.drop_speed;
         rectTransform.position = new Vector2(x, y);
     }
 

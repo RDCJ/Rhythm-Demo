@@ -73,9 +73,9 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
             type = NoteType.RightSlide;
     }
 
-    public override void Init(NoteCfg _cfg)
+    public override void Init(NoteCfg _cfg, float delta_time)
     {
-        base.Init(_cfg);
+        base.Init(_cfg, delta_time);
         is_down = false;
         is_slided = false;
     }

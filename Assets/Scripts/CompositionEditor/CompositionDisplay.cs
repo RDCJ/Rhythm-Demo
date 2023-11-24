@@ -66,7 +66,7 @@ public class CompositionDisplay : MonoBehaviour
         audio_time *= AudioWaveForm.Instance.GetAudioLength;
         Vector3 content_pos = content_trans.localPosition;
         float content_height = content_trans.sizeDelta.y;
-        content_pos.y = -scroll_height + content_height - drop_speed * audio_time;
+        content_pos.y = -scroll_height + content_height - drop_speed * audio_time + CompositionEditor.Instance.GetTimeOffset * drop_speed;
         content_trans.localPosition = content_pos;
     }
 
@@ -117,7 +117,7 @@ public class CompositionDisplay : MonoBehaviour
 
         float drop_speed = GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale;
         float x = window_size.x * (float)cfg.position_x;
-        float y = drop_speed * (float)cfg.time - content_trans.sizeDelta.y;
+        float y = drop_speed * (float)(cfg.time - CompositionEditor.Instance.GetTimeOffset) - content_trans.sizeDelta.y;
         if (cfg.note_type == (int)Note.NoteType.Hold)
         {
             Vector2 sizeDelta = trans.sizeDelta;

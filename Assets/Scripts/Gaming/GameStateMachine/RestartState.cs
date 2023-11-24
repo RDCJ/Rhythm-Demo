@@ -11,6 +11,7 @@ public class RestartState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
+        Debug.Log("enter RestartState");
         NotePoolManager.Instance.Reload();
         stateMachine.ChangeState(gameMgr.initState);
 

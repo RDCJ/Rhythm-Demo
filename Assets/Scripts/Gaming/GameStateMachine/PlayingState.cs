@@ -11,6 +11,7 @@ public class PlayingState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
+        Debug.Log("enter PlayingState");
         gameMgr.Continue();
     }
 
@@ -28,5 +29,6 @@ public class PlayingState : GameBaseState
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+        
     }
 }

@@ -115,6 +115,6 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             }
             else break;
         }
-        return index * 60.0f / this.BPM / this.grid_density;
+        return index * 60.0f / this.BPM / this.grid_density + CompositionEditor.Instance.GetTimeOffset;
     }
 }

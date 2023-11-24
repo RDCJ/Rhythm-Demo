@@ -47,14 +47,19 @@ namespace Note
             }
         }
 
-        public virtual void Init(Music.NoteCfg _cfg)
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="_cfg"></param>
+        /// <param name="delta_time">初始化的时刻与理论时刻的偏差，用于修正位置</param>
+        public virtual void Init(Music.NoteCfg _cfg, float delta_time)
         {
             is_move = false;
             is_active = false;
             cfg = _cfg;
 
             Resize();
-            ResetPosition();
+            ResetPosition(delta_time);
         }
 
         public virtual void Activate()
@@ -62,10 +67,10 @@ namespace Note
             is_active = true;
         }
 
-        protected virtual void ResetPosition()
+        protected virtual void ResetPosition(float delta_time)
         {
             float x = (float)cfg.position_x * Screen.width;
-            float y = Screen.height;
+            float y = Screen.height + delta_time * GameConst.drop_speed;
             rectTransform.position = new Vector2(x, y);
         }
 

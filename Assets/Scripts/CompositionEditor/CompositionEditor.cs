@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Music;
 using UnityEngine.UI;
+using System;
 
 public class CompositionEditor : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class CompositionEditor : MonoBehaviour
     Dropdown difficulty;
     InputField cfg_panel_bpm;
     InputField beatPerBar;
+    InputField cfg_prepare_time;
+    InputField cfg_time_offset;
     Dropdown grid_density;
 
     Button save_btn;
@@ -49,6 +52,8 @@ public class CompositionEditor : MonoBehaviour
         difficulty = music_cfg_panel.Find("difficulty").GetComponent<Dropdown>();
         cfg_panel_bpm = music_cfg_panel.Find("BPM").GetComponent<InputField>();
         beatPerBar = music_cfg_panel.Find("beatPerBar").GetComponent<InputField>();
+        cfg_prepare_time = music_cfg_panel.Find("prepare_time").GetComponent<InputField>();
+        cfg_time_offset = music_cfg_panel.Find("time_offset").GetComponent <InputField>();
         grid_density = music_cfg_panel.Find("grid_density").GetComponent<Dropdown>();
 
         save_btn = transform.Find("save_btn").GetComponent<Button>();
@@ -74,7 +79,14 @@ public class CompositionEditor : MonoBehaviour
         difficulty.onValueChanged.AddListener(this.ChangeDifficulty);
         cfg_panel_bpm.onValueChanged.AddListener((string value) =>
         {
-            music_cfg.BPM = int.Parse(value);
+            try
+            {
+                music_cfg.BPM = int.Parse(value);
+            }
+            catch (FormatException)
+            {
+                music_cfg.BPM = 1;
+            }
             HorizontalGridLine.Instance.RefreshGridLine();
         });
         beatPerBar.onValueChanged.AddListener((string value) => {
@@ -83,6 +95,26 @@ public class CompositionEditor : MonoBehaviour
 
         grid_density.onValueChanged.AddListener((int value) => {
             HorizontalGridLine.Instance.RefreshGridLine();
+        });
+        cfg_prepare_time.onValueChanged.AddListener((string value) => {
+            try
+            {
+                music_cfg.prepare_time = double.Parse(value);
+            }
+            catch (FormatException)
+            {
+                music_cfg.prepare_time = 0;
+            }
+        });
+        cfg_time_offset.onValueChanged.AddListener((string value) =>{
+            try
+            {
+                music_cfg.time_offset = double.Parse(value);
+            }
+            catch (FormatException) {
+                music_cfg.time_offset = 0;
+            }
+            CompositionDisplay.Instance.RepaintAllNote();
         });
 
         save_btn.onClick.AddListener(this.SaveMusicCfg);
@@ -124,7 +156,8 @@ public class CompositionEditor : MonoBehaviour
         cfg_panel_music_name.text = music_cfg.music_name;
         music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
         cfg_panel_bpm.text = music_cfg.BPM.ToString();
-
+        cfg_prepare_time.text = music_cfg.prepare_time.ToString();
+        cfg_time_offset.text = music_cfg.time_offset.ToString();
         // ¼ÓÔØÆ×Ãæ
         current_difficulty = GameConst.DifficultyIndex[0];
         List<NoteCfg> composition = music_cfg.GetComposition(current_difficulty);
@@ -149,9 +182,19 @@ public class CompositionEditor : MonoBehaviour
         music_cfg.Save();
     }
 
+    #region Get data
     public int GetBPM
     {
         get => music_cfg.BPM;
+    }
+
+    public float GetPrepareTime
+    {
+        get => (float)music_cfg.prepare_time;
+    }
+    public float GetTimeOffset
+    {
+        get => (float)music_cfg.time_offset;
     }
 
     public int GetBeatPerBar
@@ -168,4 +211,5 @@ public class CompositionEditor : MonoBehaviour
     {
         get => vertical_scale.value * 2.5f + 0.5f;
     }
+    #endregion
 }
