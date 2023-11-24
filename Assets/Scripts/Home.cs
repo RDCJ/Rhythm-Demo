@@ -12,13 +12,17 @@ public class Home : MonoBehaviour
 
     public GameObject game_mgr;
     public GameObject composition_editor;
+    public GameObject music_select;
+
+    public Reporter reporter;
 
     private void Awake()
     {
         play_btn = transform.Find("play_btn").GetComponent<Button>();
         editor_btn = transform.Find("editor_btn").GetComponent<Button>();
         play_btn.onClick.AddListener(() => {
-            Instantiate(game_mgr, transform.parent);
+            //Instantiate(game_mgr, transform.parent);
+            Instantiate(music_select, transform.parent);
         });
 
         editor_btn.onClick.AddListener(() => {

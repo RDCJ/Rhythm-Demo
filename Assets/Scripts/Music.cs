@@ -30,17 +30,9 @@ namespace Music
             composition = new JsonData();
         }
 
-        public static MusicCfg GetCfg(string file_name)
+        public static MusicCfg GetCfg(string music_id)
         {
-            string path = FileConst.music_data_path + file_name;
-            TextAsset textAsset = Resources.Load<TextAsset>(path);
-            string js = textAsset.text;
-            return JsonMapper.ToObject<MusicCfg>(js);
-        }
-
-        public static MusicCfg GetCfgFromEditor(string file_name)
-        {
-            string path = Application.persistentDataPath + "/" + FileConst.music_data_path + file_name;
+            string path = Application.persistentDataPath + "/" + FileConst.music_data_path + music_id;
             if (!path.EndsWith(".json"))
                 path = path + ".json";
             if (File.Exists(path))
@@ -49,7 +41,7 @@ namespace Music
                 return JsonMapper.ToObject<MusicCfg>(js);
             }
             else
-                return new MusicCfg(int.Parse(file_name));
+                return new MusicCfg(int.Parse(music_id));
         }
 
         public static string GetCfgNameByID(string id)

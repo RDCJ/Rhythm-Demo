@@ -14,7 +14,7 @@ public class TestPanel : MonoBehaviour
         Debug.Log(Application.persistentDataPath);
         string music_id = "1";
         string difficulty = "hard";
-        music_cfg = MusicCfg.GetCfgFromEditor(music_id);
+        music_cfg = MusicCfg.GetCfg(music_id);
         if (!music_cfg.composition.Keys.Contains(difficulty))
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");

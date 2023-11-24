@@ -99,10 +99,7 @@ public class GameMgr : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        music_id = "1";
-        difficulty = "Easy";
         drop_duration = (Screen.height - GameConst.judge_line_y) / GameConst.drop_speed;
-        stateMachine.Init(initState);
     }
 
     // Update is called once per frame
@@ -118,24 +115,30 @@ public class GameMgr : MonoBehaviour
     }
 
     #region logic function
+    public void SetMusic(string music_id, string difficulty)
+    {
+        this.music_id = music_id;
+        this.difficulty = difficulty;
+        music_cfg = MusicCfg.GetCfg(music_id);
+        music_cfg.prepare_time = Math.Max(0, music_cfg.prepare_time);
+        stateMachine.Init(initState);
+    }
+
     public void Init()
     {
         pause_btn.gameObject.SetActive(true);
-        music_cfg = MusicCfg.GetCfgFromEditor(music_id);
-        music_cfg.prepare_time = Math.Max(0, music_cfg.prepare_time);
         current_time = -music_cfg.prepare_time;
         current_note_idx = 0;
 
+        audioSource.clip = MusicResMgr.GetMusic(int.Parse(music_id));
+        audioSource.time = 0;
+        audioSource.Pause();
         if (!music_cfg.composition.Keys.Contains(difficulty))
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
         }
         else
         {
-            audioSource.clip = MusicResMgr.GetMusic(int.Parse(music_id));
-            audioSource.time = 0;
-            audioSource.Pause();
-
             composition = music_cfg.GetComposition(difficulty);
             note_count = composition.Count;
 

@@ -152,7 +152,7 @@ public class CompositionEditor : MonoBehaviour
         AudioWaveForm.Instance.LoadAudio(index);
 
         // º”‘ÿ≈‰÷√–≈œ¢
-        music_cfg = MusicCfg.GetCfgFromEditor(index.ToString());
+        music_cfg = MusicCfg.GetCfg(index.ToString());
         cfg_panel_music_name.text = music_cfg.music_name;
         music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
         cfg_panel_bpm.text = music_cfg.BPM.ToString();

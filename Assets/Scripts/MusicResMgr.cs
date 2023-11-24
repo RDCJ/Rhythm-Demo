@@ -6,7 +6,7 @@ public class MusicResMgr
 {
     public static Dictionary<int, string> MusicIndex2Name = new()
     {
-        { 1, "11.Entrance - Ice" },
+        {1, "11.Entrance - Ice" },
         {2, "06.Invention No.1 - J.S Bach"}
     };
 
