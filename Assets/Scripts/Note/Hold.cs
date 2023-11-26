@@ -62,18 +62,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         icon_rect = transform.Find("icon").GetComponent<RectTransform>();
     }
 
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        
-    }
-
     public override void Init(NoteCfg _cfg, float delta_time)
     {
         base.Init(_cfg, delta_time);

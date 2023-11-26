@@ -1,8 +1,10 @@
 using DG.Tweening.Plugins.Core.PathCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class Home : MonoBehaviour
@@ -53,20 +55,33 @@ public class Home : MonoBehaviour
         string dataPath = Application.persistentDataPath;  //数据目录
         string resPath = AppContentPath; //游戏包资源目录
         if (Directory.Exists(dataPath))
+        {
             Directory.Delete(dataPath, true);
+            Debug.Log("删除目录: " + dataPath);
+        }
+
+        Debug.Log("新建目录: " + dataPath);
         Directory.CreateDirectory(dataPath);
 
 
         string[] folders = new string[1] {"MusicsData" };
         foreach (var folder in folders)
         {
-            string in_dir = System.IO.Path.Combine(AppContentPath, folder);
-            string out_dir = System.IO.Path.Combine(Application.persistentDataPath, folder);
+            string in_dir = System.IO.Path.Combine(resPath, folder);
+            string out_dir = System.IO.Path.Combine(dataPath, folder);
             if (!Directory.Exists(out_dir))
+            {
                 Directory.CreateDirectory(out_dir);
-            string[] files = Directory.GetFiles(in_dir);
+                Debug.Log("新建目录: " + out_dir);
+            }
+
+            List<string> files = new List<string>();
+            foreach (var key in MusicResMgr.MusicIndex2Name.Keys)
+                files.Add(in_dir + "/" + key.ToString() + ".json");
+
             foreach (var in_file in files)
             {
+                Debug.Log("开始复制文件:" + in_file);
                 if (in_file.EndsWith(".meta")) continue;
                 string file_name = System.IO.Path.GetFileName(in_file);
                 string out_file = System.IO.Path.Combine(out_dir, file_name);
@@ -75,9 +90,10 @@ public class Home : MonoBehaviour
                     WWW www = new WWW(in_file);
                     yield return www;
 
-                    if (www.isDone)
+                    if (www.isDone && string.IsNullOrEmpty(www.error))
                     {
                         File.WriteAllBytes(out_file, www.bytes);
+                        Debug.Log("复制文件成功:" + out_file);
                     }
                     yield return 0;
                 }
@@ -87,7 +103,8 @@ public class Home : MonoBehaviour
                     {
                         File.Delete(out_file);
                     }
-                    File.Copy(in_file, out_file, true);
+                    if (File.Exists(in_file))
+                        File.Copy(in_file, out_file, true);
                 }
                 yield return new WaitForEndOfFrame();
             }
@@ -142,4 +159,5 @@ public class Home : MonoBehaviour
             return path;
         }
     }
+
 }

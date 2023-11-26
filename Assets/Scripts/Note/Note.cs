@@ -104,6 +104,7 @@ namespace Note
 
         public virtual void Miss() {
             ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
+            NotePoolManager.Instance.ReturnObject(this);
         }
 
         /// <summary>

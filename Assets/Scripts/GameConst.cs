@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameConst
 {
     public static float editor_drop_speed = 300;
-    public static float drop_speed = 800;
+    public static float drop_speed = 1200;
     public static float judge_line_y = 180f;
     
     public static float perfect_interval = 0.04f;
