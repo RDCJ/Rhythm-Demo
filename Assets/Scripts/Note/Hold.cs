@@ -21,12 +21,14 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         {
             is_holding = true;
             start_time = GameMgr.Instance.current_time;
-            Debug.Log("Hold start " + start_time);
+            //Debug.Log("Hold start " + start_time);
 
             start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.time); ;
             
             if (start_judge_level == ScoreMgr.ScoreLevel.bad)
             {
+                is_judged = true;
+                Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
                 float x = this.transform.position.x;
                 float y = JudgeLine.Instance.transform.position.y;
                 EffectPlayer.Instance.PlayEffect(start_judge_level, new Vector3(x, y, 0));
@@ -40,7 +42,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (is_holding)
         {
             is_holding = false;
-            Debug.Log("Hold end " + end_time);
+            //Debug.Log("Hold end " + end_time);
             EndJudge();
         }
     }
@@ -50,7 +52,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (is_holding)
         {
             is_holding = false;
-            Debug.Log("Hold end " + end_time);
+            //Debug.Log("Hold end " + end_time);
             EndJudge();
         }
     }
@@ -89,6 +91,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     private void EndJudge()
     {
+        is_judged = true;
         end_time = GameMgr.Instance.current_time;
         end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
 
@@ -99,10 +102,11 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             level = ScoreMgr.ScoreLevel.bad;
         else
             level = ScoreMgr.ScoreLevel.good;
-
+        
         float x = this.transform.position.x;
         float y = JudgeLine.Instance.transform.position.y;
 
+        Debug.Log("[判定] 类型: Hold, 结果: " + level);
         ScoreMgr.Instance.AddScore(level);
         EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
 

@@ -50,7 +50,6 @@ public class GameMgr : MonoBehaviour
     public PrepareState prepareState;
     public PlayingState playingState;
     public PauseState pauseState;
-    public ScoreState scoreState;
     public RestartState restartState;
     public MusicEndState musicEndState;
     #endregion
@@ -89,7 +88,6 @@ public class GameMgr : MonoBehaviour
         initState = new InitState(this, stateMachine);
         playingState = new PlayingState(this, stateMachine);
         pauseState = new PauseState(this, stateMachine);
-        scoreState = new ScoreState(this, stateMachine);
         restartState = new RestartState(this, stateMachine);
         prepareState = new PrepareState(this, stateMachine);
         musicEndState = new MusicEndState(this, stateMachine);
@@ -168,7 +166,7 @@ public class GameMgr : MonoBehaviour
             double next_drop_time = composition[current_note_idx].time - drop_duration;
             if (current_time < next_drop_time) break;
 
-            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
+            //Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
             new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));

@@ -45,7 +45,7 @@ public class ScoreMgr : MonoBehaviour
     int current_combo;
     int max_combo;
 
-    Dictionary<ScoreLevel, int> score_level_count;
+    int[] score_level_count;
 
     float judge_fix;
     #endregion
@@ -84,12 +84,7 @@ public class ScoreMgr : MonoBehaviour
         current_combo = 0;
         max_combo = 0;
 
-        score_level_count = new Dictionary<ScoreLevel, int>
-        {
-            { ScoreLevel.perfect, 0},
-            { ScoreLevel.good, 0 },
-            { ScoreLevel.bad, 0 }
-        };
+        score_level_count = new int[3] { 0, 0, 0 };
         JudgeLine.Instance.ChangeColor(2);
         final_score_panel.gameObject.SetActive(false);
         judge_fix = JudgeFix.GetJudgeFix;
@@ -98,12 +93,13 @@ public class ScoreMgr : MonoBehaviour
     public void AddScore(ScoreLevel scoreLevel)
     {
         // ¼ÆÊý
-        score_level_count[scoreLevel]++;
-        if (score_level_count[ScoreLevel.bad] > 0)
+        score_level_count[(int)scoreLevel]++;
+        Debug.Log("score_level_count: " + score_level_count[0] + " " + score_level_count[1] + " " + score_level_count[2]);
+        if (score_level_count[(int)ScoreLevel.bad] > 0)
         {
             JudgeLine.Instance.ChangeColor(0);
         }
-        else if (score_level_count[ScoreLevel.good] > 0)
+        else if (score_level_count[(int)ScoreLevel.good] > 0)
         {
             JudgeLine.Instance.ChangeColor(1);
         }
@@ -130,7 +126,7 @@ public class ScoreMgr : MonoBehaviour
         int current_weight = 0;
         for (int i=0; i<3; i++)
         {
-            current_weight += score_level_count[(ScoreLevel)i] * GameConst.acc_weight[(ScoreLevel)i];
+            current_weight += score_level_count[i] * GameConst.acc_weight[(ScoreLevel)i];
         }
         return (float)current_weight / total_weight;
     }
@@ -140,12 +136,12 @@ public class ScoreMgr : MonoBehaviour
         final_score_panel.gameObject.SetActive(true);
         final_score_txt.text = ((int)score).ToString().PadLeft(7, '0');
         final_acc_txt.text = (GetAccuracy() * 100).ToString("N2") + "%";
-        final_perfect_count.text = score_level_count[ScoreLevel.perfect].ToString();
-        final_good_count.text = score_level_count[ScoreLevel.good].ToString();
-        final_bad_count.text = score_level_count[ScoreLevel.bad].ToString();
-        if (score_level_count[ScoreLevel.bad] > 0)
+        final_perfect_count.text = score_level_count[(int)ScoreLevel.perfect].ToString();
+        final_good_count.text = score_level_count[(int)ScoreLevel.good].ToString();
+        final_bad_count.text = score_level_count[(int)ScoreLevel.bad].ToString();
+        if (score_level_count[(int)ScoreLevel.bad] > 0)
             extra_tag.gameObject.SetActive(false);
-        else if (score_level_count[ScoreLevel.good] > 0)
+        else if (score_level_count[(int)ScoreLevel.good] > 0)
         {
             extra_tag.gameObject.SetActive(true);
             extra_tag.text = "FC";

@@ -11,11 +11,13 @@ public class Tap : NoteBase, IPointerDownHandler
     {
         if (this.is_active)
         {
+            is_judged = true;
             double current_time = GameMgr.Instance.current_time;
-            Debug.Log("tap: " + current_time + " cfg_time: " + cfg.time);
+            //Debug.Log("tap: " + current_time + " cfg_time: " + cfg.time);
 
             ScoreMgr.ScoreLevel level = ScoreMgr.Instance.JudgeClickTime(current_time, cfg.time);
             // 计分
+            Debug.Log("[判定] 类型: Tap, 结果: " + level);
             ScoreMgr.Instance.AddScore(level);
             // 点击效果
             float x = this.transform.position.x;

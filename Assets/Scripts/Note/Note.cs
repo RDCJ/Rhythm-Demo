@@ -25,6 +25,7 @@ namespace Note
 
         protected bool is_move;
         [HideInInspector] protected bool is_active;
+        [HideInInspector] protected bool is_judged;
 
         protected virtual void Awake()
         {
@@ -56,6 +57,7 @@ namespace Note
         {
             is_move = false;
             is_active = false;
+            is_judged = false;
             cfg = _cfg;
 
             Resize();
@@ -109,6 +111,7 @@ namespace Note
 
 
         public virtual void Miss() {
+            Debug.Log("Miss");
             ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
             NotePoolManager.Instance.ReturnObject(this);
         }
@@ -134,7 +137,8 @@ namespace Note
         {
             if (collision.CompareTag("JudgeLine"))
             {
-                Miss();
+                if (!is_judged)
+                    Miss();
             }
         }
     }

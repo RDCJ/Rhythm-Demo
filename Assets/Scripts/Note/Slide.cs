@@ -25,7 +25,7 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
         {
             is_down = true;
             down_position = eventData.position;
-            Debug.Log("slide down " + down_position);
+            //Debug.Log("slide down " + down_position);
         }
     }
 
@@ -33,6 +33,7 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
     {
         if (is_down && !is_slided)
         {
+            is_judged = true;
             is_slided = true;
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
@@ -43,14 +44,14 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
             if ((slide_direction.x < 0) == (direciton == SlideDirection.Left))
             {
                 level = ScoreMgr.Instance.JudgeClickTime(GameMgr.Instance.current_time, cfg.time);
-                Debug.Log("sliding right " + eventData.position);
+                //Debug.Log("sliding right " + eventData.position);
             }
             else
             {
                 level = ScoreMgr.ScoreLevel.bad;
-                Debug.Log("sliding wrong " + eventData.position);
+                //Debug.Log("sliding wrong " + eventData.position);
             }
-                
+            Debug.Log("[判定] 类型: Slide, 结果: " + level);
             ScoreMgr.Instance.AddScore(level);
             EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
 
