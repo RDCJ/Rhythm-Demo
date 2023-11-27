@@ -46,6 +46,8 @@ public class ScoreMgr : MonoBehaviour
     int max_combo;
 
     Dictionary<ScoreLevel, int> score_level_count;
+
+    float judge_fix;
     #endregion
 
     private void Awake()
@@ -90,6 +92,7 @@ public class ScoreMgr : MonoBehaviour
         };
         JudgeLine.Instance.ChangeColor(2);
         final_score_panel.gameObject.SetActive(false);
+        judge_fix = JudgeFix.GetJudgeFix;
     }
 
     public void AddScore(ScoreLevel scoreLevel)
@@ -160,9 +163,9 @@ public class ScoreMgr : MonoBehaviour
     /// <param name="click_time"></param>
     /// <param name="ref_time"></param>
     /// <returns></returns>
-    public static ScoreLevel JudgeClickTime(double click_time, double ref_time)
+    public ScoreLevel JudgeClickTime(double click_time, double ref_time)
     {
-        double delta = System.Math.Abs(click_time - ref_time);
+        double delta = System.Math.Abs(click_time + judge_fix - ref_time);
         if (delta <= GameConst.perfect_interval)
             return ScoreLevel.perfect;
         else if (delta <= GameConst.good_interval)
@@ -172,9 +175,9 @@ public class ScoreMgr : MonoBehaviour
     }
 
 
-    public static ScoreLevel JudgeHoldEnd(double click_time, double ref_time)
+    public ScoreLevel JudgeHoldEnd(double click_time, double ref_time)
     {
-        double delta = ref_time - click_time;
+        double delta = ref_time - (click_time + judge_fix);
         if (delta <= GameConst.perfect_interval)
             return ScoreLevel.perfect;
         else if (delta <= GameConst.good_interval)

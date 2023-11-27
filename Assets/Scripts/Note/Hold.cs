@@ -23,7 +23,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             start_time = GameMgr.Instance.current_time;
             Debug.Log("Hold start " + start_time);
 
-            start_judge_level = ScoreMgr.JudgeClickTime(start_time, cfg.time); ;
+            start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.time); ;
             
             if (start_judge_level == ScoreMgr.ScoreLevel.bad)
             {
@@ -90,7 +90,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     private void EndJudge()
     {
         end_time = GameMgr.Instance.current_time;
-        end_judge_level = ScoreMgr.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
+        end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
 
         ScoreMgr.ScoreLevel level;
         if (start_judge_level == ScoreMgr.ScoreLevel.perfect && end_judge_level == ScoreMgr.ScoreLevel.perfect)

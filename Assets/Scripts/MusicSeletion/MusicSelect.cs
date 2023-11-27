@@ -10,12 +10,25 @@ public class MusicSelect : MonoBehaviour
     private CircularScrollingList _list;
     private Dropdown difficulty;
     public GameObject game_mgr;
+    Button play_btn;
+
 
     private void Awake()
     {
         difficulty = transform.Find("difficulty").GetComponent<Dropdown>();
+        play_btn = transform.Find("play_btn").GetComponent<Button>();
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
+
+        play_btn.onClick.AddListener(() =>
+        {
+            int current_id = _list.GetFocusingContentID();
+            MusicListContent content =
+            (MusicListContent)_list.ListBank.GetListContent(current_id);
+            GameMgr new_game = Instantiate(game_mgr, transform.parent).GetComponent<GameMgr>();
+            new_game.SetMusic(content.music_id.ToString(), GameConst.DifficultyIndex[difficulty.value]);
+
+        });
     }
 
     public void DisplayFocusingContent()
@@ -30,11 +43,7 @@ public class MusicSelect : MonoBehaviour
         Debug.Log("current_box_id: " + _list.GetFocusingContentID());
         if (_list.GetFocusingContentID() == MusicListBox.ContentID)
         {
-            MusicListContent content =
-            (MusicListContent)_list.ListBank.GetListContent(MusicListBox.ContentID);
-            Debug.Log("OnBoxSelected: " + MusicListBox.ContentID);
-            GameMgr new_game = Instantiate(game_mgr, transform.parent).GetComponent<GameMgr>();
-            new_game.SetMusic(content.music_id.ToString(), GameConst.DifficultyIndex[difficulty.value]);
+            
         }
     }
 

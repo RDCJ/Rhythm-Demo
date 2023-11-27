@@ -42,7 +42,7 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
 
             if ((slide_direction.x < 0) == (direciton == SlideDirection.Left))
             {
-                level = ScoreMgr.JudgeClickTime(GameMgr.Instance.current_time, cfg.time);
+                level = ScoreMgr.Instance.JudgeClickTime(GameMgr.Instance.current_time, cfg.time);
                 Debug.Log("sliding right " + eventData.position);
             }
             else

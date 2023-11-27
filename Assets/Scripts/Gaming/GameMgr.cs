@@ -118,7 +118,7 @@ public class GameMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        time_txt.text = current_time.ToString("F3");
+        time_txt.text = current_time.ToString("N2") + " / " + audioSource.clip.length.ToString("N2");
         stateMachine.CurrentState.FrameUpdate();
     }
 

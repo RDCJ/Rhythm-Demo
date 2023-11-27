@@ -14,7 +14,7 @@ public class Tap : NoteBase, IPointerDownHandler
             double current_time = GameMgr.Instance.current_time;
             Debug.Log("tap: " + current_time + " cfg_time: " + cfg.time);
 
-            ScoreMgr.ScoreLevel level = ScoreMgr.JudgeClickTime(current_time, cfg.time);
+            ScoreMgr.ScoreLevel level = ScoreMgr.Instance.JudgeClickTime(current_time, cfg.time);
             // 计分
             ScoreMgr.Instance.AddScore(level);
             // 点击效果
