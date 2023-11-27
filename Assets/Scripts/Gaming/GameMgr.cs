@@ -47,16 +47,27 @@ public class GameMgr : MonoBehaviour
     #region statemachine
     public StateMachine stateMachine;
     public InitState initState;
+    public PrepareState prepareState;
     public PlayingState playingState;
     public PauseState pauseState;
     public ScoreState scoreState;
     public RestartState restartState;
-    public PrepareState prepareState;
+    public MusicEndState musicEndState;
     #endregion
 
     public MusicCfg GetMusicCfg
     {
         get { return music_cfg; }
+    }
+
+    public bool IsMusicEnd
+    {
+        get => audioSource.time >= audioSource.clip.length;
+    }
+
+    public bool IsNoteEnd
+    {
+        get => current_note_idx >= note_count;
     }
 
     private void Awake()
@@ -81,6 +92,7 @@ public class GameMgr : MonoBehaviour
         scoreState = new ScoreState(this, stateMachine);
         restartState = new RestartState(this, stateMachine);
         prepareState = new PrepareState(this, stateMachine);
+        musicEndState = new MusicEndState(this, stateMachine);
 
         pause_btn.onClick.AddListener(()=> {
             stateMachine.ChangeState(pauseState);        
@@ -99,7 +111,8 @@ public class GameMgr : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        drop_duration = (Screen.height - GameConst.judge_line_y) / GameConst.drop_speed;
+        drop_duration = Screen.height * (1 - GameConst.judge_line_y) / DropSpeedFix.GetScaledDropSpeed;
+
     }
 
     // Update is called once per frame
@@ -151,7 +164,7 @@ public class GameMgr : MonoBehaviour
         current_time += Time.deltaTime;
         while (true)
         {
-            if (current_note_idx >= note_count) break;
+            if (IsNoteEnd) break;
             double next_drop_time = composition[current_note_idx].time - drop_duration;
             if (current_time < next_drop_time) break;
 

@@ -23,7 +23,10 @@ public class PlayingState : GameBaseState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-        gameMgr.DropNote();
+        if (!gameMgr.IsMusicEnd)
+            gameMgr.DropNote();
+        else
+            stateMachine.ChangeState(gameMgr.musicEndState);
     }
 
     public override void PhysicsUpdate()

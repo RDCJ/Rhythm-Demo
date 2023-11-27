@@ -23,10 +23,21 @@ public class ScoreMgr : MonoBehaviour
         }
     }
     #endregion
-    Text score_txt;
 
+    Text score_txt;
+    Transform final_score_panel;
+    Text final_score_txt;
+    Text final_acc_txt;
+    Text final_perfect_count;
+    Text final_good_count;
+    Text final_bad_count;
+    Text extra_tag;
+    Button restart_btn;
+    Button back_btn;
+
+
+    #region data
     float score;
-    float accuracy;
     int note_count;
     float basic_score_once;
     float combo_score_point;
@@ -35,32 +46,35 @@ public class ScoreMgr : MonoBehaviour
     int max_combo;
 
     Dictionary<ScoreLevel, int> score_level_count;
+    #endregion
 
     private void Awake()
     {
         instance = this;
-        score_txt = this.transform.Find("score_txt").GetComponent<Text>();
-    }
-
-    
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        score_txt = transform.Find("score_txt").GetComponent<Text>();
+        final_score_panel = transform.Find("final_score_panel");
+        final_score_txt = final_score_panel.Find("score_txt").GetComponent<Text>();
+        final_acc_txt = final_score_panel.Find("accuracy").GetComponent<Text>();
+        final_perfect_count = final_score_panel.Find("perfect_count").GetComponent<Text>();
+        final_good_count = final_score_panel.Find("good_count").GetComponent<Text>();
+        final_bad_count = final_score_panel.Find("bad_count").GetComponent<Text>();
+        extra_tag = final_score_panel.Find("extra_tag").GetComponent<Text>();
+        restart_btn = final_score_panel.Find("restart_btn").GetComponent<Button>();
+        back_btn = final_score_panel.Find("back_btn").GetComponent<Button>();
+        restart_btn.onClick.AddListener(() =>
+        {
+            GameMgr.Instance.stateMachine.ChangeState(GameMgr.Instance.restartState);
+        });
+        back_btn.onClick.AddListener(() =>
+        {
+            Destroy(GameMgr.Instance.gameObject);
+        });
     }
 
     public void Init(int note_count)
     {
         score = 0;
         score_txt.text = score.ToString().PadLeft(7, '0');
-        accuracy = 0;
         this.note_count = note_count;
         basic_score_once = GameConst.basic_score / note_count;
         combo_score_point = GameConst.combo_score / ((1 + note_count) * note_count / 2);
@@ -74,12 +88,22 @@ public class ScoreMgr : MonoBehaviour
             { ScoreLevel.good, 0 },
             { ScoreLevel.bad, 0 }
         };
+        JudgeLine.Instance.ChangeColor(2);
+        final_score_panel.gameObject.SetActive(false);
     }
 
     public void AddScore(ScoreLevel scoreLevel)
     {
         // 计数
         score_level_count[scoreLevel]++;
+        if (score_level_count[ScoreLevel.bad] > 0)
+        {
+            JudgeLine.Instance.ChangeColor(0);
+        }
+        else if (score_level_count[ScoreLevel.good] > 0)
+        {
+            JudgeLine.Instance.ChangeColor(1);
+        }
         // 基础分
         float basic_score = basic_score_once * GameConst.score_factory[scoreLevel];
         // 连击分
@@ -103,9 +127,31 @@ public class ScoreMgr : MonoBehaviour
         int current_weight = 0;
         for (int i=0; i<3; i++)
         {
-            current_weight += 1;
+            current_weight += score_level_count[(ScoreLevel)i] * GameConst.acc_weight[(ScoreLevel)i];
         }
         return (float)current_weight / total_weight;
+    }
+
+    public void ShowFinalScore()
+    {
+        final_score_panel.gameObject.SetActive(true);
+        final_score_txt.text = ((int)score).ToString().PadLeft(7, '0');
+        final_acc_txt.text = (GetAccuracy() * 100).ToString("N2") + "%";
+        final_perfect_count.text = score_level_count[ScoreLevel.perfect].ToString();
+        final_good_count.text = score_level_count[ScoreLevel.good].ToString();
+        final_bad_count.text = score_level_count[ScoreLevel.bad].ToString();
+        if (score_level_count[ScoreLevel.bad] > 0)
+            extra_tag.gameObject.SetActive(false);
+        else if (score_level_count[ScoreLevel.good] > 0)
+        {
+            extra_tag.gameObject.SetActive(true);
+            extra_tag.text = "FC";
+        }
+        else
+        {
+            extra_tag.gameObject.SetActive(true);
+            extra_tag.text = "AP";
+        }
     }
 
     /// <summary>

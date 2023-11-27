@@ -4,22 +4,12 @@ using UnityEngine;
 
 public class GameWindow : MonoBehaviour
 {
-    private GameWindow() { }
-    private static GameWindow instance;
-    public static GameWindow Instance
-    {
-        get
-        {
-            return instance;
-        }
-    }
-
     RectTransform rect;
 
     private void Awake()
     {
-        instance = this;
         rect = this.GetComponent<RectTransform>();
+        Debug.Log(WindowSize());
     }
     
     public Vector2 WindowSize()

@@ -42,7 +42,7 @@ namespace Note
             if (is_move)
             {
                 float x = rectTransform.position.x;
-                float y = rectTransform.position.y - Time.deltaTime * GameConst.drop_speed;
+                float y = rectTransform.position.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
                 rectTransform.position = new Vector2(x, y);
             }
         }
@@ -67,18 +67,24 @@ namespace Note
             is_active = true;
         }
 
+        /// <summary>
+        /// 重置位置
+        /// </summary>
+        /// <param name="delta_time">用于修正生成时刻的偏差</param>
         protected virtual void ResetPosition(float delta_time)
         {
             float x = (float)cfg.position_x * Screen.width;
-            float y = Screen.height + delta_time * GameConst.drop_speed;
+            float y = Screen.height + delta_time * DropSpeedFix.GetScaledDropSpeed;
             rectTransform.position = new Vector2(x, y);
         }
 
-
+        /// <summary>
+        /// 调整点击区域和collider的大小
+        /// </summary>
         protected virtual void Resize()
         {
             Vector2 v = rectTransform.sizeDelta;
-            v.y = GameConst.drop_speed * GameConst.active_interval * 2;
+            v.y = DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
             rectTransform.sizeDelta = v;
             collider.size = rectTransform.sizeDelta;
         }

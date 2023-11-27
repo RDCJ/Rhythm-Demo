@@ -8875,6 +8875,7 @@ MonoBehaviour:
   leftslide_prefab: {fileID: 6651025700057596905, guid: ea15520cd4774a34aa3a44ce505f8d23, type: 3}
   rightslide_prefab: {fileID: 2699101731482346705, guid: c41720c6a8dc0254fbcbcb0c4a6003e6, type: 3}
   hold_prefab: {fileID: 1933572642246112251, guid: 538c2eaa826df9940a26cd51465e8cf9, type: 3}
+  gameWindow: {fileID: 5812614074674507464}
 --- !u!1 &5812614075268003767
 GameObject:
   m_ObjectHideFlags: 0

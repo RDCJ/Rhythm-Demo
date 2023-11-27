@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResolutionFix : MonoBehaviour
+public class FPSFix : MonoBehaviour
 {
     void Start()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 120;
 #else
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = 144;
 #endif
     }
 }

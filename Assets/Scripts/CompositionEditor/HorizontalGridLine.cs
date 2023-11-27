@@ -94,7 +94,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         NoteCfg cfg = new NoteCfg();
         cfg.note_type = NoteEditor.Instance.GetNoteType;
         cfg.time = this.GetNearestTime(eventData.position.y);
-        cfg.position_x = eventData.position.x / GameWindow.Instance.WindowSize().x;
+        cfg.position_x = eventData.position.x / CompositionDisplay.Instance.gameWindow.WindowSize().x;
         cfg.duration = 0;
         if (cfg.note_type == (int)NoteType.Hold)
             cfg.duration = NoteEditor.Instance.GetDuration;

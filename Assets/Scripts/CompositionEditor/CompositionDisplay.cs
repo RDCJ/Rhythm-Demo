@@ -31,8 +31,9 @@ public class CompositionDisplay : MonoBehaviour
     private Vector2 window_size;
     private HorizontalGridLine horizontal_grid_line;
 
-    
     private List<EditorNote> notes;
+
+    public GameWindow gameWindow;
 
     private void Awake()
     {
@@ -47,7 +48,7 @@ public class CompositionDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        window_size = GameWindow.Instance.WindowSize();
+        window_size = gameWindow.WindowSize();
         AudioWaveForm.Instance.RegisterSliderValueChange(UpdatePosition);
     }
 
@@ -145,7 +146,7 @@ public class CompositionDisplay : MonoBehaviour
     public void LoadComposition(List<NoteCfg> cfgs)
     {
         horizontal_grid_line.RefreshGridLine();
-        window_size = GameWindow.Instance.WindowSize();
+        window_size = gameWindow.WindowSize();
         ClearNote();
         foreach (var cfg in cfgs)
             CreateNewNote(cfg);

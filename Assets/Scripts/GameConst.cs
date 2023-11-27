@@ -7,15 +7,22 @@ public class GameConst
 {
     public static float editor_drop_speed = 300;
     public static float drop_speed = 1200;
-    public static float judge_line_y = 180f;
+    public static float judge_line_y = 0.167f;
     
     public static float perfect_interval = 0.04f;
     public static float good_interval = 0.08f;
     public static float active_interval = 0.18f;
 
     public static float total_score = 1000000;
-    public static float basic_score = 900000;
-    public static float combo_score = 100000;
+    public static float basic_score_percent = 0.9f;
+    public static float basic_score 
+    { 
+        get => total_score * basic_score_percent;
+    } 
+    public static float combo_score
+    {
+        get => total_score * (1- basic_score_percent);
+    }
 
     public static Dictionary<int, string> DifficultyIndex = new()
     {
@@ -24,6 +31,9 @@ public class GameConst
         {2, "Hard"}
     };
 
+    /// <summary>
+    /// 相对于perfect的得分系数，用于计算基础得分
+    /// </summary>
     public static Dictionary<ScoreMgr.ScoreLevel, float> score_factory = new()
     {
         { ScoreMgr.ScoreLevel.perfect, 1},
@@ -31,6 +41,9 @@ public class GameConst
         { ScoreMgr.ScoreLevel.bad, 0 },
     };
 
+    /// <summary>
+    /// 准确率权重
+    /// </summary>
     public static Dictionary<ScoreMgr.ScoreLevel, int> acc_weight = new()
     {
         { ScoreMgr.ScoreLevel.perfect, 10 },

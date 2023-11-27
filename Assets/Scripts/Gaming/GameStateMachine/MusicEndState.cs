@@ -2,17 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MusicEndState : MonoBehaviour
+public class MusicEndState : GameBaseState
 {
-    // Start is called before the first frame update
-    void Start()
+    public MusicEndState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
     {
-        
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void EnterState()
     {
-        
+        base.EnterState();
+        ScoreMgr.Instance.ShowFinalScore();
+    }
+
+    public override void ExitState()
+    {
+        base.ExitState();
+    }
+
+    public override void FrameUpdate()
+    {
+        base.FrameUpdate();
+    }
+
+    public override void PhysicsUpdate()
+    {
+        base.PhysicsUpdate();
     }
 }

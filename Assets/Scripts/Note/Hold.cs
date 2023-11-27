@@ -71,18 +71,18 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void ResetPosition(float delta_time)
     {
         float x = (float)cfg.position_x * Screen.width;
-        float y = Screen.height + icon_rect.sizeDelta.y / 2 + delta_time * GameConst.drop_speed;
+        float y = Screen.height + icon_rect.sizeDelta.y / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.position = new Vector2(x, y);
     }
 
     protected override void Resize()
     {
         Vector2 v = rectTransform.sizeDelta;
-        v.y = GameConst.drop_speed * (GameConst.active_interval * 2 + (float)cfg.duration);
+        v.y = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration);
         rectTransform.sizeDelta = v;
         collider.size = rectTransform.sizeDelta;
 
-        v.y = GameConst.drop_speed * (float)cfg.duration;
+        v.y = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration;
         icon_rect.sizeDelta = v;
     }
 
