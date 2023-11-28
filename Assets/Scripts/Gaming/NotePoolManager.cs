@@ -38,6 +38,10 @@ public class NotePoolManager : MonoBehaviour
             {
                 NoteType.Hold,
                 new ObjectPool(5, FileConst.hold_prefab_path, transform)
+            },
+            {
+                NoteType.Catch,
+                new ObjectPool(10, FileConst.catch_prefab_path, transform)
             }
         };
     }

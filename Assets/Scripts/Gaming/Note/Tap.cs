@@ -5,8 +5,17 @@ using UnityEngine.EventSystems;
 using DG.Tweening;
 using Note;
 
+/// <summary>
+/// 点击，正常判定
+/// </summary>
 public class Tap : NoteBase, IPointerDownHandler
 {
+    protected override void Awake()
+    {
+        base.Awake();
+        type = NoteType.Tap;
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if (this.is_active)
@@ -20,17 +29,9 @@ public class Tap : NoteBase, IPointerDownHandler
             Debug.Log("[判定] 类型: Tap, 结果: " + level);
             ScoreMgr.Instance.AddScore(level);
             // 点击效果
-            float x = this.transform.position.x;
-            float y = JudgeLine.Instance.transform.position.y;
-            EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
+            PlayEffect(level);
             //
             NotePoolManager.Instance.ReturnObject(this);
         }
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
-        type = NoteType.Tap;
     }
 }

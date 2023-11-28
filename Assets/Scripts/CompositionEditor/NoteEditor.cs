@@ -35,7 +35,6 @@ public class NoteEditor : MonoBehaviour
 
         note_selection.onValueChanged.AddListener((int value) =>
         {
-            Debug.Log("select " + value);
             hold_time.gameObject.SetActive(value == (int)NoteType.Hold);
         });
         
@@ -65,7 +64,7 @@ public class NoteEditor : MonoBehaviour
     {
         string[] note_name =
         {
-            "Tap", "LeftSlide", "RightSlide", "Hold"
+            "Tap", "LeftSlide", "RightSlide", "Hold", "Catch"
         };
         foreach (string name in note_name)
             note_selection.options.Add(new Dropdown.OptionData(name));

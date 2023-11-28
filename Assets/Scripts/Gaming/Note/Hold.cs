@@ -6,6 +6,9 @@ using DG.Tweening;
 using Note;
 using Music;
 
+/// <summary>
+/// 长按，没有尾判
+/// </summary>
 public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     bool is_holding;
@@ -13,7 +16,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     double end_time;
     ScoreMgr.ScoreLevel start_judge_level;
     ScoreMgr.ScoreLevel end_judge_level;
-    RectTransform icon_rect;
+    HoldIcon icon;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -24,14 +27,12 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             //Debug.Log("Hold start " + start_time);
 
             start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.time); ;
-            
+            PlayEffect(start_judge_level);
+
             if (start_judge_level == ScoreMgr.ScoreLevel.bad)
             {
                 is_judged = true;
                 Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
-                float x = this.transform.position.x;
-                float y = JudgeLine.Instance.transform.position.y;
-                EffectPlayer.Instance.PlayEffect(start_judge_level, new Vector3(x, y, 0));
                 NotePoolManager.Instance.ReturnObject(this);
             }
         }
@@ -61,8 +62,17 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         base.Awake();
         type = NoteType.Hold;
-        icon_rect = transform.Find("icon").GetComponent<RectTransform>();
+        icon= transform.Find("icon").GetComponent<HoldIcon>();
     }
+/*
+    protected override void Update()
+    {
+        base.Update();
+        if (is_move)
+        {
+            icon.IconUpdate();
+        }
+    }*/
 
     public override void Init(NoteCfg _cfg, float delta_time)
     {
@@ -70,24 +80,23 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         is_holding = false;
     }
 
+    protected override void Resize()
+    {
+        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration);
+        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration;
+
+        rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
+        collider.size = rectTransform.sizeDelta;
+
+        icon.Resize(icon_length);
+    }
+
     protected override void ResetPosition(float delta_time)
     {
         float x = (float)cfg.position_x * Screen.width;
-        float y = Screen.height + icon_rect.sizeDelta.y / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        float y = Screen.height + icon.sizeDelta.y / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.position = new Vector2(x, y);
     }
-
-    protected override void Resize()
-    {
-        Vector2 v = rectTransform.sizeDelta;
-        v.y = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration);
-        rectTransform.sizeDelta = v;
-        collider.size = rectTransform.sizeDelta;
-
-        v.y = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration;
-        icon_rect.sizeDelta = v;
-    }
-
 
     private void EndJudge()
     {
@@ -102,14 +111,10 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             level = ScoreMgr.ScoreLevel.bad;
         else
             level = ScoreMgr.ScoreLevel.good;
-        
-        float x = this.transform.position.x;
-        float y = JudgeLine.Instance.transform.position.y;
 
         Debug.Log("[判定] 类型: Hold, 结果: " + level);
         ScoreMgr.Instance.AddScore(level);
-        EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
-
+        PlayEffect(level);
         NotePoolManager.Instance.ReturnObject(this);
     }
 

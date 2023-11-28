@@ -61,5 +61,10 @@ public class FileConst
     public static string leftslide_prefab_path = "Prefabs/Note/SlideLeftNote";
     public static string rightslide_prefab_path = "Prefabs/Note/SlideRightNote";
     public static string hold_prefab_path = "Prefabs/Note/HoldNote";
+    public static string catch_prefab_path = "Prefabs/Note/CatchNote";
+
+    public static string perfect_effect_prefab_path = "Prefabs/Effect/Perfect";
+    public static string good_effect_prefab_path = "Prefabs/Effect/Good";
+    public static string bad_effect_prefab_path = "Prefabs/Effect/Bad";
 
 }

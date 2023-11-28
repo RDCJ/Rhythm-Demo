@@ -14,10 +14,10 @@ public class ObjectPool
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="psize"></param>
+    /// <param name="pool_size">初始的对象数量</param>
     /// <param name="prefab_path"></param>
-    /// <param name="transform"></param>
-    /// <param name="doAfterAddNew"></param>
+    /// <param name="transform">对象父物体</param>
+    /// <param name="doAfterAddNew">自定义</param>
     public ObjectPool(int pool_size, string prefab_path, Transform transform, DoAfterAddNew doAfterAddNew=null)
     {
         pool = new Stack<GameObject>();

@@ -6,6 +6,10 @@ using DG.Tweening;
 using Note;
 using Music;
 
+
+/// <summary>
+/// 点击并滑动，滑动时正常判定
+/// </summary>
 public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointerUpHandler
 {
     public enum SlideDirection
@@ -16,7 +20,6 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
     public SlideDirection direciton;
 
     private bool is_down;
-    private bool is_slided;
     private Vector2 down_position;
     
     public void OnPointerDown(PointerEventData eventData)
@@ -31,15 +34,12 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        if (is_down && !is_slided)
+        if (is_down && !is_judged)
         {
             is_judged = true;
-            is_slided = true;
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
             ScoreMgr.ScoreLevel level;
-            float x = this.transform.position.x;
-            float y = JudgeLine.Instance.transform.position.y;
 
             if ((slide_direction.x < 0) == (direciton == SlideDirection.Left))
             {
@@ -53,7 +53,7 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
             }
             Debug.Log("[判定] 类型: Slide, 结果: " + level);
             ScoreMgr.Instance.AddScore(level);
-            EffectPlayer.Instance.PlayEffect(level, new Vector3(x, y, 0));
+            PlayEffect(level);
 
             NotePoolManager.Instance.ReturnObject(this);
         }
@@ -78,6 +78,5 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
     {
         base.Init(_cfg, delta_time);
         is_down = false;
-        is_slided = false;
     }
 }

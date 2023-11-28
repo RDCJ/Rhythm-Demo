@@ -94,7 +94,7 @@ public class ScoreMgr : MonoBehaviour
     {
         // ¼ÆÊý
         score_level_count[(int)scoreLevel]++;
-        Debug.Log("score_level_count: " + score_level_count[0] + " " + score_level_count[1] + " " + score_level_count[2]);
+        //Debug.Log("score_level_count: " + score_level_count[0] + " " + score_level_count[1] + " " + score_level_count[2]);
         if (score_level_count[(int)ScoreLevel.bad] > 0)
         {
             JudgeLine.Instance.ChangeColor(0);

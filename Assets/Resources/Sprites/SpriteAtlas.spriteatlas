@@ -48,6 +48,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 86d225f31af3ef84c8692d624bc49264, type: 3}
   - {fileID: 21300000, guid: 2d2e8b24e62adb24ba1d3fc64a28660b, type: 3}
   - {fileID: 21300000, guid: 22e2e2e4611c59843a05c4b8285ddd50, type: 3}
+  - {fileID: 21300000, guid: 008b2ce49fac53447b8874abfc5940bd, type: 3}
   - {fileID: 21300000, guid: 18a96445fd0cb354094b0a105d64c141, type: 3}
   - {fileID: 21300000, guid: 8fbc75d59ce62e543aacaa433c28b799, type: 3}
   - {fileID: 21300000, guid: 3c390a47d26495b48bd149f6e75d3f4e, type: 3}
@@ -69,6 +70,7 @@ SpriteAtlas:
   - bad
   - icon_pause
   - icon_play
+  - icon_star
   - arrow_left
   - icon_scope
   - arrow_right2

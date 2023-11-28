@@ -10,7 +10,8 @@ namespace Note
         Tap,
         LeftSlide,
         RightSlide,
-        Hold
+        Hold,
+        Catch
     }
 
     public abstract class NoteBase : MonoBehaviour
@@ -66,7 +67,18 @@ namespace Note
 
         public virtual void Activate()
         {
+            Debug.Log("Activate");
             is_active = true;
+        }
+
+        /// <summary>
+        /// 调整点击区域和collider的大小
+        /// </summary>
+        protected virtual void Resize()
+        {
+            float touch_area_length = DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
+            rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
+            collider.size = rectTransform.sizeDelta;
         }
 
         /// <summary>
@@ -79,18 +91,6 @@ namespace Note
             float y = Screen.height + delta_time * DropSpeedFix.GetScaledDropSpeed;
             rectTransform.position = new Vector2(x, y);
         }
-
-        /// <summary>
-        /// 调整点击区域和collider的大小
-        /// </summary>
-        protected virtual void Resize()
-        {
-            Vector2 v = rectTransform.sizeDelta;
-            v.y = DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
-            rectTransform.sizeDelta = v;
-            collider.size = rectTransform.sizeDelta;
-        }
-
 
         public virtual void Drop()
         {
@@ -111,7 +111,6 @@ namespace Note
 
 
         public virtual void Miss() {
-            Debug.Log("Miss");
             ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
             NotePoolManager.Instance.ReturnObject(this);
         }
@@ -140,6 +139,13 @@ namespace Note
                 if (!is_judged)
                     Miss();
             }
+        }
+
+        public void PlayEffect(ScoreMgr.ScoreLevel scoreLevel)
+        {
+            float x = this.transform.position.x;
+            float y = JudgeLine.Instance.transform.position.y;
+            EffectPlayer.Instance.PlayEffect(scoreLevel, new Vector3(x, y, 0));
         }
     }
 }

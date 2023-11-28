@@ -23,6 +23,7 @@ public class CompositionDisplay : MonoBehaviour
     public GameObject leftslide_prefab;
     public GameObject rightslide_prefab;
     public GameObject hold_prefab;
+    public GameObject catch_prefab;
     #endregion
 
     private ScrollRect note_scroll_view;
@@ -92,6 +93,9 @@ public class CompositionDisplay : MonoBehaviour
                 break;
             case (int)Note.NoteType.Hold:
                 new_note = Instantiate(hold_prefab, content_trans);
+                break;
+            case (int)Note.NoteType.Catch:
+                new_note = Instantiate(catch_prefab, content_trans);
                 break;
         }
         EditorNote editorNote = new_note.GetComponent<EditorNote>();

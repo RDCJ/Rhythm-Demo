@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 
 public class EffectPlayer : MonoBehaviour
@@ -17,36 +16,41 @@ public class EffectPlayer : MonoBehaviour
         }
     }
     #endregion
-
-    public GameObject prefect_prefab;
-    public GameObject good_prefab;
-    public GameObject bad_prefab;
+    Dictionary<ScoreMgr.ScoreLevel, ObjectPool> pools;
     public float effect_time;
     public float scale;
 
     private void Awake()
     {
         instance = this;
+        pools = new Dictionary<ScoreMgr.ScoreLevel, ObjectPool>
+        {
+            {
+                ScoreMgr.ScoreLevel.perfect,
+                new ObjectPool(5, FileConst.perfect_effect_prefab_path, transform)
+            },
+            {
+                ScoreMgr.ScoreLevel.good,
+                new ObjectPool(5, FileConst.good_effect_prefab_path, transform)
+            },
+            {
+                ScoreMgr.ScoreLevel.bad,
+                new ObjectPool(5, FileConst.bad_effect_prefab_path, transform)
+            },
+        };
     }
 
     public void PlayEffect(ScoreMgr.ScoreLevel level, Vector3 position)
     {
-        GameObject new_effect = null;
-        switch (level)
-        {
-            case ScoreMgr.ScoreLevel.perfect:
-                new_effect = Instantiate(prefect_prefab, transform);
-                break;
-            case ScoreMgr.ScoreLevel.good:
-                new_effect = Instantiate(good_prefab, transform);
-                break;
-            case ScoreMgr.ScoreLevel.bad:
-                new_effect = Instantiate(bad_prefab, transform);
-                break;
-        }
+        GameObject new_effect = pools[level].GetObject();
+        CanvasGroup canvasGroup = new_effect.GetComponent<CanvasGroup>();
         new_effect.transform.position = position;
-        new_effect.transform.DOScale(new Vector3(scale, scale, 0), effect_time);
-        new_effect.GetComponent<CanvasGroup>().DOFade(0, effect_time);
-        Destroy(new_effect, effect_time);
+        new_effect.transform.localScale = Vector3.one;
+        canvasGroup.alpha = 1;
+        new_effect.transform.DOScale(new Vector3(scale, scale, 1), effect_time);
+        canvasGroup.DOFade(0, effect_time).OnComplete(() =>
+        {
+            pools[level].ReturnObject(new_effect);
+        });
     }
 }

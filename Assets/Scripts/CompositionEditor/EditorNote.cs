@@ -20,6 +20,7 @@ public class EditorNote : MonoBehaviour
         click_btn.onClick.AddListener(() => {
             NoteEditor.Instance.LoadNote(index, cfg);
         });
+        
     }
 
     public void Set(int index, Music.NoteCfg cfg)

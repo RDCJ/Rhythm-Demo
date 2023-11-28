@@ -31,7 +31,6 @@ public class MusicListBank : BaseListBank
         foreach (var k in MusicResMgr.MusicIndex2Name.Keys)
         {
             MusicCfg cfg = MusicCfg.GetCfg(k.ToString());
-            Debug.Log(cfg.music_name);
             _contents.Add(new MusicListContent(cfg));
         }
     }

@@ -63,7 +63,7 @@ public class CompositionEditor : MonoBehaviour
         music_list = music_select.Find("music_list").GetComponent<Dropdown>();
         music_confirm_btn = music_select.Find("confirm_btn").GetComponent<Button>();
 
-        vertical_scale = transform.Find("vertical_scale").GetComponent<Slider>();
+        vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
 
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
