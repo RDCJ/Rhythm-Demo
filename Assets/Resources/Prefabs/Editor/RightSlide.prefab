@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4531782930744810312}
   - component: {fileID: 6237918257562979667}
   - component: {fileID: 723045325995346565}
+  - component: {fileID: 6146639144541830717}
   m_Layer: 5
   m_Name: RightSlide
   m_TagString: Untagged
@@ -140,3 +141,18 @@ MonoBehaviour:
     time: 0
     position_x: 0
     duration: 0
+--- !u!114 &6146639144541830717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2699101731482346705}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.5019608, g: 1, b: 0, a: 1}
+  m_EffectDistance: {x: 5, y: 5}
+  m_UseGraphicAlpha: 1

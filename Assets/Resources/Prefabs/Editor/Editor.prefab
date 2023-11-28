@@ -7540,7 +7540,6 @@ GameObject:
   - component: {fileID: 5812614074674507471}
   - component: {fileID: 5812614074674507470}
   - component: {fileID: 5812614074674507468}
-  - component: {fileID: 5812614074674507464}
   - component: {fileID: 7945838298982633521}
   m_Layer: 5
   m_Name: GameManager
@@ -7620,18 +7619,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf804247a63c83046ab63b53c59516b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5812614074674507464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5812614074674507458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a067202f4604dd6489c852d7339f113d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &7945838298982633521
@@ -8875,7 +8862,7 @@ MonoBehaviour:
   leftslide_prefab: {fileID: 6651025700057596905, guid: ea15520cd4774a34aa3a44ce505f8d23, type: 3}
   rightslide_prefab: {fileID: 2699101731482346705, guid: c41720c6a8dc0254fbcbcb0c4a6003e6, type: 3}
   hold_prefab: {fileID: 1933572642246112251, guid: 538c2eaa826df9940a26cd51465e8cf9, type: 3}
-  gameWindow: {fileID: 5812614074674507464}
+  gameWindow: {fileID: 5812614074674507459}
 --- !u!1 &5812614075268003767
 GameObject:
   m_ObjectHideFlags: 0
