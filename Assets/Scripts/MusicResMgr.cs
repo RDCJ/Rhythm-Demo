@@ -8,7 +8,8 @@ public class MusicResMgr
     {
         {1, "Noël" },
         {2, "Entrance" },
-        {3, "Invention No.1"}
+        {3, "Invention No.1"},
+        {4,"Test" }
     };
 
     public static AudioClip GetMusic(int index)

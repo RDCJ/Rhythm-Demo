@@ -28,7 +28,7 @@ public class HoldIcon : MonoBehaviour
     {
         trans.sizeDelta = Util.ChangeV2(trans.sizeDelta, 1, icon_length);
 
-        trans.localPosition = Util.ChangeV3(trans.localPosition, 1, icon_length / 2);
+        //trans.localPosition = Util.ChangeV3(trans.localPosition, 1, icon_length / 2);
         collider2D.size = trans.sizeDelta;
         collider2D.offset = new Vector2(0, -icon_length / 2);
     }

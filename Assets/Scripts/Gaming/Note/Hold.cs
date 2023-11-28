@@ -64,15 +64,16 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         type = NoteType.Hold;
         icon= transform.Find("icon").GetComponent<HoldIcon>();
     }
-/*
+
     protected override void Update()
     {
         base.Update();
-        if (is_move)
-        {
-            icon.IconUpdate();
-        }
-    }*/
+        /*        if (is_move)
+                {
+                    icon.IconUpdate();
+                }*/
+        Debug.Log(rectTransform.position);
+    }
 
     public override void Init(NoteCfg _cfg, float delta_time)
     {
@@ -84,7 +85,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration);
         float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration;
-
+        Debug.Log(DropSpeedFix.GetScaledDropSpeed);
+        Debug.Log(cfg.duration);
         rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
         collider.size = rectTransform.sizeDelta;
 
@@ -94,8 +96,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void ResetPosition(float delta_time)
     {
         float x = (float)cfg.position_x * Screen.width;
-        float y = Screen.height + icon.sizeDelta.y / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
-        rectTransform.position = new Vector2(x, y);
+        float y = Screen.height + icon.sizeDelta.y / 2;// + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        rectTransform.position = new Vector3(x, y, 0);
     }
 
     private void EndJudge()
