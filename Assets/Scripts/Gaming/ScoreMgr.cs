@@ -127,12 +127,15 @@ public class ScoreMgr : MonoBehaviour
         for (int i=0; i<3; i++)
         {
             current_weight += score_level_count[i] * GameConst.acc_weight[(ScoreLevel)i];
+            Debug.Log(score_level_count[i] + " " + GameConst.acc_weight[(ScoreLevel)i]);
         }
+        Debug.Log("current_weight: " + current_weight + " total_weight: " + total_weight);
         return (float)current_weight / total_weight;
     }
 
     public void ShowFinalScore()
     {
+        Debug.Log("Score: " + score + " Accuracy: " + GetAccuracy());
         final_score_panel.gameObject.SetActive(true);
         final_score_txt.text = ((int)score).ToString().PadLeft(7, '0');
         final_acc_txt.text = (GetAccuracy() * 100).ToString("N2") + "%";

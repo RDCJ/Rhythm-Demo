@@ -17,7 +17,6 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter");
         if (this.is_active && !this.is_judged)
         {
             Judge();
@@ -26,7 +25,6 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        Debug.Log("OnPointerMove");
         if (this.is_active && !this.is_judged)
         {
             Judge();
@@ -35,7 +33,6 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("OnPointerDown");
         if (this.is_active && !this.is_judged)
         {
             Judge();
@@ -55,13 +52,11 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
         ScoreMgr.ScoreLevel level = ScoreMgr.ScoreLevel.perfect;
         // 计分
-        Debug.Log("[判定] 类型: Catch, 结果: " + level);
+        Debug.Log("[判定] 时间: " + GameMgr.Instance.current_time.ToString("N4") + "类型: Catch, 结果: " + level);
         ScoreMgr.Instance.AddScore(level);
         // 点击效果
         PlayEffect(level);
         //
         NotePoolManager.Instance.ReturnObject(this);
     }
-
-    
 }

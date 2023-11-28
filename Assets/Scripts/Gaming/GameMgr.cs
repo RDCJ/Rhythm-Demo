@@ -138,6 +138,7 @@ public class GameMgr : MonoBehaviour
     public void Init()
     {
         pause_btn.gameObject.SetActive(true);
+        pause_panel.gameObject.SetActive(false);
         current_time = -music_cfg.prepare_time;
         current_note_idx = 0;
 
@@ -160,6 +161,8 @@ public class GameMgr : MonoBehaviour
     public void DropNote()
     {
         current_time += Time.deltaTime;
+        if (IsNoteEnd) 
+            return;
         while (true)
         {
             if (IsNoteEnd) break;

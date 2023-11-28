@@ -3498,7 +3498,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3846204705242435464}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3508,12 +3508,12 @@ RectTransform:
   - {fileID: 1684973160789610482}
   - {fileID: 713214904167242003}
   - {fileID: 8674022738750574965}
-  m_Father: {fileID: 5812614073650613739}
-  m_RootOrder: 8
+  m_Father: {fileID: 5812614075182629142}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 502, y: -168}
+  m_AnchoredPosition: {x: 715.51843, y: -291.5}
   m_SizeDelta: {x: 38.4216, y: 180.8002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6049026393751713165
@@ -5977,7 +5977,6 @@ RectTransform:
   - {fileID: 1838601418458261765}
   - {fileID: 8794136249386832297}
   - {fileID: 1240566876329398908}
-  - {fileID: 8065706669559165205}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8800,6 +8799,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5812614074674507459}
+  - {fileID: 8065706669559165205}
   m_Father: {fileID: 5812614073650613739}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8862,6 +8862,7 @@ MonoBehaviour:
   leftslide_prefab: {fileID: 6651025700057596905, guid: ea15520cd4774a34aa3a44ce505f8d23, type: 3}
   rightslide_prefab: {fileID: 2699101731482346705, guid: c41720c6a8dc0254fbcbcb0c4a6003e6, type: 3}
   hold_prefab: {fileID: 1933572642246112251, guid: 538c2eaa826df9940a26cd51465e8cf9, type: 3}
+  catch_prefab: {fileID: 7715027551964686517, guid: b98e1a147b3f9ae49ade0cf4fffb7718, type: 3}
   gameWindow: {fileID: 5812614074674507459}
 --- !u!1 &5812614075268003767
 GameObject:

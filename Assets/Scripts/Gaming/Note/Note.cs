@@ -67,7 +67,6 @@ namespace Note
 
         public virtual void Activate()
         {
-            Debug.Log("Activate");
             is_active = true;
         }
 

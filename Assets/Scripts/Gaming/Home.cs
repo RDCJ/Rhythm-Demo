@@ -30,6 +30,10 @@ public class Home : MonoBehaviour
         editor_btn.onClick.AddListener(() => {
             Instantiate(composition_editor, transform.parent);
         });
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            editor_btn.gameObject.SetActive(false);
+        }
         CheckExtractResource();
     }
 
