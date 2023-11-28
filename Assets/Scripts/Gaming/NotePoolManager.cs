@@ -1,3 +1,4 @@
+using Note;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,34 +15,34 @@ public class NotePoolManager : MonoBehaviour
         }
     }
 
-    Dictionary<Note.NoteType, ObjectPool> pools;
+    Dictionary<NoteType, ObjectPool> pools;
 
     private void Awake()
     {
         instance = this;
-        pools = new Dictionary<Note.NoteType, ObjectPool>
+        pools = new Dictionary<NoteType, ObjectPool>
         {
             {
-                Note.NoteType.Tap,
-                new GameObject("TapNotePool").AddComponent<ObjectPool>().Initialize(10, FileConst.tap_prefab_path, transform)
+                NoteType.Tap,
+                new ObjectPool(10, FileConst.tap_prefab_path, transform)
             },
 
             {
-                Note.NoteType.LeftSlide,
-                new GameObject("LeftSlideNotePool").AddComponent<ObjectPool>().Initialize(5, FileConst.leftslide_prefab_path, transform)
+                NoteType.LeftSlide,
+                new ObjectPool(5, FileConst.leftslide_prefab_path, transform)
             },
             {
-                Note.NoteType.RightSlide,
-                new GameObject("RightSlideNotePool").AddComponent<ObjectPool>().Initialize(5, FileConst.rightslide_prefab_path, transform)
+                NoteType.RightSlide,
+                new ObjectPool(5, FileConst.rightslide_prefab_path, transform)
             },
             {
-                Note.NoteType.Hold,
-                new GameObject("HoldNotePool").AddComponent<ObjectPool>().Initialize(5, FileConst.hold_prefab_path, transform)
+                NoteType.Hold,
+                new ObjectPool(5, FileConst.hold_prefab_path, transform)
             }
         };
     }
 
-    public GameObject GetObject(Note.NoteType type)
+    public GameObject GetObject(NoteType type)
     {
         GameObject obj = pools[type].GetObject();
         obj.transform.SetAsFirstSibling();
@@ -53,9 +54,9 @@ public class NotePoolManager : MonoBehaviour
     /// ªÿ ’object
     /// </summary>
     /// <param name="note"></param>
-    public void ReturnObject(Note.NoteBase note)
+    public void ReturnObject(NoteBase note)
     {
-        Note.NoteType type = note.Type;
+        NoteType type = note.Type;
         note.OnReturnPool();
         pools[type].ReturnObject(note.gameObject);
     }
@@ -65,10 +66,9 @@ public class NotePoolManager : MonoBehaviour
     /// </summary>
     public void Reload()
     {
-        foreach (KeyValuePair<Note.NoteType, ObjectPool> pool in pools)
-            foreach (var obj in pool.Value.pool)
-            {
-                ReturnObject(obj.GetComponent<Note.NoteBase>());
-            }
+        for (int i=0; i<transform.childCount; i++)
+        {
+            ReturnObject(transform.GetChild(i).GetComponent<NoteBase>());
+        }
     }
 }

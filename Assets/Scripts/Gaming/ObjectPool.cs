@@ -2,31 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool : MonoBehaviour
+public class ObjectPool
 {
-    public GameObject prefab;
-    public int pool_size;
-    public List<GameObject> pool;
+    Transform transform;
+    GameObject prefab;
+    Stack<GameObject> pool;
 
     public delegate void DoAfterAddNew(ref GameObject obj);
     DoAfterAddNew addNewCallBack;
 
-    // Start is called before the first frame update
-    protected virtual void Awake()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="psize"></param>
+    /// <param name="prefab_path"></param>
+    /// <param name="transform"></param>
+    /// <param name="doAfterAddNew"></param>
+    public ObjectPool(int pool_size, string prefab_path, Transform transform, DoAfterAddNew doAfterAddNew=null)
     {
-        pool = new List<GameObject>();
-    }
-
-    public virtual ObjectPool Initialize(int psize, string prefab_path, Transform parent=null, DoAfterAddNew doAfterAddNew=null)
-    {
-        pool_size = psize;
+        pool = new Stack<GameObject>();
         prefab = Resources.Load<GameObject>(prefab_path);
-        if (parent != null) this.transform.parent = parent;
+        this.transform = transform;
         addNewCallBack = doAfterAddNew;
 
         for (int i = 0; i < pool_size; ++i)
             AddNewObj();
-        return this;
     }
 
     /// <summary>
@@ -35,32 +35,28 @@ public class ObjectPool : MonoBehaviour
     /// <returns></returns>
     public GameObject GetObject()
     {
-        foreach (GameObject obj in pool)
+        if (pool.Count == 0)
         {
-            if (!obj.activeInHierarchy)
-            {
-                obj.SetActive(true);
-                return obj;
-            }
+            AddNewObj();
         }
-        GameObject newObj = AddNewObj();
-        pool_size++;
-        newObj.SetActive(true);
-        return newObj;
+        GameObject obj = pool.Pop();
+        obj.SetActive(true);
+        return obj;
     }
 
     protected virtual GameObject AddNewObj()
     {
-        GameObject obj = Instantiate(prefab, transform);
+        GameObject obj = GameObject.Instantiate(prefab, this.transform);
         addNewCallBack?.Invoke(ref obj);
         obj.SetActive(false);
-        pool.Add(obj);
+        pool.Push(obj);
         return obj;
     }
 
     public void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
+        pool.Push(obj);
     }
 
     /// <summary>
@@ -68,7 +64,7 @@ public class ObjectPool : MonoBehaviour
     /// </summary>
     public virtual void Reload()
     {
-        for (int i = 0; i < pool_size; ++i)
-            pool[i].SetActive(false);
+/*        for (int i = 0; i < pool_size; ++i)
+            pool[i].SetActive(false);*/
     }
 }

@@ -6,9 +6,9 @@ public class MusicResMgr
 {
     public static Dictionary<int, string> MusicIndex2Name = new()
     {
-        {1, "11.Entrance - Ice" },
-        {2, "06.Invention No.1 - J.S Bach"},
-        {3, "Noël" }
+        {1, "Noël" },
+        {2, "Entrance" },
+        {3, "Invention No.1"}
     };
 
     public static AudioClip GetMusic(int index)
