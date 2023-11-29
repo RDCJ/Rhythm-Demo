@@ -97,7 +97,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         cfg.position_x = eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
         cfg.duration = 0;
         if (cfg.note_type == (int)NoteType.Hold)
-            cfg.duration = NoteEditor.Instance.GetDuration;
+            cfg.duration = NoteEditor.Instance.GetDuration * GetOneCellTime;
         CompositionDisplay.Instance.CreateNewNote(cfg);
     }
 
@@ -115,6 +115,11 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             }
             else break;
         }
-        return index * 60.0f / this.BPM / this.grid_density + CompositionEditor.Instance.GetTimeOffset;
+        return index * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
+    }
+
+    public float GetOneCellTime
+    {
+        get => 60.0f / this.BPM / this.grid_density;
     }
 }

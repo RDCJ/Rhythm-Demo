@@ -117,7 +117,8 @@ public class ScoreMgr : MonoBehaviour
         float combo_score = current_combo * combo_score_point;
 
         score += basic_score + combo_score;
-        score_txt.text = ((int)score).ToString().PadLeft(7, '0');
+        int score_show = Mathf.RoundToInt(score);
+        score_txt.text = (score_show).ToString().PadLeft(7, '0');
     }
 
     public float GetAccuracy()
@@ -135,10 +136,13 @@ public class ScoreMgr : MonoBehaviour
 
     public void ShowFinalScore()
     {
-        Debug.Log("Score: " + score + " Accuracy: " + GetAccuracy());
+        
+        score = Mathf.Round(score);
+        float acc = GetAccuracy();
+        Debug.Log("Score: " + score + " Accuracy: " + acc);
         final_score_panel.gameObject.SetActive(true);
         final_score_txt.text = ((int)score).ToString().PadLeft(7, '0');
-        final_acc_txt.text = (GetAccuracy() * 100).ToString("N2") + "%";
+        final_acc_txt.text = (acc * 100).ToString("N2") + "%";
         final_perfect_count.text = score_level_count[(int)ScoreLevel.perfect].ToString();
         final_good_count.text = score_level_count[(int)ScoreLevel.good].ToString();
         final_bad_count.text = score_level_count[(int)ScoreLevel.bad].ToString();

@@ -11,6 +11,8 @@ public class MusicEndState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
+        Debug.Log("enter MusicEndState");
+        gameMgr.audioSource.Stop();
         ScoreMgr.Instance.ShowFinalScore();
     }
 

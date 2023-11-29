@@ -40,11 +40,10 @@ public class MusicSelect : MonoBehaviour
 
     public void OnBoxSelected(ListBox MusicListBox)
     {
-        Debug.Log("current_box_id: " + _list.GetFocusingContentID());
-        if (_list.GetFocusingContentID() == MusicListBox.ContentID)
+/*        if (_list.GetFocusingContentID() == MusicListBox.ContentID)
         {
             
-        }
+        }*/
     }
 
     public void OnFocusingBoxChanged(

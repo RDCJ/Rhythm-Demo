@@ -9,9 +9,9 @@ public class GameConst
     public static float drop_speed = 1200;
     public static float judge_line_y = 0.167f;
     
-    public static float perfect_interval = 0.04f;
-    public static float good_interval = 0.08f;
-    public static float active_interval = 0.18f;
+    public static float perfect_interval = 0.06f;
+    public static float good_interval = 0.10f;
+    public static float active_interval = 0.20f;
 
     public static float total_score = 1000000;
     public static float basic_score_percent = 0.9f;

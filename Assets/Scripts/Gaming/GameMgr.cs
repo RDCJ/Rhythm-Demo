@@ -20,13 +20,11 @@ public class GameMgr : MonoBehaviour
     }
     #endregion
 
-
-    Transform judge_line;
     Button pause_btn;
     Button continue_btn;
     Button restart_btn;
     Button back_btn;
-    AudioSource audioSource;
+    public AudioSource audioSource;
     ScoreMgr scoreMgr;
     GameObject pause_panel;
     Text time_txt;
@@ -61,7 +59,7 @@ public class GameMgr : MonoBehaviour
 
     public bool IsMusicEnd
     {
-        get => audioSource.time >= audioSource.clip.length;
+        get => current_time >= audioSource.clip.length;
     }
 
     public bool IsNoteEnd
@@ -73,7 +71,6 @@ public class GameMgr : MonoBehaviour
     {
         instance = this;
         composition = new List<NoteCfg>();
-        judge_line = transform.Find("judge_line");
         pause_btn = transform.Find("pause_btn").GetComponent<Button>();
         pause_panel = transform.Find("pause_panel").gameObject;
         continue_btn = pause_panel.transform.Find("continue_btn").GetComponent<Button>();
@@ -144,7 +141,7 @@ public class GameMgr : MonoBehaviour
 
         audioSource.clip = MusicResMgr.GetMusic(int.Parse(music_id));
         audioSource.time = 0;
-        audioSource.Pause();
+        audioSource.Stop();
         if (!music_cfg.composition.Keys.Contains(difficulty))
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
@@ -173,7 +170,7 @@ public class GameMgr : MonoBehaviour
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
             new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));
-            if (type != Note.NoteType.Hold)
+            //if (type != Note.NoteType.Hold)
             new_note.Drop();
             current_note_idx++;
         }

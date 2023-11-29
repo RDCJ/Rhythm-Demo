@@ -35,12 +35,6 @@ public class JudgeLine : MonoBehaviour
         mask.gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void ChangeColor(int index)
     {
         line_img.color = colors[index];

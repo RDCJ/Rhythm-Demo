@@ -24,7 +24,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         {
             is_holding = true;
             start_time = GameMgr.Instance.current_time;
-            //Debug.Log("Hold start " + start_time);
+            Debug.Log("Hold start " + start_time);
 
             start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.time); ;
             PlayEffect(start_judge_level);
@@ -43,7 +43,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (is_holding)
         {
             is_holding = false;
-            //Debug.Log("Hold end " + end_time);
             EndJudge();
         }
     }
@@ -53,7 +52,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (is_holding)
         {
             is_holding = false;
-            //Debug.Log("Hold end " + end_time);
             EndJudge();
         }
     }
@@ -65,28 +63,29 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         icon= transform.Find("icon").GetComponent<HoldIcon>();
     }
 
-    protected override void Update()
+/*    protected override void Update()
     {
         base.Update();
-        /*        if (is_move)
+        *//*        if (is_move)
                 {
                     icon.IconUpdate();
-                }*/
+                }*//*
         Debug.Log(rectTransform.position);
     }
-
+*/
     public override void Init(NoteCfg _cfg, float delta_time)
     {
         base.Init(_cfg, delta_time);
         is_holding = false;
     }
 
+    /// <summary>
+    /// 根据下落时间调整长度，canvas scaler对实际的长度有影响
+    /// </summary>
     protected override void Resize()
     {
-        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration);
-        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration;
-        Debug.Log(DropSpeedFix.GetScaledDropSpeed);
-        Debug.Log(cfg.duration);
+        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration) / MainCanvas.Instance.GetScaleFactor;
+        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration / MainCanvas.Instance.GetScaleFactor;
         rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
         collider.size = rectTransform.sizeDelta;
 
@@ -96,7 +95,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void ResetPosition(float delta_time)
     {
         float x = (float)cfg.position_x * Screen.width;
-        float y = Screen.height + icon.sizeDelta.y / 2;// + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        float y = Screen.height + icon.sizeDelta.y * MainCanvas.Instance.GetScaleFactor / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.position = new Vector3(x, y, 0);
     }
 
@@ -106,6 +105,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         end_time = GameMgr.Instance.current_time;
         end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
 
+        Debug.Log("Hold end " + end_time);
         ScoreMgr.ScoreLevel level;
         if (start_judge_level == ScoreMgr.ScoreLevel.perfect && end_judge_level == ScoreMgr.ScoreLevel.perfect)
             level = ScoreMgr.ScoreLevel.perfect;

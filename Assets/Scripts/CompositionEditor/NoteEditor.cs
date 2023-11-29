@@ -76,7 +76,7 @@ public class NoteEditor : MonoBehaviour
         if (current_note_cfg.note_type == (int)NoteType.Hold)
         {
             hold_time.gameObject.SetActive(true);
-            hold_time.text = current_note_cfg.duration.ToString();
+            hold_time.text = (current_note_cfg.duration / HorizontalGridLine.Instance.GetOneCellTime).ToString("N2");
         }
         else
         {
