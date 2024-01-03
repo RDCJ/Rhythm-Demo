@@ -24,7 +24,7 @@ public class PlayingState : GameBaseState
     {
         base.FrameUpdate();
         if (!gameMgr.IsMusicEnd)
-            gameMgr.DropNote();
+            gameMgr.GenerateNote();
         else
             stateMachine.ChangeState(gameMgr.musicEndState);
     }

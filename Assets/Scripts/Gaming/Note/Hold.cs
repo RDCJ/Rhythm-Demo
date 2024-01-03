@@ -7,11 +7,12 @@ using Note;
 using Music;
 
 /// <summary>
-/// 长按，没有尾判
+/// 长按
+/// 首判：正常判定，如果是bad则该note直接判为bad
+/// 尾判: 不提前松手
 /// </summary>
 public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
-    bool is_holding;
     double start_time;
     double end_time;
     ScoreMgr.ScoreLevel start_judge_level;
@@ -20,9 +21,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (this.is_active)
+        if (this.IsActive)
         {
-            is_holding = true;
+            finger_count++;
             start_time = GameMgr.Instance.current_time;
             Debug.Log("Hold start " + start_time);
 
@@ -31,7 +32,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
             if (start_judge_level == ScoreMgr.ScoreLevel.bad)
             {
-                is_judged = true;
+                state = NoteState.Judged;
                 Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
                 NotePoolManager.Instance.ReturnObject(this);
             }
@@ -40,19 +41,25 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (is_holding)
+        if (this.IsActive)
         {
-            is_holding = false;
-            EndJudge();
+            finger_count--;
+            if (!IsHolding)
+            {
+                EndJudge();
+            }
         }
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (is_holding)
+        if (this.IsActive)
         {
-            is_holding = false;
-            EndJudge();
+            finger_count--;
+            if (!IsHolding)
+            {
+                EndJudge();
+            }
         }
     }
 
@@ -63,20 +70,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         icon= transform.Find("icon").GetComponent<HoldIcon>();
     }
 
-/*    protected override void Update()
-    {
-        base.Update();
-        *//*        if (is_move)
-                {
-                    icon.IconUpdate();
-                }*//*
-        Debug.Log(rectTransform.position);
-    }
-*/
     public override void Init(NoteCfg _cfg, float delta_time)
     {
         base.Init(_cfg, delta_time);
-        is_holding = false;
     }
 
     /// <summary>
@@ -101,7 +97,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     private void EndJudge()
     {
-        is_judged = true;
+        state = NoteState.Judged;
         end_time = GameMgr.Instance.current_time;
         end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
 

@@ -24,6 +24,7 @@ public class ScoreMgr : MonoBehaviour
     }
     #endregion
 
+    #region component
     Text score_txt;
     Transform final_score_panel;
     Text final_score_txt;
@@ -34,7 +35,7 @@ public class ScoreMgr : MonoBehaviour
     Text extra_tag;
     Button restart_btn;
     Button back_btn;
-
+    #endregion
 
     #region data
     float score;

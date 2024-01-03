@@ -17,7 +17,7 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (this.is_active && !this.is_judged)
+        if (this.IsActive && !this.IsJudged)
         {
             Judge();
         }
@@ -25,7 +25,7 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        if (this.is_active && !this.is_judged)
+        if (this.IsActive && !this.IsJudged)
         {
             Judge();
         }
@@ -33,7 +33,7 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (this.is_active && !this.is_judged)
+        if (this.IsActive && !this.IsJudged)
         {
             Judge();
         }
@@ -48,7 +48,7 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
     private void Judge()
     {
-        is_judged = true;
+        state = NoteState.Judged;
 
         ScoreMgr.ScoreLevel level = ScoreMgr.ScoreLevel.perfect;
         // ¼Æ·Ö

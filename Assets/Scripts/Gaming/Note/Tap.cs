@@ -18,9 +18,9 @@ public class Tap : NoteBase, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (this.is_active)
+        if (this.IsActive)
         {
-            is_judged = true;
+            this.state = NoteState.Judged;
             double current_time = GameMgr.Instance.current_time;
             //Debug.Log("tap: " + current_time + " cfg_time: " + cfg.time);
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 调整下落速度
+/// </summary>
 public class DropSpeedFix : MonoBehaviour
 {
     public static string DropSpeedScaleKW = "DropSpeedScale";

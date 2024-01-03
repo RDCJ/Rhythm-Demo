@@ -10,7 +10,7 @@ using Music;
 /// <summary>
 /// 点击并滑动，滑动时正常判定
 /// </summary>
-public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointerUpHandler
+public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     public enum SlideDirection
     {
@@ -19,14 +19,13 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
     }
     public SlideDirection direciton;
 
-    private bool is_down;
     private Vector2 down_position;
     
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (this.is_active)
+        if (this.IsActive)
         {
-            is_down = true;
+            finger_count++;
             down_position = eventData.position;
             //Debug.Log("slide down " + down_position);
         }
@@ -34,9 +33,9 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        if (is_down && !is_judged)
+        if (IsHolding && !IsJudged)
         {
-            is_judged = true;
+            state = NoteState.Judged;
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
             ScoreMgr.ScoreLevel level;
@@ -61,8 +60,14 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        is_down = false;
-        Debug.Log("slide up");
+        if (IsActive)
+            finger_count--;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (IsActive)
+            finger_count--;
     }
 
     protected override void Awake()
@@ -77,6 +82,5 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
     public override void Init(NoteCfg _cfg, float delta_time)
     {
         base.Init(_cfg, delta_time);
-        is_down = false;
     }
 }

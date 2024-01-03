@@ -28,7 +28,7 @@ public class PrepareState: GameBaseState
         }
         else
         {
-            gameMgr.DropNote();
+            gameMgr.GenerateNote();
         }
     }
 

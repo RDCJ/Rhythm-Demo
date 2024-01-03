@@ -20,6 +20,7 @@ public class GameMgr : MonoBehaviour
     }
     #endregion
 
+    #region component
     Button pause_btn;
     Button continue_btn;
     Button restart_btn;
@@ -28,18 +29,42 @@ public class GameMgr : MonoBehaviour
     ScoreMgr scoreMgr;
     GameObject pause_panel;
     Text time_txt;
+    #endregion
 
     private MusicCfg music_cfg;
     private List<NoteCfg> composition;
 
-    public string music_id;
-    public string difficulty;
+    /// <summary>
+    /// 游戏暂停时调用action
+    /// </summary>
     public Action pause_action;
+    /// <summary>
+    /// 游戏继续时调用action
+    /// </summary>
     public Action continue_action;
-
+    /// <summary>
+    /// 当前歌曲的id
+    /// </summary>
+    public string music_id;
+    /// <summary>
+    /// 当前选择的难度
+    /// </summary>
+    public string difficulty;
+    /// <summary>
+    /// 下一个将要生成的note的index
+    /// </summary>
     public int current_note_idx;
+    /// <summary>
+    /// 曲谱包含的note数量
+    /// </summary>
     public int note_count;
+    /// <summary>
+    /// 当前游戏时间
+    /// </summary>
     public double current_time;
+    /// <summary>
+    /// note从生成点移动到判定线所需时间
+    /// </summary>
     public float drop_duration;
 
     #region statemachine
@@ -155,7 +180,7 @@ public class GameMgr : MonoBehaviour
         }
     }
 
-    public void DropNote()
+    public void GenerateNote()
     {
         current_time += Time.deltaTime;
         if (IsNoteEnd) 
@@ -175,7 +200,6 @@ public class GameMgr : MonoBehaviour
             current_note_idx++;
         }
     }
-
 
     public void Pause()
     {

@@ -14,6 +14,13 @@ namespace Note
         Catch
     }
 
+    public enum NoteState
+    {
+        Inactive,
+        active,
+        Judged
+    }
+
     public abstract class NoteBase : MonoBehaviour
     {
         protected NoteType type;
@@ -25,8 +32,23 @@ namespace Note
         protected BoxCollider2D collider;
 
         protected bool is_move;
-        [HideInInspector] protected bool is_active;
+        protected int finger_count;
+        [HideInInspector] protected NoteState state;
         [HideInInspector] protected bool is_judged;
+
+        public bool IsActive
+        {
+            get => state != NoteState.Inactive;
+        }
+        public bool IsJudged
+        {
+            get => state == NoteState.Judged;
+        }
+
+        public bool IsHolding
+        {
+            get => finger_count > 0;
+        }
 
         protected virtual void Awake()
         {
@@ -57,8 +79,8 @@ namespace Note
         public virtual void Init(Music.NoteCfg _cfg, float delta_time)
         {
             is_move = false;
-            is_active = false;
-            is_judged = false;
+            finger_count = 0;
+            state = NoteState.Inactive;
             cfg = _cfg;
 
             Resize();
@@ -67,7 +89,7 @@ namespace Note
 
         public virtual void Activate()
         {
-            is_active = true;
+            state = NoteState.active;
         }
 
         /// <summary>
@@ -135,7 +157,7 @@ namespace Note
         {
             if (collision.CompareTag("JudgeLine"))
             {
-                if (!is_judged)
+                if (!IsJudged)
                     Miss();
             }
         }
