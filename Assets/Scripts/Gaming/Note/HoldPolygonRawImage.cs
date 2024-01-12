@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HoldPolygonRawImage : RawImage
+public class HoldPolygonRawImage : Image
 {
     public class CheckPoint
     {
@@ -78,16 +78,15 @@ public class HoldPolygonRawImage : RawImage
         }
     }
 
-    PolygonCollider2D collider2D;
-
     private float drop_speed = 500;
     private float width = 250;
+    private Vector3[] mesh_points;
 
     protected override void Awake()
     {
         base.Awake();
-        collider2D = this.GetComponent<PolygonCollider2D>();
-        collider2D.autoTiling = true;
+        Debug.Log(transform.position);
+        this.alphaHitTestMinimumThreshold = 0.9f;
     }
 
     protected override void OnRectTransformDimensionsChange()
@@ -107,7 +106,8 @@ public class HoldPolygonRawImage : RawImage
         Vector3 center = transform.position;
         float current_h = center.y;
         int point_count = cfg.checkPoints.Count;
-        collider2D.points = new Vector2[point_count * 2];
+        mesh_points = new Vector3[point_count * 2];
+
         for (int i=0; i< point_count - 1; i++)
         {
             var p1 = cfg.checkPoints[i];
@@ -130,13 +130,21 @@ public class HoldPolygonRawImage : RawImage
             vh.AddUIVertexQuad(SetVbo(vertices, uv));
             current_h += delta_time * drop_speed;
 
-            collider2D.points[i * 2] = new Vector2(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
-            collider2D.points[i * 2 + 1] = new Vector2(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
+            mesh_points[i * 2] = vertices[0];
+            mesh_points[i * 2 + 1] = vertices[1];
+            if (i == point_count - 2)
+            {
+                mesh_points[i * 2 + 2] = vertices[3];
+                mesh_points[i * 2 + 3] = vertices[2];
+            }
         }
-        
-        var p = cfg.checkPoints[point_count - 1];
-        collider2D.points[point_count * 2 - 2] = new Vector2(Screen.width * (float)p.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
-        collider2D.points[point_count * 2 - 1] = new Vector2(Screen.width * (float)p.position_x + width * 0.5f - Screen.width * 0.5f, current_h);
+
+        Debug.Log("mesh_points:");
+        for (int i=0; i<point_count; i++)
+        {
+            Debug.Log(mesh_points[i * 2] + " " + mesh_points[i * 2 + 1]);
+        }
+
     }
 
     protected UIVertex[] SetVbo(Vector3[] vertices, Vector3[] uvs)
@@ -151,5 +159,11 @@ public class HoldPolygonRawImage : RawImage
             vbo[i] = vert;
         }
         return vbo;
+    }
+
+    public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
+    {
+        Debug.Log(screenPoint);
+        return base.IsRaycastLocationValid(screenPoint, eventCamera);
     }
 }

@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SpriteAtlas
+  m_Name: ui
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -32,61 +32,37 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 102900000, guid: 63a5b1b174cbb63489e3e1407e28d36b, type: 3}
+    - {fileID: 102900000, guid: e216675f1e5232c47b4aedfa39b36408, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 0f7357205e7f64147bcf1eb1f6724b7d, type: 3}
   - {fileID: 21300000, guid: e23d82a0d2ded2840ac5e134c589e3ba, type: 3}
   - {fileID: 21300000, guid: 9fd04721578c6cd4cba8c4290a5140ec, type: 3}
-  - {fileID: 21300000, guid: 7b3e0c027198c8a4d8ba80c39eb36a31, type: 3}
-  - {fileID: 21300000, guid: b600b062c01ed9747b557e7ce85ed6b0, type: 3}
-  - {fileID: 21300000, guid: a078068249e8b124788fa949b798dd43, type: 3}
   - {fileID: 21300000, guid: 07fd24c2671a64c498d4a85d6a53e8dd, type: 3}
   - {fileID: 21300000, guid: fdd2af234ef7cd34a969cbd857e16311, type: 3}
-  - {fileID: 21300000, guid: 86d225f31af3ef84c8692d624bc49264, type: 3}
   - {fileID: 21300000, guid: 2d2e8b24e62adb24ba1d3fc64a28660b, type: 3}
   - {fileID: 21300000, guid: 22e2e2e4611c59843a05c4b8285ddd50, type: 3}
-  - {fileID: 21300000, guid: 008b2ce49fac53447b8874abfc5940bd, type: 3}
-  - {fileID: 21300000, guid: 18a96445fd0cb354094b0a105d64c141, type: 3}
-  - {fileID: 21300000, guid: 8fbc75d59ce62e543aacaa433c28b799, type: 3}
   - {fileID: 21300000, guid: 3c390a47d26495b48bd149f6e75d3f4e, type: 3}
   - {fileID: 21300000, guid: 321d1867cb1ed52468bc330dfa7a685d, type: 3}
-  - {fileID: 21300000, guid: 4a521808c35f71b48a92472fdecb380e, type: 3}
   - {fileID: 21300000, guid: 9278709891e8354449394d5ed95ac6ca, type: 3}
-  - {fileID: 21300000, guid: 50e135bbefd0d3e439868ab4462cc052, type: 3}
-  - {fileID: 21300000, guid: f557687cda01e7044b0f8cd31b126da4, type: 3}
   - {fileID: 21300000, guid: bb82ff9c6f83d42409f934c2e5573ef2, type: 3}
   - {fileID: 21300000, guid: eb5f925e52ba2a944bd469303df8903a, type: 3}
   - {fileID: 21300000, guid: 867097dfc4af3b74b98c0da89704babb, type: 3}
-  - {fileID: 21300000, guid: a14e3cdf7009de74c90c53897ef2565a, type: 3}
   m_PackedSpriteNamesToIndex:
-  - arrow_right
   - icon_plus
   - icon_restart
-  - icon_target
-  - Green gradient
-  - Circle blue full
   - arrow_up2
   - arrow_left2
-  - bad
   - icon_pause
   - icon_play
-  - icon_star
-  - arrow_left
-  - icon_scope
   - arrow_right2
   - icon_close
-  - perfect
   - arrow_down2
-  - good
-  - 'Circle blue '
   - icon_minus
   - sound_on
   - icon_options
-  - Circle green full
   m_RenderDataMap: {}
-  m_Tag: SpriteAtlas
+  m_Tag: ui
   m_IsVariant: 0
