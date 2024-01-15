@@ -20,8 +20,16 @@ public class Util
     /// 判断点是否在三角形内部，叉乘法
     /// </summary>
     /// <returns></returns>
-    public static bool PointInsideTriangle()
+    public static bool PointInsideTriangle(Vector3 p, Vector3 t1, Vector3 t2, Vector3 t3)
     {
+        Vector3 d1 = t1 - p;
+        Vector3 d2 = t2 - p;
+        Vector3 d3 = t3 - p;
+
+        Vector3 c1 = Vector3.Cross(d1, d2);
+        Vector3 c2 = Vector3.Cross(d2, d3);
+        Vector3 c3 = Vector3.Cross(d3, d1);
+
 
     }
 }
