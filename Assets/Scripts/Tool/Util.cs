@@ -15,4 +15,13 @@ public class Util
         v[position] = value;
         return v;
     }
+
+    /// <summary>
+    /// 判断点是否在三角形内部，叉乘法
+    /// </summary>
+    /// <returns></returns>
+    public static bool PointInsideTriangle()
+    {
+
+    }
 }

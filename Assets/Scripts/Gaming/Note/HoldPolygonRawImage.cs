@@ -69,6 +69,8 @@ public class HoldPolygonRawImage : Image
                 if (value.checkPoints.Count >= 2)
                 {
                     cfg = value;
+                    checkpoint_count = cfg.checkPoints.Count;
+                    GenerateMeshPoint();
                     SetVerticesDirty();
 #if UNITY_EDITOR
                     UnityEditor.EditorUtility.SetDirty(transform);
@@ -81,19 +83,13 @@ public class HoldPolygonRawImage : Image
     private float drop_speed = 500;
     private float width = 250;
     private Vector3[] mesh_points;
+    private int checkpoint_count;
 
     protected override void Awake()
     {
         base.Awake();
-        Debug.Log(transform.position);
-        this.alphaHitTestMinimumThreshold = 0.9f;
     }
 
-    protected override void OnRectTransformDimensionsChange()
-    {
-        base.OnRectTransformDimensionsChange();
-        
-    }
 
     protected override void OnPopulateMesh(VertexHelper vh)
     {
@@ -103,22 +99,15 @@ public class HoldPolygonRawImage : Image
         Debug.Log("OnPopulateMesh");
 
         vh.Clear();
-        Vector3 center = transform.position;
-        float current_h = center.y;
-        int point_count = cfg.checkPoints.Count;
-        mesh_points = new Vector3[point_count * 2];
-
-        for (int i=0; i< point_count - 1; i++)
+        
+        for (int i=0; i< checkpoint_count - 1; i++)
         {
-            var p1 = cfg.checkPoints[i];
-            var p2 = cfg.checkPoints[i+1];
-            float delta_time = (float)(p2.time - p1.time);
             var vertices = new Vector3[]
             {
-                new(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h),
-                new(Screen.width * (float)p1.position_x + width * 0.5f - Screen.width * 0.5f, current_h),
-                new(Screen.width * (float)p2.position_x + width * 0.5f - Screen.width * 0.5f, current_h + delta_time * drop_speed),
-                new(Screen.width * (float)p2.position_x - width * 0.5f - Screen.width * 0.5f, current_h + delta_time * drop_speed)
+                mesh_points[i * 2],
+                mesh_points[i * 2 + 1],
+                mesh_points[i * 2 + 3],
+                mesh_points[i * 2 + 2]
             };
             var uv = new Vector3[4]
             {
@@ -128,23 +117,8 @@ public class HoldPolygonRawImage : Image
                 new (0, 1 ,0),
             };
             vh.AddUIVertexQuad(SetVbo(vertices, uv));
-            current_h += delta_time * drop_speed;
-
-            mesh_points[i * 2] = vertices[0];
-            mesh_points[i * 2 + 1] = vertices[1];
-            if (i == point_count - 2)
-            {
-                mesh_points[i * 2 + 2] = vertices[3];
-                mesh_points[i * 2 + 3] = vertices[2];
-            }
         }
-
-        Debug.Log("mesh_points:");
-        for (int i=0; i<point_count; i++)
-        {
-            Debug.Log(mesh_points[i * 2] + " " + mesh_points[i * 2 + 1]);
-        }
-
+        Debug.Log(transform.position + " " + transform.localPosition);
     }
 
     protected UIVertex[] SetVbo(Vector3[] vertices, Vector3[] uvs)
@@ -163,7 +137,56 @@ public class HoldPolygonRawImage : Image
 
     public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
     {
-        Debug.Log(screenPoint);
-        return base.IsRaycastLocationValid(screenPoint, eventCamera);
+        Vector2 local;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out local))
+            return false;
+        for (int i = 0; i < checkpoint_count - 1; i++)
+        {
+
+        }
+        return false;
+    }
+
+    private void GenerateMeshPoint()
+    {
+        float current_h = 0;
+        mesh_points = new Vector3[checkpoint_count * 2];
+        for (int i=0; i<checkpoint_count; i++)
+        {
+            var p1 = cfg.checkPoints[i];
+            mesh_points[i * 2] = new(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
+            mesh_points[i * 2 + 1 ] = new(Screen.width * (float)p1.position_x + width * 0.5f - Screen.width * 0.5f, current_h);
+            if (i < checkpoint_count - 1)
+            {
+                var p2 = cfg.checkPoints[i + 1];
+                float delta_time = (float)(p2.time - p1.time);
+                current_h += delta_time * drop_speed;
+            }
+        }
+        float min_x = float.MaxValue;
+        float max_x = float.MinValue;
+        for (int i = 0; i < checkpoint_count * 2; i++)
+        {
+            min_x = Mathf.Min(min_x, mesh_points[i].x);
+            max_x = Mathf.Max(max_x, mesh_points[i].x);
+        }
+
+        float rect_width = max_x - min_x;
+        float rect_height = current_h;
+        Vector3 offset = new Vector3(max_x - rect_width / 2, rect_height / 2, 0);
+        for (int i = 0; i < checkpoint_count * 2; i++)
+        {
+            mesh_points[i] -= offset;
+        }
+
+        rectTransform.sizeDelta = new Vector2 (rect_width, rect_height);
+
+        Debug.Log("mesh_points:");
+        for (int i = 0; i < checkpoint_count; i++)
+        {
+            Vector3 p1 = mesh_points[i * 2] + transform.localPosition;
+            Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
+            Debug.Log(p1 + " " + p2);
+        }
     }
 }
