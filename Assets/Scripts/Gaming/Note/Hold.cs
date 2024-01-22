@@ -27,7 +27,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             start_time = GameMgr.Instance.current_time;
             Debug.Log("Hold start " + start_time);
 
-            start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.time); ;
+            start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time); ;
             PlayEffect(start_judge_level);
 
             if (start_judge_level == ScoreMgr.ScoreLevel.bad)
@@ -80,8 +80,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     /// </summary>
     protected override void Resize()
     {
-        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.duration) / MainCanvas.Instance.GetScaleFactor;
-        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.duration / MainCanvas.Instance.GetScaleFactor;
+        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration()) / MainCanvas.Instance.GetScaleFactor;
+        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.Duration() / MainCanvas.Instance.GetScaleFactor;
         rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
         collider.size = rectTransform.sizeDelta;
 
@@ -90,7 +90,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     protected override void ResetPosition(float delta_time)
     {
-        float x = (float)cfg.position_x * Screen.width;
+        float x = (float)cfg.FirstCheckPoint().position_x * Screen.width;
         float y = Screen.height + icon.sizeDelta.y * MainCanvas.Instance.GetScaleFactor / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.position = new Vector3(x, y, 0);
     }
@@ -99,7 +99,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         state = NoteState.Judged;
         end_time = GameMgr.Instance.current_time;
-        end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.time + cfg.duration);
+        end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.FirstCheckPoint().time + cfg.Duration());
 
         Debug.Log("Hold end " + end_time);
         ScoreMgr.ScoreLevel level;

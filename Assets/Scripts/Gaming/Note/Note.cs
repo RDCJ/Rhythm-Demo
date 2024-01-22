@@ -108,7 +108,7 @@ namespace Note
         /// <param name="delta_time">用于修正生成时刻的偏差</param>
         protected virtual void ResetPosition(float delta_time)
         {
-            float x = (float)cfg.position_x * Screen.width;
+            float x = (float)cfg.FirstCheckPoint().position_x * Screen.width;
             float y = Screen.height + delta_time * DropSpeedFix.GetScaledDropSpeed;
             rectTransform.position = new Vector2(x, y);
         }

@@ -92,12 +92,12 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         NoteCfg cfg = new NoteCfg();
+        double time = this.GetNearestTime(eventData.position.y);
+        double position = eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
         cfg.note_type = NoteEditor.Instance.GetNoteType;
-        cfg.time = this.GetNearestTime(eventData.position.y);
-        cfg.position_x = eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
-        cfg.duration = 0;
+        cfg.AddCheckPoint(time, position);
         if (cfg.note_type == (int)NoteType.Hold)
-            cfg.duration = NoteEditor.Instance.GetDuration * GetOneCellTime;
+            cfg.AddCheckPoint(time + NoteEditor.Instance.GetDuration * GetOneCellTime, position);
         CompositionDisplay.Instance.CreateNewNote(cfg);
     }
 

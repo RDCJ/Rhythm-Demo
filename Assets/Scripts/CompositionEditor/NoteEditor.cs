@@ -76,7 +76,7 @@ public class NoteEditor : MonoBehaviour
         if (current_note_cfg.note_type == (int)NoteType.Hold)
         {
             hold_time.gameObject.SetActive(true);
-            hold_time.text = (current_note_cfg.duration / HorizontalGridLine.Instance.GetOneCellTime).ToString("N2");
+            hold_time.text = (current_note_cfg.Duration() / HorizontalGridLine.Instance.GetOneCellTime).ToString("N2");
         }
         else
         {
@@ -130,11 +130,12 @@ public class NoteEditor : MonoBehaviour
     {
         current_note_cfg = new NoteCfg();
         current_note_cfg.note_type = note_selection.value;
-        current_note_cfg.position_x = 0.5;
-        current_note_cfg.time = AudioWaveForm.Instance.GetCurrentAudioTime;
-        current_note_cfg.duration = 0;
+        current_note_cfg.AddCheckPoint(AudioWaveForm.Instance.GetCurrentAudioTime, 0.5);
+
         if (current_note_cfg.note_type == (int)NoteType.Hold)
-            current_note_cfg.duration = GetDuration;
+        {
+            current_note_cfg.AddCheckPoint(AudioWaveForm.Instance.GetCurrentAudioTime + GetDuration, 0.5);
+        }
     }
 
     public int GetNoteType

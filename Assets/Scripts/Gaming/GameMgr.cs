@@ -167,7 +167,7 @@ public class GameMgr : MonoBehaviour
         audioSource.clip = MusicResMgr.GetMusic(int.Parse(music_id));
         audioSource.time = 0;
         audioSource.Stop();
-        if (!music_cfg.composition.Keys.Contains(difficulty))
+        if (!music_cfg.composition.ContainsKey(difficulty))
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
         }
@@ -188,7 +188,7 @@ public class GameMgr : MonoBehaviour
         while (true)
         {
             if (IsNoteEnd) break;
-            double next_drop_time = composition[current_note_idx].time - drop_duration;
+            double next_drop_time = composition[current_note_idx].FirstCheckPoint().time - drop_duration;
             if (current_time < next_drop_time) break;
 
             //Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);

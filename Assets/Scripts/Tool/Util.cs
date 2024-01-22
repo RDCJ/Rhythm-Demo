@@ -30,6 +30,13 @@ public class Util
         Vector3 c2 = Vector3.Cross(d2, d3);
         Vector3 c3 = Vector3.Cross(d3, d1);
 
+        float s1 = Vector3.Dot(c1, c2);
+        float s2 = Vector3.Dot(c2, c3);
+        float s3 = Vector3.Dot(c3, c1);
 
+        if (s1 > 0 && s2 >0 && s3 > 0)
+            return true;
+        else
+            return false;
     }
 }

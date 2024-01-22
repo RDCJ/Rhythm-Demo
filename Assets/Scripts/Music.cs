@@ -4,6 +4,7 @@ using UnityEngine;
 using LitJson;
 using System.IO;
 using System;
+using Test;
 
 namespace Music
 {
@@ -17,17 +18,18 @@ namespace Music
         public double prepare_time;
         public double time_offset;
         public int BPM;
-        public JsonData composition;
+        public Dictionary<string, List<NoteCfg>> composition;
 
-        public MusicCfg() {
-            composition = new JsonData();
+        public MusicCfg()
+        {
+            composition = new Dictionary<string, List<NoteCfg>>();
         }
 
         public MusicCfg(int music_id)
         {
             this.music_id = music_id.ToString();
             music_name = MusicResMgr.MusicIndex2Name[music_id];
-            composition = new JsonData();
+            composition = new Dictionary<string, List<NoteCfg>>();
         }
 
         public static MusicCfg GetCfg(string music_id)
@@ -62,13 +64,10 @@ namespace Music
 
         public List<NoteCfg> GetComposition(string difficulty)
         {
-            List<NoteCfg> output = new List<NoteCfg>();
-            if (composition.Keys.Contains(difficulty) && composition[difficulty] != null && composition[difficulty].GetJsonType() == JsonType.Array)
-            {
-                for (int i = 0; i < composition[difficulty].Count; i++)
-                    output.Add(JsonMapper.ToObject<NoteCfg>(composition[difficulty][i].ToJson()));
-            }
-            return output;
+            if (composition.ContainsKey(difficulty))
+                return composition[difficulty];
+            else
+                return new List<NoteCfg>();
         }
 
         public void CompositionSerialize(ref List<NoteCfg> input, string difficulty)
@@ -77,16 +76,11 @@ namespace Music
             for (var i = 0; i < input.Count; i++)
                 listDeep.Add(new NoteCfg(input[i]));
 
-            listDeep.Sort((x, y) =>x.time.CompareTo(y.time));
+            listDeep.Sort((x, y) => x.FirstCheckPoint().time.CompareTo(y.FirstCheckPoint().time));
 
             if (composition == null)
-                composition = new JsonData();
-            composition[difficulty] = new JsonData();
-            composition[difficulty].SetJsonType(JsonType.Array);
-            foreach (var note_cfg in listDeep)
-            {
-                composition[difficulty].Add(note_cfg.ToJsonData());
-            }
+                composition = new Dictionary<string, List<NoteCfg>>();
+            composition[difficulty] = listDeep;
         }
 
         /// <summary>
@@ -112,31 +106,72 @@ namespace Music
     public class NoteCfg
     {
         public int note_type;
-        public double time;
-        public double position_x;
-        public double duration;
+        public List<CheckPoint> checkPoints;
+        public CheckPoint FirstCheckPoint()
+        {
+            if (checkPoints == null) return null;
+            return checkPoints[0];
+        }
+
+        public CheckPoint LastCheckPoint()
+        {
+            if (checkPoints == null) return null;
+            return checkPoints[checkPoints.Count - 1];
+        }
+
+        public double Duration()
+        {
+            if (checkPoints == null) return 0.0f;
+            else if (checkPoints.Count <= 1) return 0.0f;
+            else
+                return LastCheckPoint().time - FirstCheckPoint().time;
+        }
 
         public NoteCfg()
         {
-
+            checkPoints = new List<CheckPoint>();
         }
 
         public NoteCfg(NoteCfg other)
         {
-            note_type = other.note_type;
-            time = other.time;
-            position_x = other.position_x;
-            duration = other.duration;
+            this.note_type = other.note_type;
+            this.checkPoints = new(other.checkPoints.Count);
+            for (int i = 0; i < other.checkPoints.Count; i++)
+            {
+                this.AddCheckPoint(other.checkPoints[i].time, other.checkPoints[i].position_x);
+            }
         }
 
-        public JsonData ToJsonData() 
+        public void AddCheckPoint(double time, double position_x)
+        {
+            checkPoints.Add(new CheckPoint(time, position_x));
+        }
+
+        public JsonData ToJsonData()
         {
             JsonData rt = new JsonData();
             rt["note_type"] = note_type;
-            rt["time"] = time;
-            rt["position_x"] = position_x;
-            rt["duration"] = duration;
+            rt["checkPoints"] = JsonMapper.ToJson(checkPoints);
             return rt;
+        }
+    }
+
+    [Serializable]
+    public class CheckPoint
+    {
+        public double time;
+        public double position_x;
+        public CheckPoint() { }
+        public CheckPoint(double time, double position_x)
+        {
+            this.time = time;
+            this.position_x = position_x;
+        }
+
+        public CheckPoint(CheckPoint other)
+        {
+            this.time = other.time;
+            this.position_x = other.position_x;
         }
     }
 }

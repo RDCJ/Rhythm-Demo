@@ -1,65 +1,14 @@
 using LitJson;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
-using Unity.VisualScripting;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HoldPolygonRawImage : Image
 {
-    public class CheckPoint
-    {
-        public double time;
-        public double position_x;
-        public CheckPoint(double time, double position_x)
-        {
-            this.time = time;
-            this.position_x = position_x;
-        }
-    }
-
-    public class NoteCfg
-    {
-        public int note_type;
-        public List<CheckPoint> checkPoints;
-        public CheckPoint FirstCheckPoint
-        {
-            get 
-            {
-                if (checkPoints == null) return null;
-                return checkPoints[0]; 
-            }
-        }
-        public CheckPoint LastCheckPoint
-        {
-            get
-            {
-                if (checkPoints == null) return null;
-                return checkPoints[checkPoints.Count-1];
-            }
-        }
-        public double Duration
-        {
-            get
-            {
-                if (checkPoints == null) return 0.0f;
-                else
-                    return LastCheckPoint.time - FirstCheckPoint.time;
-            }
-        }
-        public NoteCfg()
-        {
-            checkPoints = new List<CheckPoint>();
-        }
-        public void AddCheckPoint(double time, double position_x)
-        {
-            checkPoints.Add(new CheckPoint(time, position_x));
-        }
-    }
-
-    private NoteCfg cfg;
-    public NoteCfg Cfg 
+    private Music.NoteCfg cfg;
+    public Music.NoteCfg Cfg 
     { 
         get { return cfg; }
         set
@@ -140,13 +89,23 @@ public class HoldPolygonRawImage : Image
         Vector2 local;
         if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out local))
             return false;
+        
         for (int i = 0; i < checkpoint_count - 1; i++)
         {
-
+            if (Util.PointInsideTriangle(local, mesh_points[i * 2], mesh_points[i * 2 + 1], mesh_points[i * 2 + 2]) ||
+                Util.PointInsideTriangle(local, mesh_points[i * 2 + 1], mesh_points[i * 2 + 2], mesh_points[i * 2 + 3]))
+            {
+                //Debug.Log(local);
+                return true;
+            }
         }
         return false;
     }
 
+    /// <summary>
+    /// 根据cfg计算mesh
+    /// RectTransform适应mesh大小
+    /// </summary>
     private void GenerateMeshPoint()
     {
         float current_h = 0;
@@ -155,7 +114,7 @@ public class HoldPolygonRawImage : Image
         {
             var p1 = cfg.checkPoints[i];
             mesh_points[i * 2] = new(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
-            mesh_points[i * 2 + 1 ] = new(Screen.width * (float)p1.position_x + width * 0.5f - Screen.width * 0.5f, current_h);
+            mesh_points[i * 2 + 1] = new(Screen.width * (float)p1.position_x + width * 0.5f - Screen.width * 0.5f, current_h);
             if (i < checkpoint_count - 1)
             {
                 var p2 = cfg.checkPoints[i + 1];
@@ -163,6 +122,7 @@ public class HoldPolygonRawImage : Image
                 current_h += delta_time * drop_speed;
             }
         }
+
         float min_x = float.MaxValue;
         float max_x = float.MinValue;
         for (int i = 0; i < checkpoint_count * 2; i++)
@@ -181,12 +141,12 @@ public class HoldPolygonRawImage : Image
 
         rectTransform.sizeDelta = new Vector2 (rect_width, rect_height);
 
-        Debug.Log("mesh_points:");
+/*        Debug.Log("mesh_points:");
         for (int i = 0; i < checkpoint_count; i++)
         {
             Vector3 p1 = mesh_points[i * 2] + transform.localPosition;
             Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
             Debug.Log(p1 + " " + p2);
-        }
+        }*/
     }
 }
