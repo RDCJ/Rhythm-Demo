@@ -44,7 +44,7 @@ public class DropSpeedFix : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// 原始下落速度*自定义系数
     /// </summary>
     /// <returns></returns>
     public static float GetScaledDropSpeed

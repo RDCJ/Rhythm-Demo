@@ -5,48 +5,33 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HoldPolygonRawImage : Image
+public class HoldPolygonImage : Image
 {
-    private Music.NoteCfg cfg;
-    public Music.NoteCfg Cfg 
-    { 
-        get { return cfg; }
-        set
+    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float width, float head_time_offset=0) 
+    {
+        if (checkPoints == null) 
         {
-            if (cfg != value)
-            {
-                if (value.checkPoints.Count >= 2)
-                {
-                    cfg = value;
-                    checkpoint_count = cfg.checkPoints.Count;
-                    GenerateMeshPoint();
-                    SetVerticesDirty();
-#if UNITY_EDITOR
-                    UnityEditor.EditorUtility.SetDirty(transform);
-#endif
-                }
-            }
+            Debug.Log("[HoldPolygonRawImage] checkPoints == null");
+            return;
         }
+        if (checkPoints.Count < 2)
+        {
+            Debug.Log("[HoldPolygonRawImage] checkPoints.Count < 2");
+            return;
+        }
+        checkpoint_count = checkPoints.Count;
+        GenerateMeshPoint(checkPoints, drop_speed, width, head_time_offset);
+        SetVerticesDirty();
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(transform);
+#endif
     }
 
-    private float drop_speed = 500;
-    private float width = 250;
     private Vector3[] mesh_points;
     private int checkpoint_count;
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
-
     protected override void OnPopulateMesh(VertexHelper vh)
     {
-        if (cfg == null) return;
-        if (cfg.checkPoints == null) return;
-        if (cfg.checkPoints.Count < 2) return;
-        Debug.Log("OnPopulateMesh");
-
         vh.Clear();
         
         for (int i=0; i< checkpoint_count - 1; i++)
@@ -67,7 +52,6 @@ public class HoldPolygonRawImage : Image
             };
             vh.AddUIVertexQuad(SetVbo(vertices, uv));
         }
-        Debug.Log(transform.position + " " + transform.localPosition);
     }
 
     protected UIVertex[] SetVbo(Vector3[] vertices, Vector3[] uvs)
@@ -86,16 +70,14 @@ public class HoldPolygonRawImage : Image
 
     public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
     {
-        Vector2 local;
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out local))
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out Vector2 local))
             return false;
-        
+
         for (int i = 0; i < checkpoint_count - 1; i++)
         {
             if (Util.PointInsideTriangle(local, mesh_points[i * 2], mesh_points[i * 2 + 1], mesh_points[i * 2 + 2]) ||
                 Util.PointInsideTriangle(local, mesh_points[i * 2 + 1], mesh_points[i * 2 + 2], mesh_points[i * 2 + 3]))
             {
-                //Debug.Log(local);
                 return true;
             }
         }
@@ -106,18 +88,34 @@ public class HoldPolygonRawImage : Image
     /// 根据cfg计算mesh
     /// RectTransform适应mesh大小
     /// </summary>
-    private void GenerateMeshPoint()
+    private void GenerateMeshPoint(List<Music.CheckPoint> checkPoints, float drop_speed, float width, float head_time_offset)
     {
         float current_h = 0;
         mesh_points = new Vector3[checkpoint_count * 2];
         for (int i=0; i<checkpoint_count; i++)
         {
-            var p1 = cfg.checkPoints[i];
+            var p1 = checkPoints[i];
+            if (i == 0)
+            {
+                p1 = new Music.CheckPoint(checkPoints[i]);
+                double tan_a = (checkPoints[i + 1].time - checkPoints[i].time) / (checkPoints[i + 1].position_x - checkPoints[i].position_x);
+                float offset_x = head_time_offset / (float)tan_a;
+                p1.position_x -= offset_x;
+                p1.time -= head_time_offset;
+            }
+            else if (i == checkpoint_count - 1)
+            {
+                p1 = new Music.CheckPoint(checkPoints[i]);
+                double tan_a = (checkPoints[i].time - checkPoints[i - 1].time) / (checkPoints[i].position_x - checkPoints[i - 1].position_x);
+                float offset_x = head_time_offset / (float)tan_a;
+                p1.position_x += offset_x;
+                current_h += head_time_offset;
+            }
             mesh_points[i * 2] = new(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
             mesh_points[i * 2 + 1] = new(Screen.width * (float)p1.position_x + width * 0.5f - Screen.width * 0.5f, current_h);
             if (i < checkpoint_count - 1)
             {
-                var p2 = cfg.checkPoints[i + 1];
+                var p2 = checkPoints[i + 1];
                 float delta_time = (float)(p2.time - p1.time);
                 current_h += delta_time * drop_speed;
             }
@@ -133,7 +131,7 @@ public class HoldPolygonRawImage : Image
 
         float rect_width = max_x - min_x;
         float rect_height = current_h;
-        Vector3 offset = new Vector3(max_x - rect_width / 2, rect_height / 2, 0);
+        Vector3 offset = new(max_x - rect_width / 2, rect_height / 2, 0);
         for (int i = 0; i < checkpoint_count * 2; i++)
         {
             mesh_points[i] -= offset;

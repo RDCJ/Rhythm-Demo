@@ -1,43 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using static AirFishLab.ScrollingList.ListBank;
+using Note;
 
-public class HoldNew : MonoBehaviour
+public class HoldNew : NoteBase
 {
-    private HoldPolygonRawImage icon;
+    private HoldPolygonImage touch_area;
+    private HoldPolygonImage icon;
     Music.NoteCfg noteCfg;
-    RectTransform rectTransform;
 
-    private void Awake()
+    protected override void Awake()
     {
-        icon = transform.Find("icon").GetComponent<HoldPolygonRawImage>();
-        rectTransform = GetComponent<RectTransform>();
+        base.Awake();
+        touch_area = this.GetComponent<HoldPolygonImage>();
+        icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
         noteCfg = new Music.NoteCfg();
         noteCfg.AddCheckPoint(1, 0.5);
         noteCfg.AddCheckPoint(2, 0.7);
         noteCfg.AddCheckPoint(3, 0.5);
         noteCfg.AddCheckPoint(4, 0.1);
+
+        /*        noteCfg.AddCheckPoint(1, 0.5);
+                noteCfg.AddCheckPoint(2, 0.5);*/
+        is_move = false;
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        icon.Cfg = noteCfg;
+        Init(noteCfg, 0);
 
-/*        foreach (var k in MusicResMgr.MusicIndex2Name.Keys)
-        {
-            Music.MusicCfg old_cfg = Music.MusicCfg.GetCfg(k.ToString());
-            Test.MusicCfg new_cfg = Test.MusicCfg.OldVersionToNew(old_cfg);
-            new_cfg.Save();
-        }*/
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         
     }
 
-    
+    protected override void Resize()
+    {
+        float drop_speed = 500;
+        icon.SetCheckPoints(noteCfg.checkPoints, drop_speed, 250);
+        touch_area.SetCheckPoints(noteCfg.checkPoints, drop_speed, 290, 0.2f);
+    }
+
+    protected override void ResetPosition(float delta_time)
+    {
+        
+    }
 }
