@@ -109,10 +109,10 @@ public class HoldPolygonImage : Image
                 double tan_a = (checkPoints[i].time - checkPoints[i - 1].time) / (checkPoints[i].position_x - checkPoints[i - 1].position_x);
                 float offset_x = head_time_offset / (float)tan_a;
                 p1.position_x += offset_x;
-                current_h += head_time_offset;
+                current_h += head_time_offset * drop_speed;
             }
-            mesh_points[i * 2] = new(Screen.width * (float)p1.position_x - width * 0.5f - Screen.width * 0.5f, current_h);
-            mesh_points[i * 2 + 1] = new(Screen.width * (float)p1.position_x + width * 0.5f - Screen.width * 0.5f, current_h);
+            mesh_points[i * 2] = new(Screen.width * ((float)p1.position_x - 0.5f) - width * 0.5f, current_h);
+            mesh_points[i * 2 + 1] = new(Screen.width * ((float)p1.position_x - 0.5f) + width * 0.5f, current_h);
             if (i < checkpoint_count - 1)
             {
                 var p2 = checkPoints[i + 1];
@@ -121,24 +121,46 @@ public class HoldPolygonImage : Image
             }
         }
 
+        Debug.Log("old mesh_points:");
+        for (int i = 0; i < checkpoint_count; i++)
+        {
+            Vector3 p1 = mesh_points[i * 2] + transform.localPosition;
+            Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
+            Debug.Log(p1 + " " + p2);
+        }
+
         float min_x = float.MaxValue;
         float max_x = float.MinValue;
+
         for (int i = 0; i < checkpoint_count * 2; i++)
         {
             min_x = Mathf.Min(min_x, mesh_points[i].x);
             max_x = Mathf.Max(max_x, mesh_points[i].x);
         }
-
         float rect_width = max_x - min_x;
         float rect_height = current_h;
+
+        
+        rectTransform.sizeDelta = new Vector2(rect_width, rect_height);
+
+
+        min_x = float.MaxValue;
+        max_x = float.MinValue;
+        foreach (var p in checkPoints)
+        {
+            float x1 = Screen.width * ((float)p.position_x - 0.5f) - width * 0.5f;
+            float x2 = Screen.width * ((float)p.position_x - 0.5f) + width * 0.5f;
+            min_x = Mathf.Min(min_x, x1);
+            max_x = Mathf.Max(max_x, x2);
+        }
+
+        rect_width = max_x - min_x;
+        rect_height = current_h;
         Vector3 offset = new(max_x - rect_width / 2, rect_height / 2, 0);
         for (int i = 0; i < checkpoint_count * 2; i++)
         {
             mesh_points[i] -= offset;
         }
-
-        rectTransform.sizeDelta = new Vector2 (rect_width, rect_height);
-
 /*        Debug.Log("mesh_points:");
         for (int i = 0; i < checkpoint_count; i++)
         {
