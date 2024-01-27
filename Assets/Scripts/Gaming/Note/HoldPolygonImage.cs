@@ -90,6 +90,7 @@ public class HoldPolygonImage : Image
     /// </summary>
     private void GenerateMeshPoint(List<Music.CheckPoint> checkPoints, float drop_speed, float width, float head_time_offset)
     {
+        #region 以起始点为原点计算mesh
         float current_h = 0;
         mesh_points = new Vector3[checkpoint_count * 2];
         for (int i=0; i<checkpoint_count; i++)
@@ -120,53 +121,40 @@ public class HoldPolygonImage : Image
                 current_h += delta_time * drop_speed;
             }
         }
+        #endregion
 
-        Debug.Log("old mesh_points:");
-        for (int i = 0; i < checkpoint_count; i++)
-        {
-            Vector3 p1 = mesh_points[i * 2] + transform.localPosition;
-            Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
-            Debug.Log(p1 + " " + p2);
-        }
-
+        #region 将原点移到整个图案的中心
         float min_x = float.MaxValue;
         float max_x = float.MinValue;
-
-        for (int i = 0; i < checkpoint_count * 2; i++)
-        {
-            min_x = Mathf.Min(min_x, mesh_points[i].x);
-            max_x = Mathf.Max(max_x, mesh_points[i].x);
-        }
-        float rect_width = max_x - min_x;
-        float rect_height = current_h;
-
-        
-        rectTransform.sizeDelta = new Vector2(rect_width, rect_height);
-
-
-        min_x = float.MaxValue;
-        max_x = float.MinValue;
         foreach (var p in checkPoints)
         {
-            float x1 = Screen.width * ((float)p.position_x - 0.5f) - width * 0.5f;
-            float x2 = Screen.width * ((float)p.position_x - 0.5f) + width * 0.5f;
-            min_x = Mathf.Min(min_x, x1);
-            max_x = Mathf.Max(max_x, x2);
+            min_x = Mathf.Min(min_x, (float)p.position_x);
+            max_x = Mathf.Max(max_x, (float)p.position_x);
         }
 
-        rect_width = max_x - min_x;
-        rect_height = current_h;
-        Vector3 offset = new(max_x - rect_width / 2, rect_height / 2, 0);
+        float rect_height = current_h;
+        Vector3 offset = new(0.5f * (max_x + min_x - 1) * Screen.width, rect_height / 2, 0);
         for (int i = 0; i < checkpoint_count * 2; i++)
         {
             mesh_points[i] -= offset;
         }
-/*        Debug.Log("mesh_points:");
-        for (int i = 0; i < checkpoint_count; i++)
+        #endregion
+
+        #region 计算rectTransform的大小
+        float rect_width = 0;
+        for (int i = 0; i < checkpoint_count * 2; i++)
         {
-            Vector3 p1 = mesh_points[i * 2] + transform.localPosition;
-            Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
-            Debug.Log(p1 + " " + p2);
-        }*/
+            rect_width = MathF.Max(rect_width, MathF.Abs(mesh_points[i].x));
+        }
+        rectTransform.sizeDelta = new Vector2(rect_width * 2, rect_height);
+        #endregion
+
+        /*        Debug.Log("mesh_points:");
+                for (int i = 0; i < checkpoint_count; i++)
+                {
+                    Vector3 p1 = mesh_points[i * 2] + transform.localPosition;
+                    Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
+                    Debug.Log(p1 + " " + p2);
+                }*/
     }
 }
