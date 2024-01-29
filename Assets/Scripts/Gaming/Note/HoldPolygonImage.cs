@@ -137,21 +137,7 @@ public class HoldPolygonImage : Image
         #endregion
 
         float rect_height = current_h;
-        #region 将原点移到整个图案的中心
-        float min_x = float.MaxValue;
-        float max_x = float.MinValue;
-        /*        foreach (var p in checkPoints)
-                {
-                    min_x = Mathf.Min(min_x, (float)p.position_l);
-                    max_x = Mathf.Max(max_x, (float)p.position_r);
-                }*/
-
-        for (int i = 2; i < checkpoint_count * 2 - 2; i++)
-        {
-            min_x = Mathf.Min(min_x, (float)mesh_points[i].x);
-            max_x = Mathf.Max(max_x, (float)mesh_points[i].x);
-        }
-
+        #region 将rectTransform的y移到整个图案的中心
         Vector3 offset = new(0, rect_height / 2, 0);
         for (int i = 0; i < (checkpoint_count + 2) * 2; i++)
         {
