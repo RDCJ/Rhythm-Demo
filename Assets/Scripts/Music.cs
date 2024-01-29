@@ -138,13 +138,18 @@ namespace Music
             this.checkPoints = new(other.checkPoints.Count);
             for (int i = 0; i < other.checkPoints.Count; i++)
             {
-                this.AddCheckPoint(other.checkPoints[i].time, other.checkPoints[i].position_x);
+                this.AddCheckPoint(other.checkPoints[i].time, other.checkPoints[i].position_l, other.checkPoints[i].position_r);
             }
         }
 
         public void AddCheckPoint(double time, double position_x)
         {
             checkPoints.Add(new CheckPoint(time, position_x));
+        }
+
+        public void AddCheckPoint(double time, double position_l, double position_r)
+        {
+            checkPoints.Add(new CheckPoint(time, position_l, position_r));
         }
 
         public JsonData ToJsonData()
@@ -160,18 +165,33 @@ namespace Music
     public class CheckPoint
     {
         public double time;
-        public double position_x;
+        public double position_l;
+        public double position_r;
         public CheckPoint() { }
         public CheckPoint(double time, double position_x)
         {
             this.time = time;
-            this.position_x = position_x;
+            this.position_l = position_x;
+            this.position_r = position_x;
+        }
+
+        public CheckPoint(double time, double position_l, double position_r)
+        {
+            this.time = time;
+            this.position_l = position_l;
+            this.position_r = position_r;
         }
 
         public CheckPoint(CheckPoint other)
         {
             this.time = other.time;
-            this.position_x = other.position_x;
+            this.position_l = other.position_l;
+            this.position_r = other.position_r;
+        }
+
+        public double Center()
+        {
+                return (position_l + position_r) * 0.5f;
         }
     }
 }

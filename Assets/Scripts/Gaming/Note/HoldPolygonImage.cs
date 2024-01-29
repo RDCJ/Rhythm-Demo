@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class HoldPolygonImage : Image
 {
-    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float width, float head_time_offset=0) 
+    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float width_extend=0, float head_time_offset=0) 
     {
         if (checkPoints == null) 
         {
@@ -20,7 +20,7 @@ public class HoldPolygonImage : Image
             return;
         }
         checkpoint_count = checkPoints.Count;
-        GenerateMeshPoint(checkPoints, drop_speed, width, head_time_offset);
+        GenerateMeshPoint(checkPoints, drop_speed, width_extend, head_time_offset);
         SetVerticesDirty();
 #if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(transform);
@@ -30,11 +30,26 @@ public class HoldPolygonImage : Image
     private Vector3[] mesh_points;
     private int checkpoint_count;
 
+    public Vector3 HeadCenter
+    {
+        get => (mesh_points[0] + mesh_points[1]) * 0.5f;
+    }
+
+    public Vector3 TailCenter
+    {
+        get 
+        {
+            int l = mesh_points.Length;
+            return (mesh_points[l - 2] + mesh_points[l - 1]) * 0.5f;
+         }
+    }
+
+
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
         
-        for (int i=0; i< checkpoint_count - 1; i++)
+        for (int i=0; i< checkpoint_count + 1; i++)
         {
             var vertices = new Vector3[]
             {
@@ -73,7 +88,7 @@ public class HoldPolygonImage : Image
         if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out Vector2 local))
             return false;
 
-        for (int i = 0; i < checkpoint_count - 1; i++)
+        for (int i = 0; i < checkpoint_count +1; i++)
         {
             if (Util.PointInsideTriangle(local, mesh_points[i * 2], mesh_points[i * 2 + 1], mesh_points[i * 2 + 2]) ||
                 Util.PointInsideTriangle(local, mesh_points[i * 2 + 1], mesh_points[i * 2 + 2], mesh_points[i * 2 + 3]))
@@ -88,32 +103,24 @@ public class HoldPolygonImage : Image
     /// 根据cfg计算mesh
     /// RectTransform适应mesh大小
     /// </summary>
-    private void GenerateMeshPoint(List<Music.CheckPoint> checkPoints, float drop_speed, float width, float head_time_offset)
+    private void GenerateMeshPoint(List<Music.CheckPoint> checkPoints, float drop_speed, float width_extend, float head_time_offset)
     {
-        #region 以起始点为原点计算mesh
+        #region 以(0, 0)为原点计算mesh
         float current_h = 0;
-        mesh_points = new Vector3[checkpoint_count * 2];
+        mesh_points = new Vector3[(checkpoint_count + 2) * 2];
+
+        //note起始端预留判定区
+        var first_p = checkPoints[0];
+        mesh_points[0] = new(Screen.width * ((float)first_p.position_l - 0.5f) - width_extend, current_h);
+        mesh_points[1] = new(Screen.width * ((float)first_p.position_r - 0.5f) + width_extend, current_h);
+        current_h += head_time_offset * drop_speed;
+
+        //icon区域
         for (int i=0; i<checkpoint_count; i++)
         {
             var p1 = checkPoints[i];
-            if (i == 0)
-            {
-                p1 = new Music.CheckPoint(checkPoints[i]);
-                double tan_a = (checkPoints[i + 1].time - checkPoints[i].time) / (checkPoints[i + 1].position_x - checkPoints[i].position_x);
-                float offset_x = head_time_offset / (float)tan_a;
-                p1.position_x -= offset_x;
-                p1.time -= head_time_offset;
-            }
-            else if (i == checkpoint_count - 1)
-            {
-                p1 = new Music.CheckPoint(checkPoints[i]);
-                double tan_a = (checkPoints[i].time - checkPoints[i - 1].time) / (checkPoints[i].position_x - checkPoints[i - 1].position_x);
-                float offset_x = head_time_offset / (float)tan_a;
-                p1.position_x += offset_x;
-                current_h += head_time_offset * drop_speed;
-            }
-            mesh_points[i * 2] = new(Screen.width * ((float)p1.position_x - 0.5f) - width * 0.5f, current_h);
-            mesh_points[i * 2 + 1] = new(Screen.width * ((float)p1.position_x - 0.5f) + width * 0.5f, current_h);
+            mesh_points[i * 2 + 2] = new(Screen.width * ((float)p1.position_l - 0.5f) - width_extend, current_h);
+            mesh_points[i * 2 + 3] = new(Screen.width * ((float)p1.position_r - 0.5f) + width_extend, current_h);
             if (i < checkpoint_count - 1)
             {
                 var p2 = checkPoints[i + 1];
@@ -121,20 +128,32 @@ public class HoldPolygonImage : Image
                 current_h += delta_time * drop_speed;
             }
         }
+
+        //note末尾端预留判定区
+        current_h += head_time_offset * drop_speed;
+        var last_p = checkPoints[checkpoint_count - 1];
+        mesh_points[(checkpoint_count + 2) * 2 - 2] = new(Screen.width * ((float)last_p.position_l - 0.5f) - width_extend, current_h);
+        mesh_points[(checkpoint_count + 2) * 2 - 1] = new(Screen.width * ((float)last_p.position_r - 0.5f) + width_extend, current_h);
         #endregion
 
+        float rect_height = current_h;
         #region 将原点移到整个图案的中心
         float min_x = float.MaxValue;
         float max_x = float.MinValue;
-        foreach (var p in checkPoints)
+        /*        foreach (var p in checkPoints)
+                {
+                    min_x = Mathf.Min(min_x, (float)p.position_l);
+                    max_x = Mathf.Max(max_x, (float)p.position_r);
+                }*/
+
+        for (int i = 2; i < checkpoint_count * 2 - 2; i++)
         {
-            min_x = Mathf.Min(min_x, (float)p.position_x);
-            max_x = Mathf.Max(max_x, (float)p.position_x);
+            min_x = Mathf.Min(min_x, (float)mesh_points[i].x);
+            max_x = Mathf.Max(max_x, (float)mesh_points[i].x);
         }
 
-        float rect_height = current_h;
-        Vector3 offset = new(0.5f * (max_x + min_x - 1) * Screen.width, rect_height / 2, 0);
-        for (int i = 0; i < checkpoint_count * 2; i++)
+        Vector3 offset = new(0, rect_height / 2, 0);
+        for (int i = 0; i < (checkpoint_count + 2) * 2; i++)
         {
             mesh_points[i] -= offset;
         }
@@ -142,7 +161,7 @@ public class HoldPolygonImage : Image
 
         #region 计算rectTransform的大小
         float rect_width = 0;
-        for (int i = 0; i < checkpoint_count * 2; i++)
+        for (int i = 0; i < (checkpoint_count + 2) * 2; i++)
         {
             rect_width = MathF.Max(rect_width, MathF.Abs(mesh_points[i].x));
         }

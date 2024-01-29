@@ -90,7 +90,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     protected override void ResetPosition(float delta_time)
     {
-        float x = (float)cfg.FirstCheckPoint().position_x * Screen.width;
+        float x = (float)cfg.FirstCheckPoint().Center() * Screen.width;
         float y = Screen.height + icon.sizeDelta.y * MainCanvas.Instance.GetScaleFactor / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.position = new Vector3(x, y, 0);
     }

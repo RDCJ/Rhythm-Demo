@@ -121,7 +121,7 @@ public class CompositionDisplay : MonoBehaviour
         NoteCfg cfg = notes[index].cfg;
 
         float drop_speed = GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale;
-        float x = window_size.x * (float)cfg.FirstCheckPoint().position_x;
+        float x = window_size.x * (float)cfg.FirstCheckPoint().Center();
         float y = drop_speed * (float)(cfg.FirstCheckPoint().time - CompositionEditor.Instance.GetTimeOffset) - content_trans.sizeDelta.y;
         if (cfg.note_type == (int)Note.NoteType.Hold)
         {
