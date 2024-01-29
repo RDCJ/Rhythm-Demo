@@ -5,16 +5,41 @@ using UnityEngine;
 
 public class GameConst
 {
-    public static float editor_drop_speed = 300;
-    public static float drop_speed = 1200;
-    public static float judge_line_y = 0.167f;
-    
-    public static float perfect_interval = 0.06f;
-    public static float good_interval = 0.10f;
-    public static float active_interval = 0.20f;
+    public static GameCFG gameCFG = Resources.Load<GameCFG>("GameCFG");
 
-    public static float total_score = 1000000;
-    public static float basic_score_percent = 0.9f;
+    /// <summary>
+    /// 谱面编辑器的基础下落速度
+    /// </summary>
+    public static float editor_drop_speed => gameCFG.editor_drop_speed;
+    /// <summary>
+    /// 正常游戏的基础下落速度
+    /// </summary>
+    public static float drop_speed => gameCFG.drop_speed;
+    /// <summary>
+    /// 判定线的位置
+    /// </summary>
+    public static float judge_line_y => gameCFG.judge_line_y;
+    /// <summary>
+    /// perfect判定区间
+    /// </summary>
+    public static float perfect_interval => gameCFG.perfect_interval;
+    /// <summary>
+    /// good判定区间
+    /// </summary>
+    public static float good_interval => gameCFG.good_interval;
+    /// <summary>
+    /// bad判定区间
+    /// </summary>
+    public static float active_interval => gameCFG.active_interval;
+    /// <summary>
+    /// 游戏总分
+    /// </summary>
+    public static float total_score => gameCFG.total_score;
+    /// <summary>
+    /// 基础得分占比
+    /// </summary>
+    public static float basic_score_percent => gameCFG.basic_score_percent;
+
     public static float basic_score 
     { 
         get => total_score * basic_score_percent;
