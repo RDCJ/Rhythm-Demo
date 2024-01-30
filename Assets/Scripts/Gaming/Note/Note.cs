@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 namespace Note
 {
@@ -54,6 +55,15 @@ namespace Note
         {
             rectTransform = this.GetComponent<RectTransform>();
             collider = this.GetComponent<BoxCollider2D>();
+#if UNITY_EDITOR
+            Image touch_img = this.GetComponent<Image>();
+            if (GameConst.note_show_touch_area)
+            {
+                var color = touch_img.color;
+                color.a = 0.5f;
+                touch_img.color = color;
+            }
+#endif
         }
 
         protected virtual void Start()

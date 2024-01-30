@@ -79,7 +79,9 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             Debug.Log("arguement error");
     }
 
-    // 设置高度
+    /// <summary>
+    /// 设置高度
+    /// </summary>
     public void RefreshHeight()
     {
         Vector2 v = rect.sizeDelta;

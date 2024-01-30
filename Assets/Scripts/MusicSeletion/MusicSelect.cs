@@ -26,8 +26,7 @@ public class MusicSelect : MonoBehaviour
             MusicListContent content =
             (MusicListContent)_list.ListBank.GetListContent(current_id);
             GameMgr new_game = Instantiate(game_mgr, transform.parent).GetComponent<GameMgr>();
-            new_game.SetMusic(content.music_id.ToString(), GameConst.DifficultyIndex[difficulty.value]);
-
+            new_game.SetMusic(content.music_name, GameConst.DifficultyIndex[difficulty.value]);
         });
     }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using System.Reflection;
 
 public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
 {
@@ -61,11 +62,16 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     }
 
 
-    public void LoadAudio(int index)
+    public void LoadAudio(string music_file_name)
     {
-        audioClip = MusicResMgr.GetMusic(index);
-        audioSource.clip = audioClip;
-        _rawImage.texture = BakeAudioWaveform();
+        StartCoroutine(
+            MusicResMgr.GetMusic(music_file_name, (AudioClip clip) =>
+            {
+                audioClip = clip;
+                audioSource.clip = audioClip;
+                _rawImage.texture = BakeAudioWaveform();
+            })
+        );
     }
 
     /// <summary>

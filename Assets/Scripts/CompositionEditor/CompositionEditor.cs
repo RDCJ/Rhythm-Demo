@@ -65,10 +65,12 @@ public class CompositionEditor : MonoBehaviour
 
         vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
 
+        // 难度选项
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
-        foreach (KeyValuePair<int, string> keyValue in MusicResMgr.MusicIndex2Name)
-            music_list.options.Add(new Dropdown.OptionData(keyValue.Value));
+        // 音乐选项
+        foreach (var music_file_name in MusicResMgr.music_list.Keys)
+            music_list.options.Add(new Dropdown.OptionData(music_file_name));
 
         cfg_panel_music_name.onValueChanged.AddListener((string value) => {
             music_cfg.music_name = value;
@@ -123,7 +125,8 @@ public class CompositionEditor : MonoBehaviour
         });
 
         music_confirm_btn.onClick.AddListener(() => {
-            LoadMusic(music_list.value + 1);
+            int idx = music_list.value;
+            LoadMusic(music_list.options[idx].text);
             music_select.gameObject.SetActive(false);
         });
 
@@ -146,13 +149,13 @@ public class CompositionEditor : MonoBehaviour
         
     }
 
-    private void LoadMusic(int index)
+    private void LoadMusic(string music_file_name)
     {
         // 加载音频
-        AudioWaveForm.Instance.LoadAudio(index);
+        AudioWaveForm.Instance.LoadAudio(music_file_name);
 
         // 加载配置信息
-        music_cfg = MusicCfg.GetCfg(index.ToString());
+        music_cfg = MusicResMgr.GetCfg(music_file_name);
         cfg_panel_music_name.text = music_cfg.music_name;
         music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
         cfg_panel_bpm.text = music_cfg.BPM.ToString();

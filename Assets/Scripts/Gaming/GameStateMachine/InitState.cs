@@ -14,7 +14,6 @@ public class InitState : GameBaseState
         base.EnterState();
         Debug.Log("enter InitState");
         gameMgr.Init();
-        stateMachine.ChangeState(gameMgr.prepareState);
     }
 
     public override void ExitState()

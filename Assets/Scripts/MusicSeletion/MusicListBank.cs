@@ -28,9 +28,9 @@ public class MusicListBank : BaseListBank
     private void Awake()
     {
         _contents = new List<MusicListContent>();
-        foreach (var k in MusicResMgr.MusicIndex2Name.Keys)
+        foreach (var k in MusicResMgr.music_list.Keys)
         {
-            MusicCfg cfg = MusicCfg.GetCfg(k.ToString());
+            MusicCfg cfg = MusicResMgr.GetCfg(k);
             _contents.Add(new MusicListContent(cfg));
         }
     }
@@ -39,13 +39,11 @@ public class MusicListBank : BaseListBank
 [Serializable]
 public class MusicListContent : IListContent
 {
-    public int music_id;
     public string music_name;
     public string music_author;
 
     public MusicListContent(MusicCfg cfg)
     {
-        music_id = int.Parse(cfg.music_id);
         music_author = cfg.author;
         music_name = cfg.music_name;
     }

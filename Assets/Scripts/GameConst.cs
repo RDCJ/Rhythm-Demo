@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class GameConst
 {
-    public static GameCFG gameCFG = Resources.Load<GameCFG>("GameCFG");
-
+    public static GameCFG gameCFG;
     /// <summary>
     /// 谱面编辑器的基础下落速度
     /// </summary>
@@ -28,7 +27,7 @@ public class GameConst
     /// </summary>
     public static float good_interval => gameCFG.good_interval;
     /// <summary>
-    /// bad判定区间
+    /// 可判定区间
     /// </summary>
     public static float active_interval => gameCFG.active_interval;
     /// <summary>
@@ -39,6 +38,10 @@ public class GameConst
     /// 基础得分占比
     /// </summary>
     public static float basic_score_percent => gameCFG.basic_score_percent;
+    /// <summary>
+    /// 显示判定区域 [编辑器中有效]
+    /// </summary>
+    public static bool note_show_touch_area=> gameCFG.note_show_touch_area;
 
     public static float basic_score 
     { 
@@ -80,7 +83,7 @@ public class GameConst
 public class FileConst
 {
     public static string resources_path = Application.dataPath + "/Resources/";
-    public static string music_data_path = "MusicsData/";
+    public static string music_data_path = "MusicsData";
 
     public static string tap_prefab_path = "Prefabs/Note/TapNote";
     public static string leftslide_prefab_path = "Prefabs/Note/SlideLeftNote";
@@ -91,5 +94,7 @@ public class FileConst
     public static string perfect_effect_prefab_path = "Prefabs/Effect/Perfect";
     public static string good_effect_prefab_path = "Prefabs/Effect/Good";
     public static string bad_effect_prefab_path = "Prefabs/Effect/Bad";
+
+    public static string music_cfg_file_name = "music_cfg";
 
 }

@@ -25,41 +25,10 @@ namespace Music
             composition = new Dictionary<string, List<NoteCfg>>();
         }
 
-        public MusicCfg(int music_id)
+        public MusicCfg(string music_name)
         {
-            this.music_id = music_id.ToString();
-            music_name = MusicResMgr.MusicIndex2Name[music_id];
+            this.music_name = music_name;
             composition = new Dictionary<string, List<NoteCfg>>();
-        }
-
-        public static MusicCfg GetCfg(string music_id)
-        {
-            string path = Application.persistentDataPath + "/" + FileConst.music_data_path + music_id;
-            if (!path.EndsWith(".json"))
-                path = path + ".json";
-            if (File.Exists(path))
-            {
-                string js = File.ReadAllText(path);
-                return JsonMapper.ToObject<MusicCfg>(js);
-            }
-            else
-                return new MusicCfg(int.Parse(music_id));
-        }
-
-        public static string GetCfgNameByID(string id)
-        {
-            string[] files = Directory.GetFiles(FileConst.music_data_path);
-            // 获取当前文件夹下所有文件的路径
-            foreach (string file in files)
-            {
-                string file_name = Path.GetFileName(file);
-                // 检查文件名是否具有特定前缀
-                if (file_name.StartsWith(id) && !file_name.EndsWith(".meta"))
-                {
-                    return file_name;
-                }
-            }
-            return null;
         }
 
         public List<NoteCfg> GetComposition(string difficulty)
@@ -105,7 +74,13 @@ namespace Music
     [Serializable]
     public class NoteCfg
     {
+        /// <summary>
+        /// note类型
+        /// </summary>
         public int note_type;
+        /// <summary>
+        /// 判定点
+        /// </summary>
         public List<CheckPoint> checkPoints;
         public CheckPoint FirstCheckPoint()
         {
@@ -161,11 +136,23 @@ namespace Music
         }
     }
 
+    /// <summary>
+    /// 判定点
+    /// </summary>
     [Serializable]
     public class CheckPoint
     {
+        /// <summary>
+        /// 时间点
+        /// </summary>
         public double time;
+        /// <summary>
+        /// 判定点左端
+        /// </summary>
         public double position_l;
+        /// <summary>
+        /// 判定点右端
+        /// </summary>
         public double position_r;
         public CheckPoint() { }
         public CheckPoint(double time, double position_x)

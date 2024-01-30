@@ -1,4 +1,5 @@
 using DG.Tweening.Plugins.Core.PathCore;
+using LitJson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ public class Home : MonoBehaviour
 
     private void Awake()
     {
+        GameConst.gameCFG = Resources.Load<GameCFG>("GameCFG");
         play_btn = transform.Find("play_btn").GetComponent<Button>();
         editor_btn = transform.Find("editor_btn").GetComponent<Button>();
         play_btn.onClick.AddListener(() => {
@@ -42,79 +44,114 @@ public class Home : MonoBehaviour
     /// </summary>
     public void CheckExtractResource()
     {
-        bool isExists = Directory.Exists(Application.persistentDataPath + "/MusicsData");
-        if (isExists)
-        {
-            Debug.Log("跳过资源解包");
-            return;   //文件已经解压过了，自己可添加检查文件列表逻辑
-        }
-        StartCoroutine(OnExtractResource());    //启动释放协成 
+        StartCoroutine(
+            OnExtractResource(
+                () =>
+                {
+                    play_btn.interactable = false;
+                    editor_btn.interactable = false;
+                },
+                () =>
+                {
+                    play_btn.interactable = true;
+                    editor_btn.interactable = true;
+                    MusicResMgr.PersistentDataPathMusicList();
+                }
+           )
+            
+        );    //启动释放协成 
     }
 
-    IEnumerator OnExtractResource()
+    IEnumerator OnExtractResource(Action callback1=null, Action callback2=null)
     {
         Debug.Log("资源解包开始");
-        play_btn.interactable = false;
-        editor_btn.interactable = false;
+        callback1?.Invoke();
+       
         string dataPath = Application.persistentDataPath;  //数据目录
         string resPath = AppContentPath; //游戏包资源目录
-        if (Directory.Exists(dataPath))
+
+        string in_dir = System.IO.Path.Combine(resPath, FileConst.music_data_path);
+        string out_dir = System.IO.Path.Combine(dataPath, FileConst.music_data_path);
+        if (!Directory.Exists(out_dir))
         {
-            Directory.Delete(dataPath, true);
-            Debug.Log("删除目录: " + dataPath);
+            Directory.CreateDirectory(out_dir);
+            Debug.Log("新建目录: " + out_dir);
         }
 
-        Debug.Log("新建目录: " + dataPath);
-        Directory.CreateDirectory(dataPath);
-
-
-        string[] folders = new string[1] {"MusicsData" };
-        foreach (var folder in folders)
+        WWW _www = new WWW(resPath + "music_list.json");
+        yield return _www;
+        Dictionary<string, string> tmp_music_list;
+        if (_www.isDone && string.IsNullOrEmpty(_www.error))
         {
-            string in_dir = System.IO.Path.Combine(resPath, folder);
-            string out_dir = System.IO.Path.Combine(dataPath, folder);
-            if (!Directory.Exists(out_dir))
+            tmp_music_list = JsonMapper.ToObject<Dictionary<string, string>>(_www.text);
+        }
+        else
+        {
+            Debug.Log("music_list.json 解析失败");
+            yield break;
+        }
+
+        foreach (var kv in tmp_music_list)
+        {
+            string music_name = kv.Key;
+            string extension = kv.Value;
+            string in_music_folder = System.IO.Path.Combine(in_dir, music_name);
+            string out_music_folder = System.IO.Path.Combine(out_dir, music_name);
+            if (!Directory.Exists(out_music_folder))
             {
-                Directory.CreateDirectory(out_dir);
-                Debug.Log("新建目录: " + out_dir);
+                Directory.CreateDirectory(out_music_folder);
+                Debug.Log("新建目录: " + out_music_folder);
             }
-
-            List<string> files = new List<string>();
-            foreach (var key in MusicResMgr.MusicIndex2Name.Keys)
-                files.Add(in_dir + "/" + key.ToString() + ".json");
-
-            foreach (var in_file in files)
+            else
             {
-                Debug.Log("开始复制文件:" + in_file);
-                if (in_file.EndsWith(".meta")) continue;
-                string file_name = System.IO.Path.GetFileName(in_file);
-                string out_file = System.IO.Path.Combine(out_dir, file_name);
+                Debug.Log("资源已存在, 忽略本次复制: " + out_music_folder);
+                continue;
+            }
+            List<string> files = new List<string>
+            {
+                music_name + extension,
+                "music_cfg.json"
+            };
+
+            #region 复制文件
+            foreach (var file in files)
+            {
+                Debug.Log("开始复制文件: " + file);
+                if (file.EndsWith(".meta")) continue;
+                string in_file_path = System.IO.Path.Combine(in_music_folder, file);
+                string out_file_path = System.IO.Path.Combine(out_music_folder, file);
                 if (Application.platform == RuntimePlatform.Android)
                 {
-                    WWW www = new WWW(in_file);
+                    WWW www = new WWW(in_file_path);
                     yield return www;
 
                     if (www.isDone && string.IsNullOrEmpty(www.error))
                     {
-                        File.WriteAllBytes(out_file, www.bytes);
-                        Debug.Log("复制文件成功:" + out_file);
+                        File.WriteAllBytes(out_file_path, www.bytes);
+                        Debug.Log("复制文件成功: " + out_file_path);
+                    }
+                    else
+                    {
+                        Debug.Log("复制文件失败: " + out_file_path);
                     }
                     yield return 0;
                 }
                 else
                 {
-                    if (File.Exists(out_file))
+                    if (File.Exists(out_file_path))
                     {
-                        File.Delete(out_file);
+                        File.Delete(out_file_path);
                     }
-                    if (File.Exists(in_file))
-                        File.Copy(in_file, out_file, true);
+                    if (File.Exists(in_file_path))
+                        File.Copy(in_file_path, out_file_path, true);
                 }
                 yield return new WaitForEndOfFrame();
             }
+            #endregion
+
         }
-        play_btn.interactable = true;
-        editor_btn.interactable = true;
+
+        callback2?.Invoke();
         Debug.Log("资源解包结束");
     }
 
@@ -163,5 +200,4 @@ public class Home : MonoBehaviour
             return path;
         }
     }
-
 }
