@@ -73,11 +73,33 @@ namespace Note
 
         protected virtual void Update()
         {
+
             if (is_move)
             {
                 float x = rectTransform.position.x;
                 float y = rectTransform.position.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
                 rectTransform.position = new Vector2(x, y);
+            }
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            float distance_to_judge_line = rectTransform.position.y - Screen.width * GameConst.judge_line_y;
+            if (!IsActive)
+            {
+                if (distance_to_judge_line > 0 && distance_to_judge_line < DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval)
+                {
+                    state = NoteState.active;
+                    Debug.Log("note active");
+                }
+            }
+            else if (distance_to_judge_line < -DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval)
+            {
+                if (!IsJudged)
+                {
+                    Miss();
+                    Debug.Log("note miss");
+                }
             }
         }
 
@@ -107,7 +129,7 @@ namespace Note
         /// </summary>
         protected virtual void Resize()
         {
-            float touch_area_length = DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
+            float touch_area_length = DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2 / MainCanvas.Instance.GetScaleFactor;
             rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
             collider.size = rectTransform.sizeDelta;
         }
@@ -155,7 +177,7 @@ namespace Note
             GameMgr.Instance.continue_action -= Continue;
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+/*        private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.CompareTag("JudgeLine"))
             {
@@ -170,7 +192,7 @@ namespace Note
                 if (!IsJudged)
                     Miss();
             }
-        }
+        }*/
 
         public void PlayEffect(ScoreMgr.ScoreLevel scoreLevel)
         {

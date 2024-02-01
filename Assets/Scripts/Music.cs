@@ -11,7 +11,6 @@ namespace Music
     [Serializable]
     public class MusicCfg
     {
-        public string music_id;
         public string music_name;
         public string author;
         public double time;
@@ -55,9 +54,9 @@ namespace Music
         /// <summary>
         /// 
         /// </summary>
-        public void Save()
+        public void Save(string music_file_name)
         {
-            string folder_path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path);
+            string folder_path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path, music_file_name);
             if (!Directory.Exists(folder_path))
             {
                 //创建了一个路径为 path 文件夹的实例对象
@@ -65,7 +64,7 @@ namespace Music
                 // 创建目录
                 directoryInfo.Create();
             }
-            string filePath = Path.Combine(folder_path, music_id + ".json");
+            string filePath = Path.Combine(folder_path, FileConst.music_cfg_file_name + ".json");
             string json_txt = JsonMapper.ToJson(this);
             File.WriteAllText(filePath, json_txt);
         }

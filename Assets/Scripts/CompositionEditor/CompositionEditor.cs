@@ -42,6 +42,7 @@ public class CompositionEditor : MonoBehaviour
     Slider vertical_scale;
 
     string current_difficulty;
+    string current_music_file_name;
 
     private void Awake()
     {
@@ -155,6 +156,7 @@ public class CompositionEditor : MonoBehaviour
         AudioWaveForm.Instance.LoadAudio(music_file_name, () =>
         {
             // º”‘ÿ≈‰÷√–≈œ¢
+            current_music_file_name = music_file_name;
             music_cfg = MusicResMgr.GetCfg(music_file_name);
             cfg_panel_music_name.text = music_cfg.music_name;
             music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
@@ -186,7 +188,7 @@ public class CompositionEditor : MonoBehaviour
     {
         List<NoteCfg> composition = CompositionDisplay.Instance.GetComposition();
         music_cfg.CompositionSerialize(ref composition, current_difficulty);
-        music_cfg.Save();
+        music_cfg.Save(current_music_file_name);
     }
 
     #region Get data

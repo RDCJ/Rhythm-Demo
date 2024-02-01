@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1298617818742711718}
   m_Layer: 5
   m_Name: HoldNote
-  m_TagString: Untagged
+  m_TagString: Note
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
