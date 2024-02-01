@@ -28,6 +28,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     private RectTransform scroll_content_rect;
     private RectTransform slide_area_rect;
     Slider slider;
+    private Texture2D waveform_texture;
 
 
     private void Awake()
@@ -62,7 +63,7 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
     }
 
 
-    public void LoadAudio(string music_file_name)
+    public void LoadAudio(string music_file_name, Action callback=null)
     {
         StartCoroutine(
             MusicResMgr.GetMusic(music_file_name, (AudioClip clip) =>
@@ -70,6 +71,8 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
                 audioClip = clip;
                 audioSource.clip = audioClip;
                 _rawImage.texture = BakeAudioWaveform();
+
+                callback?.Invoke();
             })
         );
     }
@@ -116,14 +119,16 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
         Color backgroundColor = Color.black;
         Color waveformColor = Color.green;
         Color[] blank = new Color[width * height];
-        Texture2D texture = new Texture2D(width, height);
+        if (waveform_texture != null)
+            Destroy(waveform_texture);
+        waveform_texture = new Texture2D(width, height);
 
         for (int i = 0; i < blank.Length; ++i)
         {
             blank[i] = backgroundColor;
         }
 
-        texture.SetPixels(blank, 0);
+        waveform_texture.SetPixels(blank, 0);
 
         float xScale = (float)width / (float)waveForm.Length;
 
@@ -144,12 +149,12 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
 
             for (int y = startY; y <= endY; ++y)
             {
-                texture.SetPixel(x, y, waveformColor);
+                waveform_texture.SetPixel(x, y, waveformColor);
             }
         }
 
-        texture.Apply();
-        return texture;
+        waveform_texture.Apply();
+        return waveform_texture;
     }
 
 

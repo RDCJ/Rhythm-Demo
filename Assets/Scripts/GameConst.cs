@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameConst
 {
-    public static GameCFG gameCFG;
+    public static GameCFG gameCFG = Resources.Load<GameCFG>("GameCFG");
     /// <summary>
     /// 谱面编辑器的基础下落速度
     /// </summary>

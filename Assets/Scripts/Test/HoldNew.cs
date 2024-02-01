@@ -7,12 +7,16 @@ public class HoldNew : NoteBase, IPointerDownHandler
     private HoldPolygonImage touch_area;
     private HoldPolygonImage icon;
     Music.NoteCfg noteCfg;
+    private RectTransform head_handle;
+    private RectTransform tail_handle;
 
     protected override void Awake()
     {
         base.Awake();
         touch_area = this.GetComponent<HoldPolygonImage>();
         icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
+        head_handle = transform.Find("icon/head_handle") as RectTransform;
+        tail_handle = transform.Find("icon/tail_handle") as RectTransform;
 
         noteCfg = new Music.NoteCfg();
         /*        noteCfg.AddCheckPoint(1, 0.1);
@@ -44,7 +48,10 @@ public class HoldNew : NoteBase, IPointerDownHandler
         float drop_speed = 500;
         icon.SetCheckPoints(noteCfg.checkPoints, drop_speed);
         touch_area.SetCheckPoints(noteCfg.checkPoints, drop_speed, 40, 0.2f);
-
+        head_handle.localPosition = icon.HeadCenter;
+        head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, icon.HeadWidth / head_handle.localScale.x);
+        tail_handle.localPosition = icon.TailCenter;
+        tail_handle.sizeDelta = Util.ChangeV2(tail_handle.sizeDelta, 0, icon.TailWidth / tail_handle.localScale.x);
     }
 
     protected override void ResetPosition(float delta_time)

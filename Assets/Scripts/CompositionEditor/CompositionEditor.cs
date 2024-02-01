@@ -127,7 +127,6 @@ public class CompositionEditor : MonoBehaviour
         music_confirm_btn.onClick.AddListener(() => {
             int idx = music_list.value;
             LoadMusic(music_list.options[idx].text);
-            music_select.gameObject.SetActive(false);
         });
 
         vertical_scale.onValueChanged.AddListener((float value) => {
@@ -151,20 +150,25 @@ public class CompositionEditor : MonoBehaviour
 
     private void LoadMusic(string music_file_name)
     {
+        music_confirm_btn.interactable = false;
         // 加载音频
-        AudioWaveForm.Instance.LoadAudio(music_file_name);
+        AudioWaveForm.Instance.LoadAudio(music_file_name, () =>
+        {
+            // 加载配置信息
+            music_cfg = MusicResMgr.GetCfg(music_file_name);
+            cfg_panel_music_name.text = music_cfg.music_name;
+            music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
+            cfg_panel_bpm.text = music_cfg.BPM.ToString();
+            cfg_prepare_time.text = music_cfg.prepare_time.ToString();
+            cfg_time_offset.text = music_cfg.time_offset.ToString();
+            // 加载谱面
+            current_difficulty = GameConst.DifficultyIndex[0];
+            List<NoteCfg> composition = music_cfg.GetComposition(current_difficulty);
+            CompositionDisplay.Instance.LoadComposition(composition);
 
-        // 加载配置信息
-        music_cfg = MusicResMgr.GetCfg(music_file_name);
-        cfg_panel_music_name.text = music_cfg.music_name;
-        music_cfg.time = AudioWaveForm.Instance.GetAudioLength;
-        cfg_panel_bpm.text = music_cfg.BPM.ToString();
-        cfg_prepare_time.text = music_cfg.prepare_time.ToString();
-        cfg_time_offset.text = music_cfg.time_offset.ToString();
-        // 加载谱面
-        current_difficulty = GameConst.DifficultyIndex[0];
-        List<NoteCfg> composition = music_cfg.GetComposition(current_difficulty);
-        CompositionDisplay.Instance.LoadComposition(composition);
+            music_confirm_btn.interactable = true;
+            music_select.gameObject.SetActive(false);
+        });
     }
 
     private void ChangeDifficulty(int value)

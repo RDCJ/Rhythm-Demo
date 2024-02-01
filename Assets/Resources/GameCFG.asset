@@ -20,3 +20,4 @@ MonoBehaviour:
   active_interval: 0.2
   total_score: 1000000
   basic_score_percent: 0.9
+  note_show_touch_area: 0

@@ -37,11 +37,25 @@ public class HoldPolygonImage : Image
 
     public Vector3 TailCenter
     {
-        get 
+        get
         {
             int l = mesh_points.Length;
             return (mesh_points[l - 2] + mesh_points[l - 1]) * 0.5f;
          }
+    }
+
+    public float HeadWidth
+    {
+        get => mesh_points[1].x - mesh_points[0].x;
+    }
+
+    public float TailWidth
+    {
+        get
+        {
+            int l = mesh_points.Length;
+            return mesh_points[l - 1].x - mesh_points[l - 2].x;
+        }
     }
 
 
