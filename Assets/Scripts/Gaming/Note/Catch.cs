@@ -39,13 +39,6 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
         }
     }
 
-    protected override void Resize()
-    {
-        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * GameConst.good_interval * 2;
-        rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
-        collider.size = rectTransform.sizeDelta;
-    }
-
     private void Judge()
     {
         state = NoteState.Judged;
@@ -59,4 +52,13 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
         //
         NotePoolManager.Instance.ReturnObject(this);
     }
+
+    protected override float TouchAreaLength
+    {
+        get
+        {
+            return DropSpeedFix.GetScaledDropSpeed * GameConst.good_interval * 2 / MainCanvas.Instance.GetScaleFactor;
+        }
+    }
+       
 }

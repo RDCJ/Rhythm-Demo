@@ -30,7 +30,6 @@ namespace Note
 
         protected Music.NoteCfg cfg;
         protected RectTransform rectTransform;
-        protected BoxCollider2D collider;
 
         protected bool is_move;
         protected int finger_count;
@@ -54,7 +53,6 @@ namespace Note
         protected virtual void Awake()
         {
             rectTransform = this.GetComponent<RectTransform>();
-            collider = this.GetComponent<BoxCollider2D>();
 #if UNITY_EDITOR
             Image touch_img = this.GetComponent<Image>();
             if (GameConst.note_show_touch_area)
@@ -79,26 +77,23 @@ namespace Note
                 float x = rectTransform.position.x;
                 float y = rectTransform.position.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
                 rectTransform.position = new Vector2(x, y);
-            }
-        }
 
-        protected virtual void FixedUpdate()
-        {
-            float distance_to_judge_line = rectTransform.position.y - Screen.width * GameConst.judge_line_y;
-            if (!IsActive)
-            {
-                if (distance_to_judge_line > 0 && distance_to_judge_line < DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval)
+                float distance_to_judge_line = rectTransform.position.y - Screen.height * GameConst.judge_line_y;
+                // note进入判定区
+                if (!IsActive)
                 {
-                    state = NoteState.active;
-                    Debug.Log("note active");
+                    if (distance_to_judge_line > 0 && distance_to_judge_line < TouchAreaLength * 0.5f)
+                    {
+                        state = NoteState.active;
+                    }
                 }
-            }
-            else if (distance_to_judge_line < -DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval)
-            {
-                if (!IsJudged)
+                // note离开判定区
+                else if (distance_to_judge_line < - TouchAreaLength * 0.5f)
                 {
-                    Miss();
-                    Debug.Log("note miss");
+                    if (!IsJudged)
+                    {
+                        Miss();
+                    }
                 }
             }
         }
@@ -129,9 +124,7 @@ namespace Note
         /// </summary>
         protected virtual void Resize()
         {
-            float touch_area_length = DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2 / MainCanvas.Instance.GetScaleFactor;
-            rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
-            collider.size = rectTransform.sizeDelta;
+            rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, TouchAreaLength);
         }
 
         /// <summary>
@@ -177,28 +170,20 @@ namespace Note
             GameMgr.Instance.continue_action -= Continue;
         }
 
-/*        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (collision.CompareTag("JudgeLine"))
-            {
-                Activate();
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            if (collision.CompareTag("JudgeLine"))
-            {
-                if (!IsJudged)
-                    Miss();
-            }
-        }*/
 
         public void PlayEffect(ScoreMgr.ScoreLevel scoreLevel)
         {
             float x = this.transform.position.x;
             float y = JudgeLine.Instance.transform.position.y;
             EffectPlayer.Instance.PlayEffect(scoreLevel, new Vector3(x, y, 0));
+        }
+
+        protected virtual float TouchAreaLength
+        {
+            get 
+            { 
+                return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2 / MainCanvas.Instance.GetScaleFactor;
+            }
         }
     }
 }

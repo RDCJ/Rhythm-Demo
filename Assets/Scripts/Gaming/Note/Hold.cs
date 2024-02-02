@@ -80,11 +80,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     /// </summary>
     protected override void Resize()
     {
-        float touch_area_length = DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration()) / MainCanvas.Instance.GetScaleFactor;
-        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.Duration() / MainCanvas.Instance.GetScaleFactor;
-        rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, touch_area_length);
-        collider.size = rectTransform.sizeDelta;
+        base.Resize();
 
+        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.Duration() / MainCanvas.Instance.GetScaleFactor;
         icon.Resize(icon_length);
     }
 
@@ -116,4 +114,12 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         NotePoolManager.Instance.ReturnObject(this);
     }
 
+
+    protected override float TouchAreaLength
+    {
+        get
+        {
+            return DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration()) / MainCanvas.Instance.GetScaleFactor;
+        }
+    }
 }
