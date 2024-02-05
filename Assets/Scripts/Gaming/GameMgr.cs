@@ -102,9 +102,9 @@ public class GameMgr : MonoBehaviour
         composition = new List<NoteCfg>();
         pause_btn = transform.Find("pause_btn").GetComponent<Button>();
         pause_panel = transform.Find("pause_panel").gameObject;
-        continue_btn = pause_panel.transform.Find("continue_btn").GetComponent<Button>();
-        restart_btn = pause_panel.transform.Find("restart_btn").GetComponent<Button>();
-        back_btn = pause_panel.transform.Find("back_btn").GetComponent<Button>();
+        continue_btn = pause_panel.transform.Find("btn/continue_btn").GetComponent<Button>();
+        restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
+        back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
         time_txt = transform.Find("time_txt").GetComponent<Text>();
 
         audioSource = transform.Find("music").GetComponent<AudioSource>();
@@ -136,7 +136,7 @@ public class GameMgr : MonoBehaviour
     void Start()
     {
         drop_duration = Screen.height * (1 - GameConst.judge_line_y) / DropSpeedFix.GetScaledDropSpeed;
-
+        Debug.Log("œ¬¬‰ ±º‰: " + drop_duration);
     }
 
     // Update is called once per frame
@@ -210,7 +210,7 @@ public class GameMgr : MonoBehaviour
             double next_drop_time = composition[current_note_idx].FirstCheckPoint().time - drop_duration;
             if (current_time < next_drop_time) break;
 
-            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
+            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time + " music time: " + audioSource.time);
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
             new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));
