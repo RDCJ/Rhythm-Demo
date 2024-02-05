@@ -32,5 +32,11 @@ public class EditorNote : MonoBehaviour
     private void Update()
     {
         outline.enabled = (NoteEditor.Instance.current_index == index);
+/*        if (cfg.note_type == 3)
+        {
+            var rect = this.GetComponent<RectTransform>();
+            Debug.Log(rect.anchoredPosition);
+        }*/
+
     }
 }

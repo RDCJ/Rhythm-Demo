@@ -20,15 +20,30 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     }
     #endregion
 
+    /// <summary>
+    /// 水平线预制体
+    /// </summary>
     public GameObject horizontal_line;
+    /// <summary>
+    /// 小节号文本预制体
+    /// </summary>
     public GameObject bar_order_txt;
+    /// <summary>
+    /// 小节号序列
+    /// </summary>
     public RectTransform bar_order_trans;
 
     private RectTransform rect;
 
     private int BPM;
+    /// <summary>
+    /// 每小节节拍数
+    /// </summary>
     private int beatPerBar;
     private int grid_density;
+    /// <summary>
+    /// 小节数量
+    /// </summary>
     private int bar_count;
 
     private void Awake()
@@ -97,9 +112,17 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         double time = this.GetNearestTime(eventData.position.y);
         double position = eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
         cfg.note_type = NoteEditor.Instance.GetNoteType;
-        cfg.AddCheckPoint(time, position);
+        
         if (cfg.note_type == (int)NoteType.Hold)
-            cfg.AddCheckPoint(time + NoteEditor.Instance.GetDuration * GetOneCellTime, position);
+        {
+            cfg.AddCheckPoint(time, position - 0.05f, position + 0.05f);
+            cfg.AddCheckPoint(time + GetOneCellTime, position - 0.05f, position + 0.05f);
+        }
+        else
+        {
+            cfg.AddCheckPoint(time, position);
+        }
+            
         CompositionDisplay.Instance.CreateNewNote(cfg);
     }
 
@@ -120,6 +143,9 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         return index * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
     }
 
+    /// <summary>
+    /// 一节拍时长
+    /// </summary>
     public float GetOneCellTime
     {
         get => 60.0f / this.BPM / this.grid_density;

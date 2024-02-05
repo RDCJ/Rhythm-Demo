@@ -13,11 +13,16 @@ using Music;
 /// </summary>
 public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
+    private HoldPolygonImage touch_area;
+    private HoldPolygonImage icon;
+    private RectTransform head_handle;
+    private RectTransform tail_handle;
+
     double start_time;
     double end_time;
     ScoreMgr.ScoreLevel start_judge_level;
     ScoreMgr.ScoreLevel end_judge_level;
-    HoldIcon icon;
+
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -63,11 +68,21 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         }
     }
 
+
     protected override void Awake()
     {
         base.Awake();
         type = NoteType.Hold;
-        icon= transform.Find("icon").GetComponent<HoldIcon>();
+        touch_area = this.GetComponent<HoldPolygonImage>();
+        icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
+        head_handle = transform.Find("icon/head_handle") as RectTransform;
+        tail_handle = transform.Find("icon/tail_handle") as RectTransform;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        Debug.Log(rectTransform.position);
     }
 
     public override void Init(NoteCfg _cfg, float delta_time)
@@ -76,21 +91,25 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     }
 
     /// <summary>
-    /// 根据下落时间调整长度，canvas scaler对实际的长度有影响
+    /// 
     /// </summary>
     protected override void Resize()
     {
-        base.Resize();
+        float drop_speed = DropSpeedFix.GetScaledDropSpeed / MainCanvas.Instance.GetScaleFactor;
+        icon.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width);
+        touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
 
-        float icon_length = DropSpeedFix.GetScaledDropSpeed * (float)cfg.Duration() / MainCanvas.Instance.GetScaleFactor;
-        icon.Resize(icon_length);
+        head_handle.localPosition = icon.HeadCenter;
+        head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, icon.HeadWidth / head_handle.localScale.x);
+        tail_handle.localPosition = icon.TailCenter;
+        tail_handle.sizeDelta = Util.ChangeV2(tail_handle.sizeDelta, 0, icon.TailWidth / tail_handle.localScale.x);
     }
 
     protected override void ResetPosition(float delta_time)
     {
-        float x = (float)cfg.FirstCheckPoint().Center() * Screen.width;
-        float y = Screen.height + icon.sizeDelta.y * MainCanvas.Instance.GetScaleFactor / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
-        rectTransform.position = new Vector3(x, y, 0);
+        float y = Screen.height + icon.Height * MainCanvas.Instance.GetScaleFactor / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        rectTransform.position = Util.ChangeV3(rectTransform.position, 1, y);
+        rectTransform.localPosition = Util.ChangeV3(rectTransform.localPosition, 0, 0);
     }
 
     private void EndJudge()

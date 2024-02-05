@@ -29,5 +29,8 @@ public class MainCanvas : MonoBehaviour
         Debug.Log("scaleFactor:" + canvas.scaleFactor);
     }
 
+    /// <summary>
+    /// canvasËõ·ÅÏµÊý
+    /// </summary>
     public float GetScaleFactor {  get { return canvas.scaleFactor; } }
 }

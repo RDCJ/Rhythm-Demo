@@ -24,4 +24,6 @@ public class GameCFG : ScriptableObject
     public float basic_score_percent;
     [Header("显示判定区域 [编辑器中有效]")]
     public bool note_show_touch_area;
+    [Header("Hold音符判定宽度延长")]
+    public float hold_touch_area_width_extend;
 }

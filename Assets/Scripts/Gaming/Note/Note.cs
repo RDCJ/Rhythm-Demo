@@ -120,7 +120,7 @@ namespace Note
         }
 
         /// <summary>
-        /// 调整点击区域和collider的大小
+        /// 调整点击区域的大小
         /// </summary>
         protected virtual void Resize()
         {

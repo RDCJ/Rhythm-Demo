@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Music;
+using Unity.IO.LowLevel.Unsafe;
 
 public class CompositionDisplay : MonoBehaviour
 {
@@ -125,13 +126,28 @@ public class CompositionDisplay : MonoBehaviour
         float y = drop_speed * (float)(cfg.FirstCheckPoint().time - CompositionEditor.Instance.GetTimeOffset) - content_trans.sizeDelta.y;
         if (cfg.note_type == (int)Note.NoteType.Hold)
         {
-            Vector2 sizeDelta = trans.sizeDelta;
-            sizeDelta.y = (float)cfg.Duration() * drop_speed;
-            trans.sizeDelta = sizeDelta;
+            var hold_icon = notes[index].GetComponent<HoldPolygonImage>();
+            hold_icon.SetCheckPoints(cfg.checkPoints, drop_speed, window_size.x);
 
-            y += sizeDelta.y * trans.localScale.y / 2.0f;
+            var head_handle = hold_icon.transform.Find("head_handle") as RectTransform;
+            var tail_handle = hold_icon.transform.Find("tail_handle") as RectTransform;
+            head_handle.localPosition = hold_icon.HeadCenter;
+            head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, hold_icon.HeadWidth / head_handle.localScale.x);
+            tail_handle.localPosition = hold_icon.TailCenter;
+            tail_handle.sizeDelta = Util.ChangeV2(tail_handle.sizeDelta, 0, hold_icon.TailWidth / tail_handle.localScale.x);
+
+            x = 0;
+            y += trans.sizeDelta.y * trans.localScale.y / 2.0f;
+
+            trans.anchoredPosition = Util.ChangeV2(trans.anchoredPosition, 0, x);
+            trans.localPosition = Util.ChangeV3(trans.localPosition, 1, y);
+            //trans.localPosition = new Vector3(x, y, 0);
         }
-        trans.localPosition = new Vector3(x, y, 0);
+        else
+        {
+            trans.localPosition = new Vector3(x, y, 0);
+        }
+        
     }
 
     public void RepaintAllNote()

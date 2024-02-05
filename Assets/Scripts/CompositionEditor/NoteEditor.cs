@@ -20,8 +20,6 @@ public class NoteEditor : MonoBehaviour
     #endregion
 
     Dropdown note_selection;
-    InputField hold_time;
-    
 
     public int current_index;
     NoteCfg current_note_cfg;
@@ -30,24 +28,12 @@ public class NoteEditor : MonoBehaviour
     {
         instance = this;
         note_selection = transform.Find("note_selection").GetComponent<Dropdown>();
-        hold_time = transform.Find("hold_time").GetComponent<InputField>();
-        
-
-        note_selection.onValueChanged.AddListener((int value) =>
-        {
-            hold_time.gameObject.SetActive(value == (int)NoteType.Hold);
-        });
-        
 
         LoadNoteSeletion();
         current_index = -1;
         current_note_cfg = new NoteCfg();
     }
 
-    private void Start()
-    {
-        hold_time.gameObject.SetActive(note_selection.value == (int)NoteType.Hold);
-    }
 
     private void Update()
     {
@@ -73,15 +59,6 @@ public class NoteEditor : MonoBehaviour
     public void RefreshEditor()
     {
         note_selection.value = current_note_cfg.note_type;
-        if (current_note_cfg.note_type == (int)NoteType.Hold)
-        {
-            hold_time.gameObject.SetActive(true);
-            hold_time.text = (current_note_cfg.Duration() / HorizontalGridLine.Instance.GetOneCellTime).ToString("N2");
-        }
-        else
-        {
-            hold_time.gameObject.SetActive(false);
-        }
     }
 
     /// <summary>
@@ -134,17 +111,12 @@ public class NoteEditor : MonoBehaviour
 
         if (current_note_cfg.note_type == (int)NoteType.Hold)
         {
-            current_note_cfg.AddCheckPoint(AudioWaveForm.Instance.GetCurrentAudioTime + GetDuration, 0.5);
+            current_note_cfg.AddCheckPoint(AudioWaveForm.Instance.GetCurrentAudioTime + HorizontalGridLine.Instance.GetOneCellTime, 0.5);
         }
     }
 
     public int GetNoteType
     {
         get => note_selection.value;
-    }
-
-    public float GetDuration
-    {
-        get => float.Parse(hold_time.text);
     }
 }

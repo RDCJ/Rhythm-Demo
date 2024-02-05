@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class HoldPolygonImage : Image
 {
-    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float width_extend=0, float head_time_offset=0) 
+    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float screen_width, float width_extend=0, float head_time_offset=0) 
     {
         if (checkPoints == null) 
         {
@@ -20,6 +20,7 @@ public class HoldPolygonImage : Image
             return;
         }
         checkpoint_count = checkPoints.Count;
+        this.screen_width = screen_width;
         GenerateMeshPoint(checkPoints, drop_speed, width_extend, head_time_offset);
         SetVerticesDirty();
 #if UNITY_EDITOR
@@ -29,12 +30,18 @@ public class HoldPolygonImage : Image
 
     private Vector3[] mesh_points;
     private int checkpoint_count;
-
+    private float screen_width;
+    /// <summary>
+    /// 第一个判定点的中心
+    /// </summary>
     public Vector3 HeadCenter
     {
         get => (mesh_points[0] + mesh_points[1]) * 0.5f;
     }
 
+    /// <summary>
+    /// 最后一个判定点的中心
+    /// </summary>
     public Vector3 TailCenter
     {
         get
@@ -44,11 +51,17 @@ public class HoldPolygonImage : Image
          }
     }
 
+    /// <summary>
+    /// 第一个判定点的宽度
+    /// </summary>
     public float HeadWidth
     {
         get => mesh_points[1].x - mesh_points[0].x;
     }
 
+    /// <summary>
+    /// 最后一个判定点的宽度
+    /// </summary>
     public float TailWidth
     {
         get
@@ -62,7 +75,8 @@ public class HoldPolygonImage : Image
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
-        
+        if (mesh_points == null) return;
+        if (mesh_points.Length <= 0) return;
         for (int i=0; i< checkpoint_count + 1; i++)
         {
             var vertices = new Vector3[]
@@ -125,16 +139,16 @@ public class HoldPolygonImage : Image
 
         //note起始端预留判定区
         var first_p = checkPoints[0];
-        mesh_points[0] = new(Screen.width * ((float)first_p.position_l - 0.5f) - width_extend, current_h);
-        mesh_points[1] = new(Screen.width * ((float)first_p.position_r - 0.5f) + width_extend, current_h);
+        mesh_points[0] = new(screen_width * ((float)first_p.position_l - 0.5f) - width_extend, current_h);
+        mesh_points[1] = new(screen_width * ((float)first_p.position_r - 0.5f) + width_extend, current_h);
         current_h += head_time_offset * drop_speed;
 
         //icon区域
         for (int i=0; i<checkpoint_count; i++)
         {
             var p1 = checkPoints[i];
-            mesh_points[i * 2 + 2] = new(Screen.width * ((float)p1.position_l - 0.5f) - width_extend, current_h);
-            mesh_points[i * 2 + 3] = new(Screen.width * ((float)p1.position_r - 0.5f) + width_extend, current_h);
+            mesh_points[i * 2 + 2] = new(screen_width * ((float)p1.position_l - 0.5f) - width_extend, current_h);
+            mesh_points[i * 2 + 3] = new(screen_width * ((float)p1.position_r - 0.5f) + width_extend, current_h);
             if (i < checkpoint_count - 1)
             {
                 var p2 = checkPoints[i + 1];
@@ -146,8 +160,8 @@ public class HoldPolygonImage : Image
         //note末尾端预留判定区
         current_h += head_time_offset * drop_speed;
         var last_p = checkPoints[checkpoint_count - 1];
-        mesh_points[(checkpoint_count + 2) * 2 - 2] = new(Screen.width * ((float)last_p.position_l - 0.5f) - width_extend, current_h);
-        mesh_points[(checkpoint_count + 2) * 2 - 1] = new(Screen.width * ((float)last_p.position_r - 0.5f) + width_extend, current_h);
+        mesh_points[(checkpoint_count + 2) * 2 - 2] = new(screen_width * ((float)last_p.position_l - 0.5f) - width_extend, current_h);
+        mesh_points[(checkpoint_count + 2) * 2 - 1] = new(screen_width * ((float)last_p.position_r - 0.5f) + width_extend, current_h);
         #endregion
 
         float rect_height = current_h;
@@ -175,5 +189,13 @@ public class HoldPolygonImage : Image
                     Vector3 p2 = mesh_points[i * 2 + 1] + transform.localPosition;
                     Debug.Log(p1 + " " + p2);
                 }*/
+    }
+
+    /// <summary>
+    /// rectTransform.sizeDelta.y
+    /// </summary>
+    public float Height
+    {
+        get => rectTransform.sizeDelta.y;
     }
 }
