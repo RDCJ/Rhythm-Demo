@@ -21,3 +21,4 @@ MonoBehaviour:
   total_score: 1000000
   basic_score_percent: 0.9
   note_show_touch_area: 0
+  hold_touch_area_width_extend: 50
