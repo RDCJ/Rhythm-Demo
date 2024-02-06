@@ -1,9 +1,11 @@
+using Note;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class EditorNote : MonoBehaviour
+public class EditorNote : MonoBehaviour, IDragHandler
 {
     [HideInInspector]
     public int index;
@@ -38,5 +40,18 @@ public class EditorNote : MonoBehaviour
             Debug.Log(rect.anchoredPosition);
         }*/
 
+    }
+
+    /// <summary>
+    /// 拖动，hold不支持
+    /// </summary>
+    /// <param name="eventData"></param>
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (this.cfg.note_type != (int)NoteType.Hold)
+        {
+            this.cfg = HorizontalGridLine.Instance.GetNoteCfgFromPointer(eventData, this.cfg.note_type);
+            CompositionDisplay.Instance.PaintNote(index);
+        }
     }
 }

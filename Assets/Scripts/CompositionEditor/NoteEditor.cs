@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Music;
 using Note;
+using UnityEngine.EventSystems;
 
 public class NoteEditor : MonoBehaviour
 {
@@ -37,8 +38,6 @@ public class NoteEditor : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F))
-            CreateNote();
         if (Input.GetKeyDown(KeyCode.Delete))
             DeleteNote();
     }
@@ -62,15 +61,6 @@ public class NoteEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// 
-    /// </summary>
-    public void CreateNote()
-    {
-        ToCfg();
-        current_index = CompositionDisplay.Instance.CreateNewNote(current_note_cfg);
-    }
-
-    /// <summary>
     /// 删除当前选中的note
     /// </summary>
     public void DeleteNote()
@@ -82,20 +72,6 @@ public class NoteEditor : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public void ResetNote()
-    {
-        if (current_index != -1)
-        {
-            DeleteNote();
-            CreateNote();
-        }
-    }
-
-
-
     public void LoadNote(int index, NoteCfg cfg)
     {
         current_index = index;
@@ -103,20 +79,13 @@ public class NoteEditor : MonoBehaviour
         RefreshEditor();
     }
 
-    private void ToCfg()
-    {
-        current_note_cfg = new NoteCfg();
-        current_note_cfg.note_type = note_selection.value;
-        current_note_cfg.AddCheckPoint(AudioWaveForm.Instance.GetCurrentAudioTime, 0.5);
-
-        if (current_note_cfg.note_type == (int)NoteType.Hold)
-        {
-            current_note_cfg.AddCheckPoint(AudioWaveForm.Instance.GetCurrentAudioTime + HorizontalGridLine.Instance.GetOneCellTime, 0.5);
-        }
-    }
-
     public int GetNoteType
     {
         get => note_selection.value;
+    }
+
+    public string GetNoteTypeStr
+    {
+        get => note_selection.options[note_selection.value].text;
     }
 }

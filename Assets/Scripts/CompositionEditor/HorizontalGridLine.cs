@@ -35,6 +35,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     private RectTransform rect;
 
+
     private int BPM;
     /// <summary>
     /// 每小节节拍数
@@ -108,11 +109,24 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        NoteCfg cfg = new NoteCfg();
+        // 点击时创建一个note
+        NoteCfg cfg = GetNoteCfgFromPointer(eventData, NoteEditor.Instance.GetNoteType);
+        CompositionDisplay.Instance.CreateNewNote(cfg);
+    }
+
+    /// <summary>
+    /// 根据当前pointer的位置创建一个cfg
+    /// </summary>
+    /// <param name="eventData"></param>
+    /// <param name="note_type"></param>
+    /// <returns></returns>
+    public NoteCfg GetNoteCfgFromPointer(PointerEventData eventData, int note_type)
+    {
+        NoteCfg cfg = new();
         double time = this.GetNearestTime(eventData.position.y);
         double position = eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
-        cfg.note_type = NoteEditor.Instance.GetNoteType;
-        
+        cfg.note_type = note_type;
+
         if (cfg.note_type == (int)NoteType.Hold)
         {
             cfg.AddCheckPoint(time, position - 0.05f, position + 0.05f);
@@ -122,15 +136,19 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         {
             cfg.AddCheckPoint(time, position);
         }
-            
-        CompositionDisplay.Instance.CreateNewNote(cfg);
+        return cfg;
     }
 
-    public float GetNearestTime(float y)
+    /// <summary>
+    /// 获取离y最近的水平线的index
+    /// </summary>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public int GetNearestLineIndex(float y)
     {
         int index = -1;
         float min_delta = float.MaxValue;
-        for (int i=0; i<transform.childCount; ++i)
+        for (int i = 0; i < transform.childCount; ++i)
         {
             float delta = Mathf.Abs(transform.GetChild(i).position.y - y);
             if (delta < min_delta)
@@ -140,7 +158,28 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             }
             else break;
         }
-        return index * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
+        return index;
+    }
+
+    /// <summary>
+    /// 获取离y最近的水平线的position.y
+    /// </summary>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public float GetNearestLineY(float y)
+    {
+        int idx = GetNearestLineIndex(y);
+        return transform.GetChild(idx).position.y;
+    }
+
+    /// <summary>
+    /// 获取离y最近的水平线对应的时刻
+    /// </summary>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public float GetNearestTime(float y)
+    {
+        return GetNearestLineIndex(y) * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
     }
 
     /// <summary>
