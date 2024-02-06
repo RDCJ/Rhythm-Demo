@@ -60,6 +60,7 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         window_size = gameWindow.sizeDelta;
         AudioWaveForm.Instance.RegisterSliderValueChange(UpdatePosition);
+        preview_notes.gameObject.SetActive(true);
     }
 
     // Update is called once per frame
