@@ -26,6 +26,7 @@ public class ScoreMgr : MonoBehaviour
 
     #region component
     Text score_txt;
+    Text combo_txt;
     Transform final_score_panel;
     Text final_score_txt;
     Text final_acc_txt;
@@ -55,6 +56,7 @@ public class ScoreMgr : MonoBehaviour
     {
         instance = this;
         score_txt = transform.Find("score_txt").GetComponent<Text>();
+        combo_txt = transform.Find("combo_txt").GetComponent<Text>();
         final_score_panel = transform.Find("final_score_panel");
         final_score_txt = final_score_panel.Find("score_txt").GetComponent<Text>();
         final_acc_txt = final_score_panel.Find("accuracy").GetComponent<Text>();
@@ -78,6 +80,7 @@ public class ScoreMgr : MonoBehaviour
     {
         score = 0;
         score_txt.text = score.ToString().PadLeft(7, '0');
+        combo_txt.text = "0";
         this.note_count = note_count;
         basic_score_once = GameConst.basic_score / note_count;
         combo_score_point = GameConst.combo_score / ((1 + note_count) * note_count / 2);
@@ -120,6 +123,7 @@ public class ScoreMgr : MonoBehaviour
         score += basic_score + combo_score;
         int score_show = Mathf.RoundToInt(score);
         score_txt.text = (score_show).ToString().PadLeft(7, '0');
+        combo_txt.text = current_combo.ToString();
     }
 
     public float GetAccuracy()

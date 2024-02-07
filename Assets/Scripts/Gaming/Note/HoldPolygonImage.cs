@@ -7,6 +7,10 @@ using UnityEngine.UI;
 
 public class HoldPolygonImage : Image
 {
+    private Vector3[] mesh_points;
+    public int checkpoint_count;
+    private float screen_width;
+
     public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float screen_width, float width_extend=0, float head_time_offset=0) 
     {
         if (checkPoints == null) 
@@ -28,15 +32,34 @@ public class HoldPolygonImage : Image
 #endif
     }
 
-    private Vector3[] mesh_points;
-    private int checkpoint_count;
-    private float screen_width;
+    public Vector3 GetCheckPointCenter(int idx)
+    {
+        if (2 * idx + 1 < mesh_points.Length)
+            return (mesh_points[2 * idx] + mesh_points[2 * idx + 1]) * 0.5f;
+        else
+        {
+            Debug.Log("[HoldPolygonImage.CheckPointCenter] index is out of mesh_points.Length");
+            return Vector3.zero;
+        }
+    }
+
+    public float GetCheckPointWidth(int idx)
+    {
+        if (2 * idx + 1 < mesh_points.Length)
+            return mesh_points[2 * idx + 1].x - mesh_points[2 * idx].x;
+        else
+        {
+            Debug.Log("[HoldPolygonImage.CheckPointCenter] index is out of mesh_points.Length");
+            return 0;
+        }
+    }
+
     /// <summary>
     /// 第一个判定点的中心
     /// </summary>
     public Vector3 HeadCenter
     {
-        get => (mesh_points[0] + mesh_points[1]) * 0.5f;
+        get => GetCheckPointCenter(0);
     }
 
     /// <summary>
@@ -46,8 +69,8 @@ public class HoldPolygonImage : Image
     {
         get
         {
-            int l = mesh_points.Length;
-            return (mesh_points[l - 2] + mesh_points[l - 1]) * 0.5f;
+            int l = mesh_points.Length / 2 - 1;
+            return GetCheckPointCenter(l);
          }
     }
 
@@ -56,7 +79,7 @@ public class HoldPolygonImage : Image
     /// </summary>
     public float HeadWidth
     {
-        get => mesh_points[1].x - mesh_points[0].x;
+        get => GetCheckPointWidth(0);
     }
 
     /// <summary>
@@ -66,8 +89,8 @@ public class HoldPolygonImage : Image
     {
         get
         {
-            int l = mesh_points.Length;
-            return mesh_points[l - 1].x - mesh_points[l - 2].x;
+            int l = mesh_points.Length / 2 - 1;
+            return GetCheckPointWidth(l);
         }
     }
 

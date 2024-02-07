@@ -157,6 +157,7 @@ namespace Note
 
 
         public virtual void Miss() {
+            PlayEffect(ScoreMgr.ScoreLevel.bad);
             ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
             NotePoolManager.Instance.ReturnObject(this);
         }

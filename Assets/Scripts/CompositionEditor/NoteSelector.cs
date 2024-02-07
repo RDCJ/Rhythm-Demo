@@ -6,12 +6,12 @@ using Music;
 using Note;
 using UnityEngine.EventSystems;
 
-public class NoteEditor : MonoBehaviour
+public class NoteSelector : MonoBehaviour
 {
     #region Singleton
-    private NoteEditor() { }
-    private static NoteEditor instance;
-    public static NoteEditor Instance
+    private NoteSelector() { }
+    private static NoteSelector instance;
+    public static NoteSelector Instance
     {
         get
         {
@@ -55,7 +55,7 @@ public class NoteEditor : MonoBehaviour
             note_selection.options.Add(new Dropdown.OptionData(name));
     }
 
-    public void RefreshEditor()
+    public void Refresh()
     {
         note_selection.value = current_note_cfg.note_type;
     }
@@ -76,7 +76,7 @@ public class NoteEditor : MonoBehaviour
     {
         current_index = index;
         current_note_cfg = cfg;
-        RefreshEditor();
+        Refresh();
     }
 
     public int GetNoteType

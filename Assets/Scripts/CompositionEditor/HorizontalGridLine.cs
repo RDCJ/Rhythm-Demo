@@ -109,9 +109,12 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // 点击时创建一个note
-        NoteCfg cfg = GetNoteCfgFromPointer(eventData, NoteEditor.Instance.GetNoteType);
-        CompositionDisplay.Instance.CreateNewNote(cfg);
+        if (CompositionEditor.Instance.BPMHasValue)
+        {
+            // 点击时创建一个note
+            NoteCfg cfg = GetNoteCfgFromPointer(eventData, NoteSelector.Instance.GetNoteType);
+            CompositionDisplay.Instance.CreateNewNote(cfg);
+        }
     }
 
     /// <summary>
@@ -124,7 +127,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     {
         NoteCfg cfg = new();
         double time = this.GetNearestTime(eventData.position.y);
-        double position = eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
+        double position = GetPositionX(eventData);
         cfg.note_type = note_type;
 
         if (cfg.note_type == (int)NoteType.Hold)
@@ -180,6 +183,11 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     public float GetNearestTime(float y)
     {
         return GetNearestLineIndex(y) * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
+    }
+
+    public float GetPositionX(PointerEventData eventData)
+    {
+        return eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
     }
 
     /// <summary>

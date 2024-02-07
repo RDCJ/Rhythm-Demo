@@ -220,5 +220,10 @@ public class CompositionEditor : MonoBehaviour
     {
         get => vertical_scale.value * 2.5f + 0.5f;
     }
+
+    public bool BPMHasValue
+    {
+        get => music_cfg.BPM > 0;
+    }
     #endregion
 }

@@ -12,7 +12,7 @@ namespace Test
     {
         public void OnPointerClick(PointerEventData eventData)
         {
-            Debug.Log("OnPointerClick");
+            Debug.Log("OnPointerClick " + this.name);
         }
 
         // Start is called before the first frame update
