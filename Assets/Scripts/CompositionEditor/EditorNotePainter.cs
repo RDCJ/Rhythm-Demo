@@ -22,10 +22,12 @@ public class EditorNotePainter : MonoBehaviour, IDragHandler
         click_btn = this.GetComponent<Button>();
         outline = this.GetComponent<Outline>();
         rectTransform = this.GetComponent<RectTransform>();
-        click_btn.onClick.AddListener(() => {
-            NoteSelector.Instance.LoadNote(index, cfg);
-        });
-        
+        if (click_btn != null)
+        {
+            click_btn.onClick.AddListener(() => {
+                NoteSelector.Instance.LoadNote(index, cfg);
+            });
+        }
     }
 
     public void Set(int index, Music.NoteCfg cfg)
@@ -36,7 +38,8 @@ public class EditorNotePainter : MonoBehaviour, IDragHandler
 
     private void Update()
     {
-        outline.enabled = (NoteSelector.Instance.current_index == index);
+        if (outline != null)
+            outline.enabled = (NoteSelector.Instance.current_index == index);
 /*        if (cfg.note_type == 3)
         {
             var rect = this.GetComponent<RectTransform>();

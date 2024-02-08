@@ -43,6 +43,30 @@ public class HoldPolygonImage : Image
         }
     }
 
+    public Vector3 GetCheckPointLeft(int idx)
+    {
+        if (2 * idx + 1 < mesh_points.Length)
+            return mesh_points[2 * idx];
+        else
+        {
+            Debug.Log("[HoldPolygonImage.GetCheckPointLeft] index is out of mesh_points.Length");
+            return Vector3.zero;
+        }
+    }
+
+    public Vector3 GetCheckPointRight(int idx)
+    {
+        if (2 * idx + 1 < mesh_points.Length)
+            return mesh_points[2 * idx + 1];
+        else
+        {
+            Debug.Log("[HoldPolygonImage.GetCheckPointRight] index is out of mesh_points.Length");
+            return Vector3.zero;
+        }
+    }
+
+
+
     public float GetCheckPointWidth(int idx)
     {
         if (2 * idx + 1 < mesh_points.Length)

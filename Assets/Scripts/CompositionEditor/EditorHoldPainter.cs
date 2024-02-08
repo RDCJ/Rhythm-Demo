@@ -12,13 +12,17 @@ public class EditorHoldPainter : EditorNotePainter
     HoldPolygonImage hold_icon;
 
     List<CheckPointDrag> center_drags;
+    List<CheckPointDrag> left_drags;
+    List<CheckPointDrag> right_drags;
 
     protected override void Awake()
     {
         base.Awake();
-        hold_icon = this.GetComponent<HoldPolygonImage>();
+        hold_icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
         checkPointDrag = this.transform.Find("checkpoint_drag").gameObject;
         center_drags = new List<CheckPointDrag>();
+        left_drags = new List<CheckPointDrag>();
+        right_drags = new List<CheckPointDrag>();
     }
 
     public override void OnPaint()
@@ -30,11 +34,11 @@ public class EditorHoldPainter : EditorNotePainter
     private void RePaint()
     {
         float drop_speed = GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale;
-        PaintHold(rectTransform, cfg);
+        PaintHold(hold_icon.transform as RectTransform, cfg);
 
         float x = 0;
         float y = drop_speed * (float)(cfg.FirstCheckPoint().time - CompositionEditor.Instance.GetTimeOffset) - CompositionDisplay.Instance.ContentHeight;
-        y += rectTransform.sizeDelta.y * rectTransform.localScale.y / 2.0f;
+        y += hold_icon.rectTransform.sizeDelta.y * hold_icon.rectTransform.localScale.y / 2.0f;
 
         rectTransform.anchoredPosition = Util.ChangeV2(rectTransform.anchoredPosition, 0, x);
         rectTransform.localPosition = Util.ChangeV3(rectTransform.localPosition, 1, y);
@@ -57,26 +61,45 @@ public class EditorHoldPainter : EditorNotePainter
 
     private void SetCheckPointDrag()
     {
-        for (int i = 1; i <= hold_icon.checkpoint_count; i++)
+        void SetDrag(List<CheckPointDrag> list, CheckPointDrag.TYPE type, int index)
         {
             CheckPointDrag drag;
-            if (center_drags.Count < i)
+            if (list.Count < index)
             {
                 drag = Instantiate(checkPointDrag, transform).GetComponent<CheckPointDrag>();
-                drag.index = i - 1;
-                center_drags.Add(drag);
+                drag.index = index - 1;
+                drag.type = type;
+                list.Add(drag);
             }
             else
-                drag = center_drags[i - 1];
+                drag = list[index - 1];
 
             drag.gameObject.SetActive(true);
             RectTransform drag_tf = drag.rectTransform;
-            drag_tf.localPosition = hold_icon.GetCheckPointCenter(i);
+            switch (type)
+            {
+                case CheckPointDrag.TYPE.Center:
+                    drag_tf.localPosition = hold_icon.GetCheckPointCenter(index);
+                    break;
+                 case CheckPointDrag.TYPE.Left:
+                    drag_tf.localPosition = hold_icon.GetCheckPointLeft(index);
+                    break;
+                 case CheckPointDrag.TYPE.Right:
+                    drag_tf.localPosition = hold_icon.GetCheckPointRight(index);
+                    break;
+            }
             
+        }
+
+        for (int i = 1; i <= hold_icon.checkpoint_count; i++)
+        {
+            SetDrag(center_drags, CheckPointDrag.TYPE.Center, i);
+            SetDrag(left_drags, CheckPointDrag.TYPE.Left, i);
+            SetDrag(right_drags, CheckPointDrag.TYPE.Right, i);
         }
     }
 
-    public void OnCheckPointDrag(PointerEventData eventData, int index, RectTransform drag_tf)
+    public void OnCheckPointDragCenter(PointerEventData eventData, int index)
     {
         double time = HorizontalGridLine.Instance.GetNearestTime(eventData.position.y);
         if (index > 0)
@@ -91,9 +114,47 @@ public class EditorHoldPainter : EditorNotePainter
         }
         double new_center = HorizontalGridLine.Instance.GetPositionX(eventData);
         double width = cfg.checkPoints[index].position_r - cfg.checkPoints[index].position_l;
+
+        if (new_center - width * 0.5f < 0) return;
+        if (new_center + width * 0.5f > 1) return;
+
         cfg.checkPoints[index].time = time;
         cfg.checkPoints[index].position_l = new_center - width * 0.5f;
         cfg.checkPoints[index].position_r = new_center + width * 0.5f;
+        this.OnPaint();
+    }
+
+    public void OnCheckPointDragLeft(PointerEventData eventData, int index)
+    {
+        double x = HorizontalGridLine.Instance.GetPositionX(eventData);
+        if (x > 1 || x < 0) return;
+        if (x < cfg.checkPoints[index].position_r)
+        {
+            cfg.checkPoints[index].position_l = x;
+            this.OnPaint();
+        }
+    }
+
+    public void OnCheckPointDragRight(PointerEventData eventData, int index)
+    {
+        double x = HorizontalGridLine.Instance.GetPositionX(eventData);
+        if (x > 1 || x < 0) return;
+        if (x > cfg.checkPoints[index].position_l)
+        {
+            cfg.checkPoints[index].position_r = x;
+            this.OnPaint();
+        }
+    }
+
+    /// <summary>
+    /// 在最后一个检查点后添加一个新的检查点
+    /// </summary>
+    public void AddCheckPoint()
+    {
+        CheckPoint last_ckp = cfg.checkPoints[cfg.checkPoints.Count - 1];
+        CheckPoint new_ckp = new CheckPoint(last_ckp);
+        new_ckp.time = new_ckp.time + HorizontalGridLine.Instance.GetOneCellTime;
+        cfg.checkPoints.Add(new_ckp);
         this.OnPaint();
     }
 }
