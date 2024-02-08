@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// 检测拖动、点击事件，修改note_cfg
+/// </summary>
 public class CheckPointDrag : MonoBehaviour, IDragHandler, IPointerClickHandler
 {
     public enum TYPE
@@ -32,6 +35,10 @@ public class CheckPointDrag : MonoBehaviour, IDragHandler, IPointerClickHandler
         rectTransform = GetComponent<RectTransform>();
     }
 
+    /// <summary>
+    /// 拖动修改检测点的位置和宽度
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnDrag(PointerEventData eventData)
     {
         switch (type)
@@ -49,6 +56,10 @@ public class CheckPointDrag : MonoBehaviour, IDragHandler, IPointerClickHandler
         
     }
 
+    /// <summary>
+    /// 双击增加一个检查点
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
         float time_span = Time.time - last_click_time;

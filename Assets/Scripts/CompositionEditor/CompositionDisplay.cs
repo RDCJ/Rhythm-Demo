@@ -76,7 +76,7 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     // Update is called once per frame
     void Update()
     {
-       
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 
     /// <summary>
@@ -176,7 +176,6 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("[CompositionDisplay] OnPointerEnter");
         if (!CompositionEditor.Instance.BPMHasValue) return;
         if (preview_note != null)
             preview_note.gameObject.SetActive(true);
@@ -184,7 +183,6 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("[CompositionDisplay] OnPointerExit");
         if (!CompositionEditor.Instance.BPMHasValue) return;
         if (preview_note != null)
         {
