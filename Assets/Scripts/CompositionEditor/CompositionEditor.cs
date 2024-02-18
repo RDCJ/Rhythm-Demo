@@ -245,6 +245,8 @@ public class CompositionEditor : MonoBehaviour
         music_list.ClearOptions();
         foreach (var music_file_name in MusicResMgr.music_list.Keys)
             music_list.options.Add(new Dropdown.OptionData(music_file_name));
+        music_list.value = 0;
+        music_list.RefreshShownValue();
     }
 
     public void Open()
