@@ -6,6 +6,18 @@ using UnityEngine.UI;
 
 public class MusicCtrl : MonoBehaviour
 {
+    #region Singleton
+    private MusicCtrl() { }
+    private static MusicCtrl instance;
+    public static MusicCtrl Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+    #endregion
+
     Button play_btn;
     Button pause_btn;
     Button width_up_btn;
@@ -19,6 +31,7 @@ public class MusicCtrl : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
         play_btn = transform.Find("btn/play_btn").GetComponent<Button>();
         pause_btn = transform.Find("btn/pause_btn").GetComponent<Button>();
         width_up_btn = transform.Find("btn/width_up_btn").GetComponent<Button>();
@@ -54,8 +67,13 @@ public class MusicCtrl : MonoBehaviour
     private void Start()
     {
         AudioWaveForm.Instance.RegisterSliderValueChange((float value) => {
-            time_txt.text = new Times(AudioWaveForm.Instance.GetCurrentAudioTime) + " / " + new Times(AudioWaveForm.Instance.GetAudioLength);
+            RefreshTimeText();
         });
         speed_txt.text = AudioWaveForm.Instance.GetAudioPitch.ToString("F2");
+    }
+
+    public void RefreshTimeText()
+    {
+        time_txt.text = new Times(AudioWaveForm.Instance.GetCurrentAudioTime) + " / " + new Times(AudioWaveForm.Instance.GetAudioLength);
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using Music;
 using UnityEngine.UI;
 using System;
+using System.IO;
 
 public class CompositionEditor : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class CompositionEditor : MonoBehaviour
     Transform music_select;
     Dropdown music_list;
     Button music_confirm_btn;
+    Button import_music_btn;
+    Button open_res_folder_btn;
 
     Slider vertical_scale;
 
@@ -63,15 +66,13 @@ public class CompositionEditor : MonoBehaviour
         music_select = transform.Find("music_select");
         music_list = music_select.Find("music_list").GetComponent<Dropdown>();
         music_confirm_btn = music_select.Find("confirm_btn").GetComponent<Button>();
-
+        import_music_btn = music_select.Find("import_music_btn").GetComponent<Button>();
+        open_res_folder_btn = music_select.Find("open_res_folder_btn").GetComponent<Button>();
         vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
 
         // 难度选项
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
-        // 音乐选项
-        foreach (var music_file_name in MusicResMgr.music_list.Keys)
-            music_list.options.Add(new Dropdown.OptionData(music_file_name));
 
         cfg_panel_music_name.onValueChanged.AddListener((string value) => {
             music_cfg.music_name = value;
@@ -122,7 +123,7 @@ public class CompositionEditor : MonoBehaviour
 
         save_btn.onClick.AddListener(this.SaveMusicCfg);
         close_btn.onClick.AddListener(() => {
-            Destroy(this.gameObject);
+            this.Close();
         });
 
         music_confirm_btn.onClick.AddListener(() => {
@@ -130,17 +131,61 @@ public class CompositionEditor : MonoBehaviour
             LoadMusic(music_list.options[idx].text);
         });
 
+        import_music_btn.onClick.AddListener(() =>
+        {
+            UnityOpenWindowsFile.OpenFIleDialog(UnityOpenWindowsFile.FileType.Music, callback: (ofn) =>
+            {
+#if (UNITY_EDITOR || UNITY_STANDALONE_WIN)
+                string music_res_dir = Path.Combine(Application.persistentDataPath, FileConst.music_data_path);
+                string music_name = Path.GetFileNameWithoutExtension(ofn.file);
+                string out_music_folder = Path.Combine(music_res_dir, music_name);
+                if (!Directory.Exists(out_music_folder))
+                {
+                    Directory.CreateDirectory(out_music_folder);
+                    Debug.Log("新建目录: " + out_music_folder);
+                }
+                else
+                {
+                    Debug.Log("资源已存在, 忽略本次复制: " + out_music_folder);
+                    return;
+                }
+                string out_file_path = Path.Combine(out_music_folder, Path.GetFileName(ofn.file));
+                if (File.Exists(out_file_path))
+                {
+                    File.Delete(out_file_path);
+                }
+                if (File.Exists(ofn.file))
+                {
+                    File.Copy(ofn.file, out_file_path, true);
+                    RefreshMusicList();
+                    Debug.Log("导入音乐：" + out_file_path);
+                }
+#endif
+
+            });
+        });
+
+        open_res_folder_btn.onClick.AddListener(() =>
+        {
+            System.Diagnostics.Process.Start("explorer.exe", System.IO.Path.Combine(Application.persistentDataPath, FileConst.music_data_path));
+        });
+        if (Application.platform == RuntimePlatform.Android)
+            open_res_folder_btn.gameObject.SetActive(false);
+
+
         vertical_scale.onValueChanged.AddListener((float value) => {
             HorizontalGridLine.Instance.RefreshHeight();
             CompositionDisplay.Instance.RepaintAllNote();
         });
+        this.Close();
+        Debug.Log("editor init");
     }
 
-    // Start is called before the first frame update
-    void Start()
+
+    private void OnEnable()
     {
+        RefreshMusicList();
         music_select.gameObject.SetActive(true);
-        
     }
 
     // Update is called once per frame
@@ -170,6 +215,8 @@ public class CompositionEditor : MonoBehaviour
 
             music_confirm_btn.interactable = true;
             music_select.gameObject.SetActive(false);
+
+            MusicCtrl.Instance.RefreshTimeText();
         });
     }
 
@@ -189,6 +236,25 @@ public class CompositionEditor : MonoBehaviour
         List<NoteCfg> composition = CompositionDisplay.Instance.GetComposition();
         music_cfg.CompositionSerialize(ref composition, current_difficulty);
         music_cfg.Save(current_music_file_name);
+    }
+
+    private void RefreshMusicList()
+    {
+        // 音乐选项
+        MusicResMgr.PersistentDataPathMusicList();
+        music_list.ClearOptions();
+        foreach (var music_file_name in MusicResMgr.music_list.Keys)
+            music_list.options.Add(new Dropdown.OptionData(music_file_name));
+    }
+
+    public void Open()
+    {
+        this.gameObject.SetActive(true);
+    }
+
+    public void Close()
+    {
+        this.gameObject.SetActive(false);
     }
 
     #region Get data

@@ -30,7 +30,7 @@ public class Home : MonoBehaviour
         });
 
         editor_btn.onClick.AddListener(() => {
-            Instantiate(composition_editor, transform.parent);
+            CompositionEditor.Instance.Open();
         });
         if (Application.platform == RuntimePlatform.Android)
         {
