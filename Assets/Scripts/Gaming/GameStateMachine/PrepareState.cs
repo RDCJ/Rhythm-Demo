@@ -11,7 +11,7 @@ public class PrepareState: GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter PrepareState");
+        Debug.Log("enter PrepareState" + " current time: " + gameMgr.current_time + " Time.time: " + Time.time);
     }
 
     public override void ExitState()
@@ -22,11 +22,7 @@ public class PrepareState: GameBaseState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-        if (gameMgr.current_time >= 0)
-        {
-            stateMachine.ChangeState(gameMgr.playingState);
-        }
-        else
+        if (gameMgr.current_time < 0)
         {
             gameMgr.GenerateNote();
         }
@@ -35,5 +31,13 @@ public class PrepareState: GameBaseState
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+    }
+
+    public override void FrameLateUpdate()
+    {
+        if (gameMgr.current_time >= 0)
+        {
+            stateMachine.ChangeState(gameMgr.playingState);
+        }
     }
 }

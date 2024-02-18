@@ -11,7 +11,7 @@ public class PauseState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter PauseState");
+        Debug.Log("enter PauseState" + " current time: " + gameMgr.current_time + " Time.time: " + Time.time);
         gameMgr.Pause();
     }
 

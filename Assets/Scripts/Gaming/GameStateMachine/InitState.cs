@@ -12,7 +12,7 @@ public class InitState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter InitState");
+        Debug.Log("enter InitState" + " current time: " + gameMgr.current_time + " Time.time: " + Time.time);
         gameMgr.Init();
     }
 

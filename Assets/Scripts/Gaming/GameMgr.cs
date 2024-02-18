@@ -178,30 +178,35 @@ public class GameMgr : MonoBehaviour
         StartCoroutine(
             MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
             {
+                Debug.Log("finish loading music, Time.time: " + Time.time);
                 audioSource.clip = clip;
                 audioSource.time = 0;
                 audioSource.Stop();
-                if (!music_cfg.composition.ContainsKey(difficulty))
-                {
-                    Debug.Log("difficulty: " + difficulty + " is invalid");
-                }
-                else
-                {
-                    // 加载谱面
-                    composition = music_cfg.GetComposition(difficulty);
-                    note_count = composition.Count;
-                    // 初始化计分
-                    scoreMgr.Init(note_count);
-                    // 
-                    stateMachine.ChangeState(prepareState);
-                }
+                stateMachine.ChangeState(prepareState);
             })
         );
+        // 加载谱面
+        if (!music_cfg.composition.ContainsKey(difficulty))
+        {
+            Debug.Log("difficulty: " + difficulty + " is invalid");
+        }
+        else
+        {
+            composition = music_cfg.GetComposition(difficulty);
+            note_count = composition.Count;
+            // 初始化计分
+            scoreMgr.Init(note_count);
+        }
     }
 
     public void GenerateNote()
     {
-        current_time += Time.deltaTime;
+        if (current_time < 0)
+            current_time += Time.deltaTime;
+        else
+            current_time = audioSource.time;  
+        if (current_note_idx == 0)
+            Debug.Log(Time.deltaTime);
         if (IsNoteEnd) 
             return;
         while (true)
@@ -234,4 +239,9 @@ public class GameMgr : MonoBehaviour
         continue_action?.Invoke();
     }
     #endregion
+
+    private void LateUpdate()
+    {
+        stateMachine.CurrentState.FrameLateUpdate();
+    }
 }

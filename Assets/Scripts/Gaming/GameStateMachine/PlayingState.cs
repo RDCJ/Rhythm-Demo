@@ -11,7 +11,7 @@ public class PlayingState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter PlayingState");
+        Debug.Log("enter PlayingState" + " current time: " + gameMgr.current_time + " Time.time: " + Time.time);
         gameMgr.Continue();
     }
 

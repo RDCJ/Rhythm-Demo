@@ -82,7 +82,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void Update()
     {
         base.Update();
-        Debug.Log(rectTransform.position);
     }
 
     public override void Init(NoteCfg _cfg, float delta_time)

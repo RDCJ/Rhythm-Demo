@@ -20,4 +20,6 @@ public class GameBaseState
     public virtual void FrameUpdate() { }
 
     public virtual void PhysicsUpdate() { }
+
+    public virtual void FrameLateUpdate() { }
 }

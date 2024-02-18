@@ -11,7 +11,7 @@ public class RestartState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter RestartState");
+        Debug.Log("enter RestartState" + " current time: " + gameMgr.current_time + " Time.time: " + Time.time);
         NotePoolManager.Instance.Reload();
         stateMachine.ChangeState(gameMgr.initState);
 
