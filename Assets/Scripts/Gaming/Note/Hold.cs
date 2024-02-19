@@ -95,6 +95,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
                 hold_effect_time = hold_effect_cd;
             }
         }
+        Debug.Log(rectTransform.position + " " + rectTransform.localPosition);
     }
 
     /// <summary>
