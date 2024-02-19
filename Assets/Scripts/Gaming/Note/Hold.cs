@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using DG.Tweening;
 using Note;
 using Music;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// 长按
@@ -23,6 +24,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     ScoreMgr.ScoreLevel start_judge_level;
     ScoreMgr.ScoreLevel end_judge_level;
 
+    float hold_effect_time;
+    float hold_effect_cd = 0.2f;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -39,6 +42,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             {
                 state = NoteState.Judged;
                 Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
+                ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
                 NotePoolManager.Instance.ReturnObject(this);
             }
         }
@@ -77,6 +81,20 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
         head_handle = transform.Find("icon/head_handle") as RectTransform;
         tail_handle = transform.Find("icon/tail_handle") as RectTransform;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (IsHolding)
+        {
+            hold_effect_time -= Time.deltaTime;
+            if (hold_effect_time < 0)
+            {
+                PlayEffect(start_judge_level);
+                hold_effect_time = hold_effect_cd;
+            }
+        }
     }
 
     /// <summary>
@@ -129,5 +147,31 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         {
             return DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration()) / MainCanvas.Instance.GetScaleFactor;
         }
+    }
+
+
+    protected override float GetCenterXOnJudgeLine
+    {
+        get
+        {
+            double time = GameMgr.Instance.current_time;
+            int n = cfg.checkPoints.Count;
+            if (time < cfg.FirstCheckPoint().time)
+                return (float)cfg.FirstCheckPoint().Center() * Screen.width;
+            for (int i = 0; i < n - 1; i++)
+            {
+                var ckp1 = cfg.checkPoints[i];
+                var ckp2 = cfg.checkPoints[i + 1];
+                if (time >= ckp1.time && time <= ckp2.time)
+                {
+                    double k = (time - ckp1.time) / (ckp2.time - ckp1.time);
+                    double l = ckp1.position_l + k * (ckp2.position_l - ckp1.position_l);
+                    double r = ckp1.position_r + k * (ckp2.position_r - ckp1.position_r);
+                    return (float)(l + r) / 2 * Screen.width;
+                }
+            }
+            return (float)cfg.LastCheckPoint().Center() * Screen.width;
+        }
+        
     }
 }

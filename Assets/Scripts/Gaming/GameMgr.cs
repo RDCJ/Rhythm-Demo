@@ -182,7 +182,10 @@ public class GameMgr : MonoBehaviour
                 audioSource.clip = clip;
                 audioSource.time = 0;
                 audioSource.Stop();
-                stateMachine.ChangeState(prepareState);
+                DelayOneFrame(() =>
+                {
+                    stateMachine.ChangeState(prepareState);
+                });
             })
         );
         // ¼ÓÔØÆ×Ãæ
@@ -204,9 +207,9 @@ public class GameMgr : MonoBehaviour
         if (current_time < 0)
             current_time += Time.deltaTime;
         else
-            current_time = audioSource.time;  
-        if (current_note_idx == 0)
-            Debug.Log(Time.deltaTime);
+            current_time = audioSource.time;
+/*        if (current_note_idx == 0)
+            Debug.Log(Time.deltaTime);*/
         if (IsNoteEnd) 
             return;
         while (true)
@@ -243,5 +246,15 @@ public class GameMgr : MonoBehaviour
     private void LateUpdate()
     {
         stateMachine.CurrentState.FrameLateUpdate();
+    }
+
+    private void DelayOneFrame(Action action)
+    {
+        IEnumerator _DelayOneFrame()
+        {
+            yield return null;
+            action.Invoke();
+        }
+        StartCoroutine(_DelayOneFrame());
     }
 }

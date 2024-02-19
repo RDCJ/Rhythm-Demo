@@ -173,9 +173,17 @@ namespace Note
 
         public void PlayEffect(ScoreMgr.ScoreLevel scoreLevel)
         {
-            float x = this.transform.position.x;
-            float y = JudgeLine.Instance.transform.position.y;
-            EffectPlayer.Instance.PlayEffect(scoreLevel, new Vector3(x, y, 0));
+            float x = GetCenterXOnJudgeLine;
+            if (x >=0 && x <= Screen.width)
+            {
+                float y = JudgeLine.Instance.transform.position.y;
+                EffectPlayer.Instance.PlayEffect(scoreLevel, new Vector3(x, y, 0));
+            }
+            else
+            {
+                Debug.Log("[Note.PlayEffect] position_x is out of screen: " + x);
+            }
+            
         }
 
         protected virtual float TouchAreaLength
@@ -184,6 +192,11 @@ namespace Note
             { 
                 return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2 / MainCanvas.Instance.GetScaleFactor;
             }
+        }
+
+        protected virtual float GetCenterXOnJudgeLine
+        {
+            get => this.transform.position.x;
         }
     }
 }
