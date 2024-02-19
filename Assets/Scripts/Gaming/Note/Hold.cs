@@ -79,16 +79,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         tail_handle = transform.Find("icon/tail_handle") as RectTransform;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-    }
-
-    public override void Init(NoteCfg _cfg, float delta_time)
-    {
-        base.Init(_cfg, delta_time);
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -96,7 +86,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         float drop_speed = DropSpeedFix.GetScaledDropSpeed / MainCanvas.Instance.GetScaleFactor;
         icon.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width);
-        touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
+        touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
 
         head_handle.localPosition = icon.HeadCenter;
         head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, icon.HeadWidth / head_handle.localScale.x);

@@ -71,7 +71,6 @@ namespace Note
 
         protected virtual void Update()
         {
-
             if (is_move)
             {
                 float x = rectTransform.position.x;
