@@ -20,7 +20,8 @@ public class EditorNotePainter : MonoBehaviour, IDragHandler
     protected virtual void Awake()
     {
         click_btn = this.GetComponent<Button>();
-        outline = this.GetComponent<Outline>();
+        outline = this.GetComponentInChildren<Outline>();
+        //outline = this.GetComponent<Outline>();
         rectTransform = this.GetComponent<RectTransform>();
         if (click_btn != null)
         {

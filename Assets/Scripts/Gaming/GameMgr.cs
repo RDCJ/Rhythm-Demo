@@ -222,8 +222,8 @@ public class GameMgr : MonoBehaviour
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
             new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));
-/*            if (type != Note.NoteType.Hold)
-            new_note.Drop();*/
+           // if (type != Note.NoteType.Hold)
+                new_note.Drop();
             current_note_idx++;
         }
     }
