@@ -135,18 +135,19 @@ public class GameMgr : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        drop_duration = Screen.height * (1 - GameConst.judge_line_y) / DropSpeedFix.GetScaledDropSpeed;
+        drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / DropSpeedFix.GetScaledDropSpeed;
+        Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
         Debug.Log("下落时间: " + drop_duration);
     }
 
     // Update is called once per frame
     void Update()
     {
+        stateMachine.CurrentState.FrameUpdate();
         if (audioSource.clip != null)
         {
             time_txt.text = current_time.ToString("N2") + " / " + audioSource.clip.length.ToString("N2");
         }
-        stateMachine.CurrentState.FrameUpdate();
     }
 
     private void FixedUpdate()
@@ -218,7 +219,7 @@ public class GameMgr : MonoBehaviour
             double next_drop_time = composition[current_note_idx].FirstCheckPoint().time - drop_duration;
             if (current_time < next_drop_time) break;
 
-            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time + " music time: " + audioSource.time);
+            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
             new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));

@@ -41,4 +41,5 @@ public class JudgeLine : MonoBehaviour
     }
 
     public static float localPositionY { get => instance.transform.localPosition.y; }
+    public static float PositionY { get => instance.transform.position.y;}
 }
