@@ -73,9 +73,9 @@ namespace Note
         {
             if (is_move)
             {
-                float x = rectTransform.position.x;
-                float y = rectTransform.position.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
-                rectTransform.position = new Vector2(x, y);
+                float x = rectTransform.localPosition.x;
+                float y = rectTransform.localPosition.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
+                rectTransform.localPosition = new Vector3(x, y, 0);
 
                 float distance_to_judge_line = rectTransform.position.y - Screen.height * GameConst.judge_line_y;
                 // note进入判定区
@@ -132,9 +132,9 @@ namespace Note
         /// <param name="delta_time">用于修正生成时刻的偏差</param>
         protected virtual void ResetPosition(float delta_time)
         {
-            float x = (float)cfg.FirstCheckPoint().Center() * Screen.width;
-            float y = Screen.height + delta_time * DropSpeedFix.GetScaledDropSpeed;
-            rectTransform.position = new Vector2(x, y);
+            float x = (float)(cfg.FirstCheckPoint().Center() - 0.5f) * Screen.width / MainCanvas.GetScaleX;
+            float y = Screen.height / MainCanvas.GetScaleX / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+            rectTransform.localPosition = new Vector3(x, y, 0);
         }
 
         public virtual void Drop()

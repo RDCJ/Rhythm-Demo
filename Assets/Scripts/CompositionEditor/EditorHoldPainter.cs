@@ -49,7 +49,7 @@ public class EditorHoldPainter : EditorNotePainter
     {
         float drop_speed = GameConst.editor_drop_speed * CompositionEditor.Instance.GetVerticalScale;
         var hold_icon = note_trans.GetComponent<HoldPolygonImage>();
-        hold_icon.SetCheckPoints(cfg.checkPoints, drop_speed, CompositionDisplay.Instance.WindowWidth);
+        hold_icon.SetCheckPoints(cfg.checkPoints, drop_speed, CompositionDisplay.Instance.WindowWidth, 1);
 
         var head_handle = note_trans.Find("head_handle") as RectTransform;
         var tail_handle = note_trans.Find("tail_handle") as RectTransform;

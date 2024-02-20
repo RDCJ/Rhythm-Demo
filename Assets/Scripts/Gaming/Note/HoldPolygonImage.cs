@@ -11,7 +11,7 @@ public class HoldPolygonImage : Image
     public int checkpoint_count;
     private float screen_width;
 
-    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float screen_width, float width_extend=0, float head_time_offset=0) 
+    public void SetCheckPoints(List<Music.CheckPoint> checkPoints, float drop_speed, float screen_width, float canvas_scale, float width_extend=0, float head_time_offset=0) 
     {
         if (checkPoints == null) 
         {
@@ -25,7 +25,7 @@ public class HoldPolygonImage : Image
         }
         checkpoint_count = checkPoints.Count;
         this.screen_width = screen_width;
-        GenerateMeshPoint(checkPoints, drop_speed, width_extend, head_time_offset);
+        GenerateMeshPoint(checkPoints, drop_speed, canvas_scale, width_extend, head_time_offset);
         SetVerticesDirty();
 #if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(transform);
@@ -178,24 +178,30 @@ public class HoldPolygonImage : Image
     /// 根据cfg计算mesh
     /// RectTransform适应mesh大小
     /// </summary>
-    private void GenerateMeshPoint(List<Music.CheckPoint> checkPoints, float drop_speed, float width_extend, float head_time_offset)
+    private void GenerateMeshPoint(List<Music.CheckPoint> checkPoints, float drop_speed, float canvas_scale, float width_extend, float head_time_offset)
     {
+        void SetMeshPoint(int idx, Music.CheckPoint ckp, float current_h)
+        {
+            float width = screen_width * (float)(ckp.position_r - ckp.position_l);
+            float center_x = screen_width * (float)((ckp.position_l + ckp.position_r) / 2 - 0.5f) / canvas_scale;
+            mesh_points[idx * 2] = new(center_x - width / 2 - width_extend, current_h);
+            mesh_points[idx * 2 + 1] = new(center_x + width / 2 + width_extend, current_h);
+        }
+
         #region 以(0, 0)为原点计算mesh
         float current_h = 0;
         mesh_points = new Vector3[(checkpoint_count + 2) * 2];
 
         //note起始端预留判定区
         var first_p = checkPoints[0];
-        mesh_points[0] = new(screen_width * ((float)first_p.position_l - 0.5f) - width_extend, current_h);
-        mesh_points[1] = new(screen_width * ((float)first_p.position_r - 0.5f) + width_extend, current_h);
+        SetMeshPoint(0, first_p, current_h);
         current_h += head_time_offset * drop_speed;
 
         //icon区域
         for (int i=0; i<checkpoint_count; i++)
         {
             var p1 = checkPoints[i];
-            mesh_points[i * 2 + 2] = new(screen_width * ((float)p1.position_l - 0.5f) - width_extend, current_h);
-            mesh_points[i * 2 + 3] = new(screen_width * ((float)p1.position_r - 0.5f) + width_extend, current_h);
+            SetMeshPoint(i + 1, p1, current_h);
             if (i < checkpoint_count - 1)
             {
                 var p2 = checkPoints[i + 1];
@@ -207,8 +213,7 @@ public class HoldPolygonImage : Image
         //note末尾端预留判定区
         current_h += head_time_offset * drop_speed;
         var last_p = checkPoints[checkpoint_count - 1];
-        mesh_points[(checkpoint_count + 2) * 2 - 2] = new(screen_width * ((float)last_p.position_l - 0.5f) - width_extend, current_h);
-        mesh_points[(checkpoint_count + 2) * 2 - 1] = new(screen_width * ((float)last_p.position_r - 0.5f) + width_extend, current_h);
+        SetMeshPoint(checkpoint_count + 1, last_p, current_h);
         #endregion
 
         float rect_height = current_h;
