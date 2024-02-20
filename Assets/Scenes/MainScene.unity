@@ -1637,7 +1637,6 @@ GameObject:
   - component: {fileID: 1969953353}
   - component: {fileID: 1969953352}
   - component: {fileID: 1969953351}
-  - component: {fileID: 1969953350}
   m_Layer: 5
   m_Name: EditorCanvas
   m_TagString: Untagged
@@ -1645,18 +1644,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1969953350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1969953349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf804247a63c83046ab63b53c59516b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1969953351
 MonoBehaviour:
   m_ObjectHideFlags: 0
