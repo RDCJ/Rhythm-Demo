@@ -33,6 +33,8 @@ public class ScoreMgr : MonoBehaviour
     Text final_perfect_count;
     Text final_good_count;
     Text final_bad_count;
+    Text final_early_count;
+    Text final_late_count;
     Text extra_tag;
     Button restart_btn;
     Button back_btn;
@@ -48,6 +50,8 @@ public class ScoreMgr : MonoBehaviour
     int max_combo;
 
     int[] score_level_count;
+    int early_count;
+    int late_count;
 
     float judge_fix;
     #endregion
@@ -63,6 +67,8 @@ public class ScoreMgr : MonoBehaviour
         final_perfect_count = final_score_panel.Find("perfect_count").GetComponent<Text>();
         final_good_count = final_score_panel.Find("good_count").GetComponent<Text>();
         final_bad_count = final_score_panel.Find("bad_count").GetComponent<Text>();
+        final_early_count = final_score_panel.Find("early_count").GetComponent<Text>();
+        final_late_count = final_score_panel.Find("late_count").GetComponent<Text>();
         extra_tag = final_score_panel.Find("extra_tag").GetComponent<Text>();
         restart_btn = final_score_panel.Find("restart_btn").GetComponent<Button>();
         back_btn = final_score_panel.Find("back_btn").GetComponent<Button>();
@@ -87,6 +93,8 @@ public class ScoreMgr : MonoBehaviour
 
         current_combo = 0;
         max_combo = 0;
+        early_count = 0;
+        late_count = 0;
 
         score_level_count = new int[3] { 0, 0, 0 };
         JudgeLine.Instance.ChangeColor(2);
@@ -141,7 +149,6 @@ public class ScoreMgr : MonoBehaviour
 
     public void ShowFinalScore()
     {
-        
         score = Mathf.Round(score);
         float acc = GetAccuracy();
         Debug.Log("Score: " + score + " Accuracy: " + acc);
@@ -151,6 +158,8 @@ public class ScoreMgr : MonoBehaviour
         final_perfect_count.text = score_level_count[(int)ScoreLevel.perfect].ToString();
         final_good_count.text = score_level_count[(int)ScoreLevel.good].ToString();
         final_bad_count.text = score_level_count[(int)ScoreLevel.bad].ToString();
+        final_early_count.text = early_count.ToString();
+        final_late_count.text = late_count.ToString();
         if (score_level_count[(int)ScoreLevel.bad] > 0)
             extra_tag.gameObject.SetActive(false);
         else if (score_level_count[(int)ScoreLevel.good] > 0)
@@ -192,5 +201,13 @@ public class ScoreMgr : MonoBehaviour
             return ScoreLevel.good;
         else
             return ScoreLevel.bad;
+    }
+
+    public void CountEarlyOrLate(double click_time, double ref_time)
+    {
+        if (click_time + judge_fix > ref_time)
+            late_count += 1;
+        else if (click_time + judge_fix < ref_time)
+            early_count += 1;
     }
 }

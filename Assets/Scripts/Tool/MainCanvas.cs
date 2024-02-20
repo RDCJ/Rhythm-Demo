@@ -9,13 +9,11 @@ public class MainCanvas : MonoBehaviour
     public static MainCanvas Instance {  get { return instance; } }
     private MainCanvas() { }
 
-    Canvas canvas;
     CanvasScaler canvasScaler;
 
     private void Awake()
     {
         instance = this;
-        canvas = GetComponent<Canvas>();
         canvasScaler = GetComponent<CanvasScaler>();
     }
 
@@ -28,14 +26,12 @@ public class MainCanvas : MonoBehaviour
 #endif
 
         
-        Debug.Log("scaleFactor:" + canvas.scaleFactor);
+        Debug.Log("scaleFactorX :" + GetScaleX + " scaleFactorY: " + GetScaleY);
     }
 
     /// <summary>
     /// canvasËõ·ÅÏµÊý
     /// </summary>
-    public float GetScaleFactor {  get { return canvas.scaleFactor; } }
-
     public static float GetScaleX { get => Screen.width / instance.canvasScaler.referenceResolution.x; }
     public static float GetScaleY { get => Screen.height / instance.canvasScaler.referenceResolution.y; }
 }

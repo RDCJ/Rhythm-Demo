@@ -30,9 +30,10 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             start_time = GameMgr.Instance.current_time;
             Debug.Log("Hold start " + start_time);
 
-            start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time); ;
+            start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
             PlayEffect(start_judge_level);
 
+            ScoreMgr.Instance.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
             if (start_judge_level == ScoreMgr.ScoreLevel.bad)
             {
                 state = NoteState.Judged;
@@ -90,7 +91,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
                 hold_effect_time = hold_effect_cd;
             }
         }
-        Debug.Log(rectTransform.position + " " + rectTransform.localPosition);
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     /// </summary>
     protected override void Resize()
     {
-        float drop_speed = DropSpeedFix.GetScaledDropSpeed / MainCanvas.Instance.GetScaleFactor;
+        float drop_speed = DropSpeedFix.GetScaledDropSpeed;
         icon.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, MainCanvas.GetScaleX);
         touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, MainCanvas.GetScaleX, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
 
@@ -119,7 +119,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         state = NoteState.Judged;
         end_time = GameMgr.Instance.current_time;
-        end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.FirstCheckPoint().time + cfg.Duration());
+        end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
 
         Debug.Log("Hold end " + end_time);
         ScoreMgr.ScoreLevel level;
@@ -131,6 +131,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             level = ScoreMgr.ScoreLevel.good;
 
         Debug.Log("[判定] 类型: Hold, 结果: " + level);
+        ScoreMgr.Instance.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
         ScoreMgr.Instance.AddScore(level);
         PlayEffect(level);
         NotePoolManager.Instance.ReturnObject(this);
@@ -141,7 +142,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         get
         {
-            return DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration()) / MainCanvas.Instance.GetScaleFactor;
+            return DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration());
         }
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using UnityEditor;
 
 namespace Note
 {
@@ -77,7 +78,7 @@ namespace Note
                 float y = rectTransform.localPosition.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
                 rectTransform.localPosition = new Vector3(x, y, 0);
 
-                float distance_to_judge_line = rectTransform.position.y - Screen.height * GameConst.judge_line_y;
+                float distance_to_judge_line = rectTransform.localPosition.y - JudgeLine.localPositionY;
                 // note进入判定区
                 if (!IsActive)
                 {
@@ -186,11 +187,14 @@ namespace Note
             
         }
 
+        /// <summary>
+        /// 判定区域的长度
+        /// </summary>
         protected virtual float TouchAreaLength
         {
             get 
             { 
-                return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2 / MainCanvas.Instance.GetScaleFactor;
+                return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
             }
         }
 

@@ -27,9 +27,10 @@ public class GameCFG : ScriptableObject
 
     [Header("显示判定区域 [编辑器中有效]")]
     public bool note_show_touch_area;
-    [Header("note下落 [编辑器中有效]")]
-    public bool note_drop;
     [Header("hold_note下落 [编辑器中有效]")]
     public bool hold_note_drop;
+    [Header("其他note下落 [编辑器中有效]")]
+    public bool note_drop;
+    
 
 }

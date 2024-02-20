@@ -15,10 +15,12 @@ MonoBehaviour:
   editor_drop_speed: 300
   drop_speed: 1200
   judge_line_y: 0.167
-  perfect_interval: 0.06
+  perfect_interval: 0.05
   good_interval: 0.1
-  active_interval: 0.2
+  active_interval: 0.15
   total_score: 1000000
   basic_score_percent: 0.9
-  note_show_touch_area: 0
   hold_touch_area_width_extend: 50
+  note_show_touch_area: 0
+  hold_note_drop: 1
+  note_drop: 1

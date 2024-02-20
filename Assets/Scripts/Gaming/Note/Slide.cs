@@ -36,13 +36,14 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
         if (IsHolding && !IsJudged)
         {
             state = NoteState.Judged;
+            double current_time = GameMgr.Instance.current_time;
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
             ScoreMgr.ScoreLevel level;
 
             if ((slide_direction.x < 0) == (direciton == SlideDirection.Left))
             {
-                level = ScoreMgr.Instance.JudgeClickTime(GameMgr.Instance.current_time, cfg.FirstCheckPoint().time);
+                level = ScoreMgr.Instance.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);
                 //Debug.Log("sliding right " + eventData.position);
             }
             else
@@ -52,6 +53,7 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
             }
             Debug.Log("[判定] 类型: Slide, 结果: " + level);
             ScoreMgr.Instance.AddScore(level);
+            ScoreMgr.Instance.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
             PlayEffect(level);
 
             NotePoolManager.Instance.ReturnObject(this);

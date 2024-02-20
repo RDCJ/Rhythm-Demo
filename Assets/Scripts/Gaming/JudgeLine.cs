@@ -31,7 +31,7 @@ public class JudgeLine : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = Util.ChangeV3(transform.position, 1, Screen.height * GameConst.judge_line_y);
+        transform.localPosition = Util.ChangeV3(transform.localPosition, 1, Screen.height / MainCanvas.GetScaleX * (GameConst.judge_line_y - 0.5f));
         mask.gameObject.SetActive(true);
     }
 
@@ -39,4 +39,6 @@ public class JudgeLine : MonoBehaviour
     {
         line_img.color = colors[index];
     }
+
+    public static float localPositionY { get => instance.transform.localPosition.y; }
 }
