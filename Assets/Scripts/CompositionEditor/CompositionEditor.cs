@@ -43,6 +43,7 @@ public class CompositionEditor : MonoBehaviour
     Button open_res_folder_btn;
 
     Slider vertical_scale;
+    CanvasScaler canvasScaler;
 
     string current_difficulty;
     string current_music_file_name;
@@ -70,6 +71,7 @@ public class CompositionEditor : MonoBehaviour
         open_res_folder_btn = music_select.Find("open_res_folder_btn").GetComponent<Button>();
         vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
 
+        canvasScaler = transform.parent.GetComponent<CanvasScaler>();
         // 难度选项
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
@@ -292,6 +294,36 @@ public class CompositionEditor : MonoBehaviour
     public bool BPMHasValue
     {
         get => music_cfg.BPM > 0;
+    }
+
+    private float editorCanvasScale = -1;
+    public float EditorCanvasScale
+    {
+        get
+        {
+            if (editorCanvasScale < 0)
+            {
+                float reference_k = canvasScaler.referenceResolution.x / canvasScaler.referenceResolution.y;
+                float screen_k = Screen.width / Screen.height;
+                if (reference_k > screen_k)
+                    editorCanvasScale =  Screen.width / canvasScaler.referenceResolution.x;
+                else
+                    editorCanvasScale =  Screen.height / canvasScaler.referenceResolution.y;
+            }
+            return editorCanvasScale;
+
+
+        }
+    }
+
+    public float GameWindowRealWidth
+    {
+        get => CompositionDisplay.Instance.gameWindow.sizeDelta.x * EditorCanvasScale;
+    }
+
+    public float EditorRealWidth
+    {
+        get => canvasScaler.referenceResolution.x * EditorCanvasScale;
     }
     #endregion
 }

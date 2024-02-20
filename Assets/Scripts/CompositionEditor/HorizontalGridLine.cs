@@ -109,6 +109,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log(eventData.position + " " + GetPositionX(eventData));
         if (CompositionEditor.Instance.BPMHasValue)
         {
             // 点击时创建一个note
@@ -187,7 +188,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     public float GetPositionX(PointerEventData eventData)
     {
-        return eventData.position.x * 1920 / Screen.width / CompositionDisplay.Instance.gameWindow.sizeDelta.x;
+        return (eventData.position.x - (Screen.width -  CompositionEditor.Instance.EditorRealWidth) / 2) / CompositionEditor.Instance.GameWindowRealWidth;
     }
 
     /// <summary>

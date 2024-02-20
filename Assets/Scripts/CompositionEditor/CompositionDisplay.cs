@@ -214,7 +214,8 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
                 NoteCfg cfg = horizontal_grid_line.GetNoteCfgFromPointer(eventData, (int)Note.NoteType.Hold);
                 EditorHoldPainter.PaintHold(preview_note, cfg);
                 preview_note.anchoredPosition = Util.ChangeV2(preview_note.anchoredPosition, 0, 0);
-                preview_note.position = Util.ChangeV3(preview_note.position, 1, horizontal_grid_line.GetNearestLineY(eventData.position.y) + preview_note.sizeDelta.y * 0.5f);
+                preview_note.position = Util.ChangeV3(preview_note.position, 1, horizontal_grid_line.GetNearestLineY(eventData.position.y));
+                preview_note.anchoredPosition = Util.ChangeV2(preview_note.anchoredPosition, 1, preview_note.anchoredPosition.y + preview_note.sizeDelta.y * 0.5f);
             }
             else
             {
