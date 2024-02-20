@@ -46,6 +46,14 @@ public class GameConst
     /// Hold音符判定宽度延长
     /// </summary>
     public static float hold_touch_area_width_extend => gameCFG.hold_touch_area_width_extend;
+    /// <summary>
+    /// note下落 [编辑器中有效]
+    /// </summary>
+    public static bool note_drop => gameCFG.note_drop;
+    /// <summary>
+    /// hold_note下落 [编辑器中有效]
+    /// </summary>
+    public static bool hold_note_drop => gameCFG.hold_note_drop;
 
     public static float basic_score 
     { 

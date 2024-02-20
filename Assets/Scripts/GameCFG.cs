@@ -22,8 +22,14 @@ public class GameCFG : ScriptableObject
     public float total_score;
     [Header("基础得分占比")]
     public float basic_score_percent;
-    [Header("显示判定区域 [编辑器中有效]")]
-    public bool note_show_touch_area;
     [Header("Hold音符判定宽度延长")]
     public float hold_touch_area_width_extend;
+
+    [Header("显示判定区域 [编辑器中有效]")]
+    public bool note_show_touch_area;
+    [Header("note下落 [编辑器中有效]")]
+    public bool note_drop;
+    [Header("hold_note下落 [编辑器中有效]")]
+    public bool hold_note_drop;
+
 }

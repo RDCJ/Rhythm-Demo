@@ -222,8 +222,21 @@ public class GameMgr : MonoBehaviour
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
             new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));
-           // if (type != Note.NoteType.Hold)
-                new_note.Drop();
+#if UNITY_EDITOR
+            if (type == Note.NoteType.Hold)
+            {
+                if (GameConst.hold_note_drop)
+                    new_note.Drop();
+            }
+            else
+            {
+                if (GameConst.note_drop)
+                    new_note.Drop();
+            }
+#else
+            new_note.Drop();
+#endif
+
             current_note_idx++;
         }
     }
@@ -241,7 +254,7 @@ public class GameMgr : MonoBehaviour
         pause_panel.SetActive(false);
         continue_action?.Invoke();
     }
-    #endregion
+#endregion
 
     private void LateUpdate()
     {
