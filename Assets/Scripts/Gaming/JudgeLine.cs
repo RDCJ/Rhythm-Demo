@@ -28,10 +28,11 @@ public class JudgeLine : MonoBehaviour
         mask = transform.Find("mask").GetComponent<Image>();
     }
 
-    // Start is called before the first frame update
-    void Start()
+
+    public void Reset()
     {
         transform.localPosition = Util.ChangeV3(transform.localPosition, 1, Screen.height / MainCanvas.GetScaleX * (GameConst.judge_line_y - 0.5f));
+        ChangeColor(2);
         mask.gameObject.SetActive(true);
     }
 

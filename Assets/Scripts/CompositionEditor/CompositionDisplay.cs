@@ -149,7 +149,10 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void ClearNote()
     {
         foreach (var note in notes)
-            Destroy(note.gameObject);
+        {
+            if (note != null)
+                Destroy(note.gameObject);
+        }
         notes.Clear();
     }
 

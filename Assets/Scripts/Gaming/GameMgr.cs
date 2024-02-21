@@ -132,13 +132,6 @@ public class GameMgr : MonoBehaviour
         });
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / DropSpeedFix.GetScaledDropSpeed;
-        Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
-        Debug.Log("下落时间: " + drop_duration);
-    }
 
     // Update is called once per frame
     void Update()
@@ -200,6 +193,10 @@ public class GameMgr : MonoBehaviour
             note_count = composition.Count;
             // 初始化计分
             scoreMgr.Init(note_count);
+            JudgeLine.Instance.Reset();
+            drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / DropSpeedFix.GetScaledDropSpeed;
+            Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
+            Debug.Log("下落时间: " + drop_duration);
         }
     }
 

@@ -97,7 +97,6 @@ public class ScoreMgr : MonoBehaviour
         late_count = 0;
 
         score_level_count = new int[3] { 0, 0, 0 };
-        JudgeLine.Instance.ChangeColor(2);
         final_score_panel.gameObject.SetActive(false);
         judge_fix = JudgeFix.GetJudgeFix;
     }
