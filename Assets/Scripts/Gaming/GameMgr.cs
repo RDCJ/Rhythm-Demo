@@ -165,30 +165,17 @@ public class GameMgr : MonoBehaviour
     {
         pause_btn.gameObject.SetActive(true);
         pause_panel.gameObject.SetActive(false);
-        current_time = -music_cfg.prepare_time;
         current_note_idx = 0;
 
-        // 加载音乐
-        StartCoroutine(
-            MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
-            {
-                Debug.Log("finish loading music, Time.time: " + Time.time);
-                audioSource.clip = clip;
-                audioSource.time = 0;
-                audioSource.Stop();
-                DelayOneFrame(() =>
-                {
-                    stateMachine.ChangeState(prepareState);
-                });
-            })
-        );
-        // 加载谱面
+        // 加载资源
         if (!music_cfg.composition.ContainsKey(difficulty))
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
+            Destroy(this.gameObject);
         }
         else
         {
+            // 加载谱面
             composition = music_cfg.GetComposition(difficulty);
             note_count = composition.Count;
             // 初始化计分
@@ -197,7 +184,27 @@ public class GameMgr : MonoBehaviour
             drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / DropSpeedFix.GetScaledDropSpeed;
             Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
+
+            float first_note_time = (float)composition[0].checkPoints[0].time;
+            current_time = Mathf.Min(first_note_time - drop_duration, 0);
+
+            // 加载音乐
+            StartCoroutine(
+                MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
+                {
+                    Debug.Log("finish loading music, Time.time: " + Time.time);
+                    audioSource.clip = clip;
+                    audioSource.time = 0;
+                    audioSource.Stop();
+                    DelayOneFrame(() =>
+                    {
+                        stateMachine.ChangeState(prepareState);
+                    });
+                })
+            );
         }
+
+        
     }
 
     public void GenerateNote()
