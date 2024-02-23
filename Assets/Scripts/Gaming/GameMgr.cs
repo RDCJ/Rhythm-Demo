@@ -171,7 +171,7 @@ public class GameMgr : MonoBehaviour
         if (!music_cfg.composition.ContainsKey(difficulty))
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
-            Destroy(this.gameObject);
+            Close();
         }
         else
         {
@@ -280,5 +280,6 @@ public class GameMgr : MonoBehaviour
     {
         audioSource.Stop();
         this.gameObject.SetActive(false);
+        MusicSelect.Instance.RefreshRecord();
     }
 }

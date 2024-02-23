@@ -78,7 +78,7 @@ public class ScoreMgr : MonoBehaviour
         });
         back_btn.onClick.AddListener(() =>
         {
-            Destroy(GameMgr.Instance.gameObject);
+            GameMgr.Instance.Close();
         });
     }
 

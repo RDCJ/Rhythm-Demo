@@ -31,7 +31,7 @@ public class MusicListBank : BaseListBank
         foreach (var k in MusicResMgr.music_list.Keys)
         {
             MusicCfg cfg = MusicResMgr.GetCfg(k);
-            _contents.Add(new MusicListContent(cfg));
+            _contents.Add(new MusicListContent(cfg, k));
         }
     }
 }
@@ -39,11 +39,13 @@ public class MusicListBank : BaseListBank
 [Serializable]
 public class MusicListContent : IListContent
 {
+    public string music_file_name;
     public string music_name;
     public string music_author;
 
-    public MusicListContent(MusicCfg cfg)
+    public MusicListContent(MusicCfg cfg, string music_file_name)
     {
+        this.music_file_name = music_file_name;
         music_author = cfg.author;
         music_name = cfg.music_name;
     }
