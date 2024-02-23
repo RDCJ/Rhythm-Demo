@@ -19,6 +19,7 @@ public class JudgeLine : MonoBehaviour
 
     Image line_img;
     Image mask;
+    RectTransform rectTransform;
 
     Color[] colors = new Color[3] { Color.white, new(107f/255, 226f/255, 1, 1), new(228f/255, 228f/255, 135f/255, 1)};
     private void Awake()
@@ -26,12 +27,14 @@ public class JudgeLine : MonoBehaviour
         instance = this;
         line_img = GetComponent<Image>();
         mask = transform.Find("mask").GetComponent<Image>();
+        rectTransform = GetComponent<RectTransform>();
     }
 
 
     public void Reset()
     {
-        transform.localPosition = Util.ChangeV3(transform.localPosition, 1, Screen.height / MainCanvas.GetScaleX * (GameConst.judge_line_y - 0.5f));
+        rectTransform.localPosition = Util.ChangeV3(rectTransform.localPosition, 1, Screen.height * (GameConst.judge_line_y - 0.5f));
+        rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 0, Screen.width);
         ChangeColor(2);
         mask.gameObject.SetActive(true);
     }

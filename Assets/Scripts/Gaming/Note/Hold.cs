@@ -99,8 +99,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void Resize()
     {
         float drop_speed = DropSpeedFix.GetScaledDropSpeed;
-        icon.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, MainCanvas.GetScaleX);
-        touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, MainCanvas.GetScaleX, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
+        icon.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width);
+        touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
 
         head_handle.localPosition = icon.HeadCenter;
         head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, icon.HeadWidth / head_handle.localScale.x);
@@ -111,7 +111,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void ResetPosition(float delta_time)
     {
         float x = 0;
-        float y = Screen.height / MainCanvas.GetScaleX / 2 + icon.Height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        float y = Screen.height / 2 + icon.Height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.localPosition = new Vector2(x, y);
     }
 

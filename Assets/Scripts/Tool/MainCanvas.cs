@@ -9,12 +9,10 @@ public class MainCanvas : MonoBehaviour
     public static MainCanvas Instance {  get { return instance; } }
     private MainCanvas() { }
 
-    CanvasScaler canvasScaler;
 
     private void Awake()
     {
         instance = this;
-        canvasScaler = GetComponent<CanvasScaler>();
     }
 
     void Start()
@@ -24,14 +22,5 @@ public class MainCanvas : MonoBehaviour
 #else
         Application.targetFrameRate = 144;
 #endif
-
-        
-        Debug.Log("scaleFactorX :" + GetScaleX + " scaleFactorY: " + GetScaleY);
     }
-
-    /// <summary>
-    /// canvasËõ·ÅÏµÊý
-    /// </summary>
-    public static float GetScaleX { get => Screen.width / instance.canvasScaler.referenceResolution.x; }
-    public static float GetScaleY { get => Screen.height / instance.canvasScaler.referenceResolution.y; }
 }

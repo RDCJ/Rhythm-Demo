@@ -13,7 +13,7 @@ namespace Test
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log("OnPointerClick " + this.name);
-            transform.localPosition = Util.ChangeV3(transform.localPosition, 1, transform.localPosition.y + 1080 / 2);
+            transform.localPosition = Util.ChangeV3(transform.localPosition, 1, transform.localPosition.y + Screen.height / 2);
         }
 
         // Start is called before the first frame update

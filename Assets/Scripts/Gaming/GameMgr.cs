@@ -43,10 +43,6 @@ public class GameMgr : MonoBehaviour
     /// </summary>
     public Action continue_action;
     /// <summary>
-    /// 当前歌曲的id
-    /// </summary>
-    public string music_id;
-    /// <summary>
     /// 当前加载的音乐文件名
     /// </summary>
     public string music_file_name;
@@ -100,16 +96,19 @@ public class GameMgr : MonoBehaviour
     {
         instance = this;
         composition = new List<NoteCfg>();
-        pause_btn = transform.Find("pause_btn").GetComponent<Button>();
-        pause_panel = transform.Find("pause_panel").gameObject;
+        audioSource = transform.Find("music").GetComponent<AudioSource>();
+
+        Transform GameCanvas_tf = transform.Find("GameCanvas");
+        Transform UICanvas_tf = transform.Find("UICanvas");
+        pause_btn = UICanvas_tf.Find("pause_btn").GetComponent<Button>();
+        pause_panel = UICanvas_tf.Find("pause_panel").gameObject;
+        time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
+        scoreMgr = UICanvas_tf.Find("score_mgr").GetComponent<ScoreMgr>();
+
         continue_btn = pause_panel.transform.Find("btn/continue_btn").GetComponent<Button>();
         restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
-        time_txt = transform.Find("time_txt").GetComponent<Text>();
-
-        audioSource = transform.Find("music").GetComponent<AudioSource>();
-        scoreMgr = transform.Find("score_mgr").GetComponent<ScoreMgr>();
-
+        
         stateMachine = new StateMachine();
         initState = new InitState(this, stateMachine);
         playingState = new PlayingState(this, stateMachine);
@@ -128,7 +127,7 @@ public class GameMgr : MonoBehaviour
             stateMachine.ChangeState(restartState);
         });
         back_btn.onClick.AddListener(() =>{
-            Destroy(this.gameObject);
+            Close();
         });
     }
 
@@ -149,8 +148,9 @@ public class GameMgr : MonoBehaviour
     }
 
     #region logic function
-    public void SetMusic(string music_file_name, string difficulty)
+    public void StartInitGame(string music_file_name, string difficulty)
     {
+        this.gameObject.SetActive(true);
         this.music_file_name = music_file_name;
         this.difficulty = difficulty;
         music_cfg = MusicResMgr.GetCfg(music_file_name);
@@ -274,5 +274,11 @@ public class GameMgr : MonoBehaviour
             action.Invoke();
         }
         StartCoroutine(_DelayOneFrame());
+    }
+
+    public void Close()
+    {
+        audioSource.Stop();
+        this.gameObject.SetActive(false);
     }
 }

@@ -133,8 +133,8 @@ namespace Note
         /// <param name="delta_time">用于修正生成时刻的偏差</param>
         protected virtual void ResetPosition(float delta_time)
         {
-            float x = (float)(cfg.FirstCheckPoint().Center() - 0.5f) * Screen.width / MainCanvas.GetScaleX;
-            float y = Screen.height / MainCanvas.GetScaleX / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+            float x = (float)(cfg.FirstCheckPoint().Center() - 0.5f) * Screen.width;
+            float y = Screen.height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
             rectTransform.localPosition = new Vector3(x, y, 0);
         }
 
