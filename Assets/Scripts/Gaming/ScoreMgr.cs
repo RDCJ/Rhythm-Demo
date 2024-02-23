@@ -160,10 +160,10 @@ public class ScoreMgr : MonoBehaviour
         final_early_count.text = early_count.ToString();
         final_late_count.text = late_count.ToString();
 
-        string tag = null;
+        string tag;
         if (score_level_count[(int)ScoreLevel.bad] > 0)
         {
-            tag = null;
+            tag = "None";
         }
         else if (score_level_count[(int)ScoreLevel.good] > 0)
         {
@@ -173,9 +173,9 @@ public class ScoreMgr : MonoBehaviour
         {
             tag = "AP";
         }
-        extra_tag.gameObject.SetActive(string.IsNullOrEmpty(tag));
+        extra_tag.gameObject.SetActive(tag != "None");
         extra_tag.text = tag;
-        PlayerData.UpdateScore(GameMgr.Instance.music_file_name, (int)score, acc, tag);
+        PlayerData.UpdateScore(GameMgr.Instance.music_file_name, GameMgr.Instance.difficulty, (int)score, acc, tag);
     }
 
     /// <summary>
