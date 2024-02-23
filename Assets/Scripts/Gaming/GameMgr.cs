@@ -185,7 +185,8 @@ public class GameMgr : MonoBehaviour
             Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
 
-            float first_note_time = (float)composition[0].checkPoints[0].time;
+
+            float first_note_time = composition.Count > 0 ? (float)composition[0].checkPoints[0].time : float.MaxValue;
             current_time = Mathf.Min(first_note_time - drop_duration, 0);
 
             // 加载音乐
@@ -280,6 +281,6 @@ public class GameMgr : MonoBehaviour
     {
         audioSource.Stop();
         this.gameObject.SetActive(false);
-        MusicSelect.Instance.RefreshRecord();
+        MusicSelect.Instance?.RefreshRecord();
     }
 }
