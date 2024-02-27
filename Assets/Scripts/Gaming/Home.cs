@@ -92,10 +92,10 @@ public class Home : MonoBehaviour
 
         WWW _www = new WWW(resPath + "music_list.json");
         yield return _www;
-        Dictionary<string, string> tmp_music_list;
+        Dictionary<string, MusicFileExtension> tmp_music_list;
         if (_www.isDone && string.IsNullOrEmpty(_www.error))
         {
-            tmp_music_list = JsonMapper.ToObject<Dictionary<string, string>>(_www.text);
+            tmp_music_list = JsonMapper.ToObject<Dictionary<string, MusicFileExtension>>(_www.text);
         }
         else
         {
@@ -106,7 +106,7 @@ public class Home : MonoBehaviour
         foreach (var kv in tmp_music_list)
         {
             string music_name = kv.Key;
-            string extension = kv.Value;
+            MusicFileExtension extension = kv.Value;
             string in_music_folder = System.IO.Path.Combine(in_dir, music_name);
             string out_music_folder = System.IO.Path.Combine(out_dir, music_name);
             if (!Directory.Exists(out_music_folder))
@@ -121,7 +121,8 @@ public class Home : MonoBehaviour
             }
             List<string> files = new List<string>
             {
-                music_name + extension,
+                music_name + extension.audio_extension,
+                "BG" + extension.bg_extension,
                 "music_cfg.json"
             };
 
