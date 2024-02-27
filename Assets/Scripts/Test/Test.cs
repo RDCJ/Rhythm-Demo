@@ -1,25 +1,28 @@
-using LitJson;
+﻿using LitJson;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Test
 {
    
-    public class Test : MonoBehaviour, IPointerClickHandler
+
+
+    public class Test : MonoBehaviour
     {
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            Debug.Log("OnPointerClick " + this.name);
-            transform.localPosition = Util.ChangeV3(transform.localPosition, 1, transform.localPosition.y + Screen.height / 2);
-        }
+        public Image img;
 
         // Start is called before the first frame update
         void Start()
         {
-
+            MusicResMgr.RefreshPersistentDataPathMusicList();
+            StartCoroutine(
+                MusicResMgr.GetBG("Noël", (Texture2D TEX) =>{
+                img.sprite = Sprite.Create(TEX, new Rect(0, 0, TEX.width, TEX.height), new Vector2(0.5f, 0.5f));
+                })
+            );
         }
 
         // Update is called once per frame
@@ -27,6 +30,7 @@ namespace Test
         {
 
         }
+
     }
 }
 

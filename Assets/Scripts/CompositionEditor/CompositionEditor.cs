@@ -243,7 +243,7 @@ public class CompositionEditor : MonoBehaviour
     private void RefreshMusicList()
     {
         // “Ù¿÷—°œÓ
-        MusicResMgr.PersistentDataPathMusicList();
+        MusicResMgr.RefreshPersistentDataPathMusicList();
         music_list.ClearOptions();
         foreach (var music_file_name in MusicResMgr.music_list.Keys)
             music_list.options.Add(new Dropdown.OptionData(music_file_name));

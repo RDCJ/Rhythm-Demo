@@ -10,9 +10,14 @@ using UnityEngine.Networking;
 
 public class MusicResMgr
 {
-    public static Dictionary<string, string> music_list;
+    public class MusicData
+    {
+        public string audio_extension;
+        public string bg_extension;
+    }
+    public static Dictionary<string, MusicData> music_list;
 
-    public static void PersistentDataPathMusicList()
+    public static void RefreshPersistentDataPathMusicList()
     {
         string res_dir = Path.Combine(Application.persistentDataPath, FileConst.music_data_path);
         music_list = ScanMusicData(res_dir);
@@ -23,12 +28,12 @@ public class MusicResMgr
         if (music_list.ContainsKey(music_file_name))
         {
             string music_file_path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path, music_file_name);
-            music_file_path = "file://" + Path.Combine(music_file_path, music_file_name + music_list[music_file_name]);
+            music_file_path = "file://" + Path.Combine(music_file_path, music_file_name + music_list[music_file_name].audio_extension);
 
             UnityWebRequest request = null;
-            if (music_list[music_file_name].Contains("mp3"))
+            if (music_list[music_file_name].audio_extension.Contains("mp3"))
                 request = UnityWebRequestMultimedia.GetAudioClip(music_file_path, AudioType.MPEG);
-            else if (music_list[music_file_name].Contains("wav"))
+            else if (music_list[music_file_name].audio_extension.Contains("wav"))
                 request = UnityWebRequestMultimedia.GetAudioClip(music_file_path, AudioType.WAV);
             yield return request.SendWebRequest();
 
@@ -37,6 +42,30 @@ public class MusicResMgr
                 Debug.Log("音乐加载失败: " + music_file_name);
             else
                 callback?.Invoke(audioClip);
+        }
+        else
+        {
+            Debug.Log("音乐未找到: " + music_file_name);
+            yield break;
+        }
+    }
+
+    public static IEnumerator GetBG(string music_file_name, Action<Texture2D> callback = null)
+    {
+        if (music_list.ContainsKey(music_file_name))
+        {
+            string bg_file_path = Path.Combine(Application.persistentDataPath, FileConst.music_data_path, music_file_name);
+            bg_file_path = "file://" + Path.Combine(bg_file_path, "BG" + music_list[music_file_name].bg_extension);
+
+            UnityWebRequest request = null;
+            request = UnityWebRequestTexture.GetTexture(bg_file_path);
+            yield return request.SendWebRequest();
+
+            Texture2D texture = DownloadHandlerTexture.GetContent(request);
+            if (texture == null)
+                Debug.Log("背景加载失败: " + music_file_name);
+
+            callback?.Invoke(texture);
         }
         else
         {
@@ -58,25 +87,35 @@ public class MusicResMgr
             return new MusicCfg(music_file_name);
     }
 
-    public static Dictionary<string, string> ScanMusicData(string music_data_dir)
+    public static Dictionary<string, MusicData> ScanMusicData(string music_data_dir)
     {
-        Dictionary<string, string> music_list = new();
+        Dictionary<string, MusicData> music_list = new();
+        // 遍历资源文件夹，每首乐曲放在单独的一个文件夹中
         foreach (string folder in Directory.GetDirectories(music_data_dir))
         {
             bool flag = false;
             string folder_name = Path.GetFileName(folder);
+            music_list[folder_name] = new MusicData();
             foreach (string file in Directory.GetFiles(folder))
             {
                 string file_name = Path.GetFileNameWithoutExtension(file);
+                // 识别与文件夹同名的音乐文件
                 if (file_name == folder_name)
                 {
                     flag = true;
-                    music_list[file_name] = Path.GetExtension(file);
-                    break;
+                    music_list[folder_name].audio_extension = Path.GetExtension(file);
+                }
+                else if (file_name == "BG")
+                {
+                    music_list[folder_name].bg_extension = Path.GetExtension(file);
                 }
             }
             if (!flag)
+            {
                 Debug.Log("未找到与文件夹同名的音乐文件: " + folder_name);
+                music_list.Remove(folder_name);
+            }
+                
         }
         return music_list;
     }

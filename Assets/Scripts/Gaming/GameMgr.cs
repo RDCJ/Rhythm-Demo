@@ -29,6 +29,9 @@ public class GameMgr : MonoBehaviour
     ScoreMgr scoreMgr;
     GameObject pause_panel;
     Text time_txt;
+    Image bg_img;
+
+    Texture2D bg_tex;
     #endregion
 
     private MusicCfg music_cfg;
@@ -108,6 +111,8 @@ public class GameMgr : MonoBehaviour
         continue_btn = pause_panel.transform.Find("btn/continue_btn").GetComponent<Button>();
         restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
+
+        bg_img = transform.Find("BGCanvas/BG").GetComponent<Image>();
         
         stateMachine = new StateMachine();
         initState = new InitState(this, stateMachine);
@@ -190,19 +195,40 @@ public class GameMgr : MonoBehaviour
             current_time = Mathf.Min(first_note_time - drop_duration, 0);
 
             // ¼ÓÔØÒôÀÖ
-            StartCoroutine(
-                MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
+            /*            StartCoroutine(
+                            MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
+                            {
+                                Debug.Log("finish loading music, Time.time: " + Time.time);
+                                audioSource.clip = clip;
+                                audioSource.time = 0;
+                                audioSource.Stop();
+                                Util.DelayOneFrame(this, () =>
+                                {
+                                    stateMachine.ChangeState(prepareState);
+                                });
+                            })
+                        );*/
+            new WaitForAllCoroutine(this)
+                .AddCoroutine(MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
                 {
                     Debug.Log("finish loading music, Time.time: " + Time.time);
                     audioSource.clip = clip;
                     audioSource.time = 0;
                     audioSource.Stop();
-                    DelayOneFrame(() =>
+                }))
+                .AddCoroutine(MusicResMgr.GetBG(this.music_file_name, (Texture2D tex) =>
+                {
+                    if (bg_tex != null) 
+                        Destroy(bg_tex);
+                    bg_tex = tex;
+                    bg_img.sprite = Sprite.Create(bg_tex, new Rect(0, 0, bg_tex.width, bg_tex.height), new Vector2(0.5f, 0.5f));
+                }))
+                .StartAll(() =>{
+                    Util.DelayOneFrame(this, () =>
                     {
-                        stateMachine.ChangeState(prepareState);
+                            stateMachine.ChangeState(prepareState);
                     });
-                })
-            );
+                });
         }
 
         
@@ -267,15 +293,7 @@ public class GameMgr : MonoBehaviour
         stateMachine.CurrentState.FrameLateUpdate();
     }
 
-    private void DelayOneFrame(Action action)
-    {
-        IEnumerator _DelayOneFrame()
-        {
-            yield return null;
-            action.Invoke();
-        }
-        StartCoroutine(_DelayOneFrame());
-    }
+    
 
     public void Close()
     {

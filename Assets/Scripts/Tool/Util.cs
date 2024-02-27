@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,5 +39,58 @@ public class Util
             return true;
         else
             return false;
+    }
+
+    public static void DelayOneFrame(MonoBehaviour mono, Action action=null)
+    {
+        IEnumerator _DelayOneFrame()
+        {
+            yield return null;
+            action?.Invoke();
+        }
+        mono.StartCoroutine(_DelayOneFrame());
+    }
+}
+
+public class WaitForAllCoroutine
+{
+    List<IEnumerator> enumerators;
+    List<Coroutine> coroutines;
+    MonoBehaviour mono;
+
+    public WaitForAllCoroutine(MonoBehaviour mono)
+    {
+        enumerators = new List<IEnumerator>();
+        coroutines = new List<Coroutine>();
+        this.mono = mono;
+    }
+
+    public WaitForAllCoroutine AddCoroutine(IEnumerator enumerator)
+    {
+        enumerators.Add(enumerator);
+        return this;
+    }
+
+    public void StartAll(Action callback = null)
+    {
+        foreach (IEnumerator enumerator in enumerators)
+        {
+            coroutines.Add(mono.StartCoroutine(enumerator));
+        }
+        WaitForAll(callback);
+    }
+
+    private void WaitForAll(Action callback)
+    {
+        IEnumerator _WaitForAll(List<Coroutine> coroutines)
+        {
+            foreach (Coroutine coroutine in coroutines)
+            {
+                yield return coroutine;
+            }
+            callback?.Invoke();
+        }
+
+        mono.StartCoroutine(_WaitForAll(coroutines));
     }
 }

@@ -66,7 +66,7 @@ public class Home : MonoBehaviour
                 {
                     play_btn.interactable = true;
                     editor_btn.interactable = true;
-                    MusicResMgr.PersistentDataPathMusicList();
+                    MusicResMgr.RefreshPersistentDataPathMusicList();
                     PlayerData.Load();
                 }
            )
