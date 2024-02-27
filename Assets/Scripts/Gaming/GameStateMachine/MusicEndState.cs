@@ -13,6 +13,7 @@ public class MusicEndState : GameBaseState
         base.EnterState();
         Debug.Log("enter MusicEndState" + " Time.time: " + Time.time);
         gameMgr.audioSource.Stop();
+        gameMgr.bg_videoPlayer.Stop();
         ScoreMgr.Instance.ShowFinalScore();
     }
 

@@ -34,7 +34,7 @@ public class GameMgr : MonoBehaviour
     Texture2D bg_tex;
     GameObject bg_video;
     RawImage bg_videoRawImage;
-    VideoPlayer bg_videoPlayer;
+    public VideoPlayer bg_videoPlayer;
     #endregion
 
     private MusicCfg music_cfg;
