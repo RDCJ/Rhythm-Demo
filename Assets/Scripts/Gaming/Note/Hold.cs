@@ -111,7 +111,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void ResetPosition(float delta_time)
     {
         float x = 0;
-        float y = Screen.height / 2 + icon.Height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        float y = icon.Height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.localPosition = new Vector2(x, y);
     }
 

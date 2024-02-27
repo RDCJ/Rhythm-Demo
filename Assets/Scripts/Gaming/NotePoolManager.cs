@@ -17,6 +17,7 @@ public class NotePoolManager : MonoBehaviour
 
     Dictionary<NoteType, ObjectPool> pools;
 
+
     private void Awake()
     {
         instance = this;
@@ -44,6 +45,9 @@ public class NotePoolManager : MonoBehaviour
                 new ObjectPool(10, FileConst.catch_prefab_path, transform)
             }
         };
+
+        var rectTransform = GetComponent<RectTransform>();
+        rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, Screen.height * (1 - GameConst.judge_line_y));
     }
 
     public GameObject GetObject(NoteType type)

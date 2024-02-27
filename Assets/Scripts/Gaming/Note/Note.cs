@@ -78,7 +78,7 @@ namespace Note
                 float y = rectTransform.localPosition.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
                 rectTransform.localPosition = new Vector3(x, y, 0);
 
-                float distance_to_judge_line = rectTransform.localPosition.y - JudgeLine.localPositionY;
+                float distance_to_judge_line = rectTransform.position.y - JudgeLine.PositionY;
                 // note进入判定区
                 if (!IsActive)
                 {
@@ -134,7 +134,7 @@ namespace Note
         protected virtual void ResetPosition(float delta_time)
         {
             float x = (float)(cfg.FirstCheckPoint().Center() - 0.5f) * Screen.width;
-            float y = Screen.height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+            float y = delta_time * DropSpeedFix.GetScaledDropSpeed;
             rectTransform.localPosition = new Vector3(x, y, 0);
         }
 
