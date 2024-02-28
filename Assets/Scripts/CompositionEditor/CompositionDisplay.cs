@@ -123,7 +123,6 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
         int index = notes.Count - 1;
         editorNote.Set(index, cfg);
         PaintNote(index);
-        //Debug.Log("create note: " + cfg.note_type + " time: " + cfg.time + " x: " + cfg.position_x);
         return index;
     }
 

@@ -63,6 +63,7 @@ public class MusicSelect : MonoBehaviour
                 if (value)
                 {
                     PlayerPrefs.SetString(SelectedDifficultyKW, difficulty_text.text);
+                    PlayerPrefs.Save();
                     RefreshRecord();
                 }
             });

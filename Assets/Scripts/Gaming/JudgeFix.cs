@@ -20,6 +20,7 @@ public class JudgeFix : MonoBehaviour
             int value = PlayerPrefs.GetInt(JudgeFixKW, 0);
             value += 1;
             PlayerPrefs.SetInt(JudgeFixKW, value);
+            PlayerPrefs.Save();
             RefreshText();
         });
 
@@ -27,6 +28,7 @@ public class JudgeFix : MonoBehaviour
             int value = PlayerPrefs.GetInt(JudgeFixKW, 0);
             value -= 1;
             PlayerPrefs.SetInt(JudgeFixKW, value);
+            PlayerPrefs.Save();
             RefreshText();
         });
     }

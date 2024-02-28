@@ -26,6 +26,7 @@ public class DropSpeedFix : MonoBehaviour
         slider.onValueChanged.AddListener((float value) =>
         {
             PlayerPrefs.SetFloat(DropSpeedScaleKW, value);
+            PlayerPrefs.Save();
             scale_txt.text = GetDropSpeedScale.ToString("N2");
         });
     }

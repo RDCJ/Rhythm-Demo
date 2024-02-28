@@ -49,6 +49,7 @@ public class PlayerData
     {
         string jsonStr = JsonMapper.ToJson(score_records);
         PlayerPrefs.SetString(ScoreRecordsKW, jsonStr);
+        PlayerPrefs.Save();
     }
 
     public static int GetMaxScore(string music_file_name, string difficulty)
