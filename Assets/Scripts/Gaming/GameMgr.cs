@@ -67,12 +67,24 @@ public class GameMgr : MonoBehaviour
     /// <summary>
     /// 当前游戏时间
     /// </summary>
-    public double current_time;
+    public double prepare_time;
+    /// <summary>
+    /// 当前游戏时间
+    /// </summary>
+    public double CurrentTime
+    {
+        get
+        {
+            if (prepare_time < 0)
+                return prepare_time;
+            else
+                return audioSource.time;
+        }
+    }
     /// <summary>
     /// note从生成点移动到判定线所需时间
     /// </summary>
     public float drop_duration;
-
     #region statemachine
     public StateMachine stateMachine;
     public InitState initState;
@@ -90,7 +102,7 @@ public class GameMgr : MonoBehaviour
 
     public bool IsMusicEnd
     {
-        get => current_time >= audioSource.clip.length;
+        get => CurrentTime >= audioSource.clip.length;
     }
 
     public bool IsNoteEnd
@@ -149,7 +161,7 @@ public class GameMgr : MonoBehaviour
         stateMachine.CurrentState.FrameUpdate();
         if (audioSource.clip != null)
         {
-            time_txt.text = current_time.ToString("N2") + " / " + audioSource.clip.length.ToString("N2");
+            time_txt.text = CurrentTime.ToString("N2") + " / " + audioSource.clip.length.ToString("N2");
         }
     }
 
@@ -198,7 +210,7 @@ public class GameMgr : MonoBehaviour
 
 
             float first_note_time = composition.Count > 0 ? (float)composition[0].checkPoints[0].time : float.MaxValue;
-            current_time = Mathf.Min(first_note_time - drop_duration, 0);
+            prepare_time = Mathf.Min(first_note_time - drop_duration, 0);
 
             // 加载音乐和背景
             WaitForAllCoroutine loading_task = new WaitForAllCoroutine(this);
@@ -246,30 +258,20 @@ public class GameMgr : MonoBehaviour
                 });
             });
         }
-
-        
     }
 
     public void GenerateNote()
     {
-        if (current_time < 0)
-            current_time += Time.deltaTime;
-        else
-            current_time = audioSource.time;
-/*        if (current_note_idx == 0)
-            Debug.Log(Time.deltaTime);*/
-        if (IsNoteEnd) 
-            return;
         while (true)
         {
             if (IsNoteEnd) break;
             double next_drop_time = composition[current_note_idx].FirstCheckPoint().time - drop_duration;
-            if (current_time < next_drop_time) break;
+            if (CurrentTime < next_drop_time) break;
 
-            Debug.Log("current_time: " + current_time + " next_drop_time: " + next_drop_time);
+            Debug.Log("[GameMgr.GenerateNote] success: current_time: " + CurrentTime + " std_drop_time: " + next_drop_time);
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
-            new_note.Init(composition[current_note_idx], (float)(next_drop_time - current_time));
+            new_note.Init(composition[current_note_idx], (float)(next_drop_time - CurrentTime));
 #if UNITY_EDITOR
             if (type == Note.NoteType.Hold)
             {
@@ -284,7 +286,6 @@ public class GameMgr : MonoBehaviour
 #else
             new_note.Drop();
 #endif
-
             current_note_idx++;
         }
     }

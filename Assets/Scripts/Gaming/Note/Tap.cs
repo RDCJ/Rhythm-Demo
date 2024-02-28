@@ -21,7 +21,7 @@ public class Tap : NoteBase, IPointerDownHandler
         if (this.IsActive)
         {
             this.state = NoteState.Judged;
-            double current_time = GameMgr.Instance.current_time;
+            double current_time = GameMgr.Instance.CurrentTime;
             //Debug.Log("tap: " + current_time + " cfg_time: " + cfg.time);
 
             ScoreMgr.ScoreLevel level = ScoreMgr.Instance.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);

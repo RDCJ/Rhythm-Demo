@@ -109,7 +109,6 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log(eventData.position + " " + GetPositionX(eventData));
         if (CompositionEditor.Instance.BPMHasValue)
         {
             // 点击时创建一个note

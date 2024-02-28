@@ -11,13 +11,7 @@ public class PlayingState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("enter PlayingState" + " current time: " + gameMgr.current_time + " Time.time: " + Time.time);
         gameMgr.Continue();
-    }
-
-    public override void ExitState()
-    {
-        base.ExitState();
     }
 
     public override void FrameUpdate()
@@ -27,11 +21,5 @@ public class PlayingState : GameBaseState
             gameMgr.GenerateNote();
         else
             stateMachine.ChangeState(gameMgr.musicEndState);
-    }
-
-    public override void PhysicsUpdate()
-    {
-        base.PhysicsUpdate();
-        
     }
 }

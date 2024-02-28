@@ -74,7 +74,6 @@ public class MusicSelect : MonoBehaviour
         var contentID = _list.GetFocusingContentID();
         var centeredContent =
             (MusicListContent)_list.ListBank.GetListContent(contentID);
-        Debug.Log("DisplayFocusingContent");
     }
 
     public void OnBoxSelected(ListBox MusicListBox)

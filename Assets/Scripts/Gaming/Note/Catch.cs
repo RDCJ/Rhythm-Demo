@@ -45,7 +45,7 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
 
         ScoreMgr.ScoreLevel level = ScoreMgr.ScoreLevel.perfect;
         // 计分
-        Debug.Log("[判定] 时间: " + GameMgr.Instance.current_time.ToString("N4") + "类型: Catch, 结果: " + level);
+        Debug.Log("[判定] 时间: " + GameMgr.Instance.CurrentTime.ToString("N4") + "类型: Catch, 结果: " + level);
         ScoreMgr.Instance.AddScore(level);
         // 点击效果
         PlayEffect(level);

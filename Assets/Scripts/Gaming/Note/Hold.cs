@@ -27,7 +27,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (this.IsActive)
         {
             finger_count++;
-            start_time = GameMgr.Instance.current_time;
+            start_time = GameMgr.Instance.CurrentTime;
             Debug.Log("Hold start " + start_time);
 
             start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
@@ -118,7 +118,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     private void EndJudge()
     {
         state = NoteState.Judged;
-        end_time = GameMgr.Instance.current_time;
+        end_time = GameMgr.Instance.CurrentTime;
         end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
 
         Debug.Log("Hold end " + end_time);
@@ -151,7 +151,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         get
         {
-            double time = GameMgr.Instance.current_time;
+            double time = GameMgr.Instance.CurrentTime;
             int n = cfg.checkPoints.Count;
             if (time < cfg.FirstCheckPoint().time)
                 return (float)cfg.FirstCheckPoint().Center() * Screen.width;

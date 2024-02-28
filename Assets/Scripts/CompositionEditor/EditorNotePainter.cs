@@ -41,12 +41,6 @@ public class EditorNotePainter : MonoBehaviour, IDragHandler
     {
         if (outline != null)
             outline.enabled = (NoteSelector.Instance.current_index == index);
-/*        if (cfg.note_type == 3)
-        {
-            var rect = this.GetComponent<RectTransform>();
-            Debug.Log(rect.anchoredPosition);
-        }*/
-
     }
 
     /// <summary>

@@ -36,7 +36,7 @@ public class Slide : NoteBase, IPointerMoveHandler, IPointerDownHandler, IPointe
         if (IsHolding && !IsJudged)
         {
             state = NoteState.Judged;
-            double current_time = GameMgr.Instance.current_time;
+            double current_time = GameMgr.Instance.CurrentTime;
             Vector2 move_position = eventData.position;
             Vector2 slide_direction = move_position - down_position;
             ScoreMgr.ScoreLevel level;
