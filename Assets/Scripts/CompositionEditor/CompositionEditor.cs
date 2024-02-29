@@ -5,6 +5,7 @@ using Music;
 using UnityEngine.UI;
 using System;
 using System.IO;
+using Unity.VisualScripting;
 
 public class CompositionEditor : MonoBehaviour
 {
@@ -45,6 +46,10 @@ public class CompositionEditor : MonoBehaviour
     Slider vertical_scale;
     CanvasScaler canvasScaler;
 
+    Button bg_view_btn;
+    Button bg_import_btn;
+    MusicBackground musicBackground;
+
     string current_difficulty;
     string current_music_file_name;
 
@@ -72,6 +77,10 @@ public class CompositionEditor : MonoBehaviour
         vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
 
         canvasScaler = transform.parent.GetComponent<CanvasScaler>();
+
+        bg_view_btn = transform.Find("music_bg/view_btn").GetComponent<Button>();
+        bg_import_btn = transform.Find("music_bg/import_btn").GetComponent<Button>();
+        musicBackground = transform.Find("BG_view").AddComponent<MusicBackground>();
         // 难度选项
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
             difficulty.options.Add(new Dropdown.OptionData(keyValue.Value));
@@ -163,7 +172,6 @@ public class CompositionEditor : MonoBehaviour
                     Debug.Log("导入音乐：" + out_file_path);
                 }
 #endif
-
             });
         });
 
@@ -179,8 +187,47 @@ public class CompositionEditor : MonoBehaviour
             HorizontalGridLine.Instance.RefreshHeight();
             CompositionDisplay.Instance.RepaintAllNote();
         });
+
+        bg_view_btn.onClick.AddListener(() =>
+        {
+            musicBackground.gameObject.SetActive(true);
+            StartCoroutine(musicBackground.Init(current_music_file_name, () => musicBackground.Play()));
+        });
+
+        bg_import_btn.onClick.AddListener(() => {
+            UnityOpenWindowsFile.OpenFIleDialog(UnityOpenWindowsFile.FileType.None, callback: (ofn) =>
+            {
+#if (UNITY_EDITOR || UNITY_STANDALONE_WIN)
+                string out_music_folder = Path.Combine(Application.persistentDataPath, FileConst.music_data_path, current_music_file_name);
+                if (!Directory.Exists(out_music_folder))
+                {
+                    Directory.CreateDirectory(out_music_folder);
+                    Debug.Log("新建目录: " + out_music_folder);
+                }
+                foreach (string file in Directory.GetFiles(out_music_folder))
+                {
+                    string file_name = Path.GetFileNameWithoutExtension(file);
+                    if (file_name == "BG")
+                    {
+                        File.Delete(file);
+                    }
+                }
+                string out_file_path = Path.Combine(out_music_folder, Path.GetFileName(ofn.file));
+                if (File.Exists(ofn.file))
+                {
+                    File.Copy(ofn.file, out_file_path, true);
+                    MusicResMgr.RefreshPersistentDataPathMusicList();
+                    Debug.Log("导入背景：" + out_file_path);
+
+                    musicBackground.gameObject.SetActive(true);
+                    StartCoroutine(musicBackground.Init(current_music_file_name, () => musicBackground.Play()));
+                }
+#endif
+            });
+        });
+
         this.Close();
-        Debug.Log("editor init");
+        Debug.Log("[CompositionEditor] init");
     }
 
 

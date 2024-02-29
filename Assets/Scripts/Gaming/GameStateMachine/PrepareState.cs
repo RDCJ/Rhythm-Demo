@@ -12,7 +12,7 @@ public class PrepareState: GameBaseState
     {
         base.ExitState();
         gameMgr.audioSource.time = (float)gameMgr.prepare_time;
-        gameMgr.bg_videoPlayer.time = (float)gameMgr.prepare_time;
+        gameMgr.musicBackground.bg_videoPlayer.time = (float)gameMgr.prepare_time;
     }
 
     public override void FrameUpdate()

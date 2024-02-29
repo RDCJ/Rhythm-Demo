@@ -12,7 +12,7 @@ public class MusicEndState : GameBaseState
     {
         base.EnterState();
         gameMgr.audioSource.Stop();
-        gameMgr.bg_videoPlayer.Stop();
+        gameMgr.musicBackground.Stop();
         ScoreMgr.Instance.ShowFinalScore();
     }
 }

@@ -5,7 +5,7 @@ using LitJson;
 using Music;
 using System;
 using UnityEngine.UI;
-using UnityEngine.Video;
+using Unity.VisualScripting;
 
 public class GameMgr : MonoBehaviour
 {
@@ -30,11 +30,8 @@ public class GameMgr : MonoBehaviour
     ScoreMgr scoreMgr;
     GameObject pause_panel;
     Text time_txt;
-    Image bg_img;
-    Texture2D bg_tex;
-    GameObject bg_video;
-    RawImage bg_videoRawImage;
-    public VideoPlayer bg_videoPlayer;
+
+    public MusicBackground musicBackground;
     #endregion
 
     private MusicCfg music_cfg;
@@ -127,10 +124,7 @@ public class GameMgr : MonoBehaviour
         restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
 
-        bg_img = transform.Find("BGCanvas/ImgBG").GetComponent<Image>();
-        bg_video = transform.Find("BGCanvas/VideoBG").gameObject;
-        bg_videoPlayer = transform.Find("BGCanvas/VideoBG/VideoPlayer").GetComponent<VideoPlayer>();
-        bg_videoRawImage = transform.Find("BGCanvas/VideoBG/RawImage").GetComponent<RawImage>();
+        musicBackground = transform.Find("BGCanvas").AddComponent<MusicBackground>();
         
         stateMachine = new StateMachine();
         initState = new InitState(this, stateMachine);
@@ -220,38 +214,9 @@ public class GameMgr : MonoBehaviour
                 audioSource.clip = clip;
                 audioSource.time = 0;
                 audioSource.Stop();
-            }));
-
-            if (MusicResMgr.BGIsVideo(this.music_file_name))
-            {
-                bg_videoPlayer.url = MusicResMgr.GetBGFilePath(this.music_file_name);
-                bg_img.gameObject.SetActive(false);
-                bg_video.SetActive(true);
-            }
-            else
-            {
-                loading_task.AddCoroutine(MusicResMgr.GetBG(this.music_file_name, (Texture2D tex) =>
-                {
-                    if (bg_tex != null)
-                        Destroy(bg_tex);
-                    if (tex != null)
-                    {
-                        bg_tex = tex;
-                        bg_img.sprite = Sprite.Create(bg_tex, new Rect(0, 0, bg_tex.width, bg_tex.height), new Vector2(0.5f, 0.5f));
-                        bg_img.color = Color.white;
-                    }
-                    else
-                    {
-                        bg_img.sprite = null;
-                        bg_img.color = Color.black;
-                    }
-
-                }));
-
-                bg_img.gameObject.SetActive(true);
-                bg_video.SetActive(false);
-            }
-            loading_task.StartAll(() =>{
+            }))
+            .AddCoroutine(musicBackground.Init(this.music_file_name))
+            .StartAll(() =>{
                 Util.DelayOneFrame(this, () =>
                 {
                         stateMachine.ChangeState(prepareState);
@@ -293,7 +258,7 @@ public class GameMgr : MonoBehaviour
     public void Pause()
     {
         audioSource.Pause();
-        bg_videoPlayer.Pause();
+        musicBackground.Pause();
         pause_panel.SetActive(true);
         pause_action?.Invoke();
     }
@@ -301,7 +266,7 @@ public class GameMgr : MonoBehaviour
     public void Continue()
     {
         audioSource.Play();
-        bg_videoPlayer.Play();
+        musicBackground.Play();
         pause_panel.SetActive(false);
         continue_action?.Invoke();
     }
