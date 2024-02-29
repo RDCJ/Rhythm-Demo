@@ -90,6 +90,7 @@ namespace Note
                 // noteÀë¿ªÅĞ¶¨Çø
                 else if (distance_to_judge_line < - TouchAreaLength * 0.5f)
                 {
+                    EndJudge();
                     if (!IsJudged)
                     {
                         Miss();
@@ -155,8 +156,10 @@ namespace Note
             is_move = true;
         }
 
+        protected virtual void EndJudge() { }
 
         public virtual void Miss() {
+            Debug.Log(this.GetType().Name + " Miss");
             PlayEffect(ScoreMgr.ScoreLevel.bad);
             ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
             NotePoolManager.Instance.ReturnObject(this);

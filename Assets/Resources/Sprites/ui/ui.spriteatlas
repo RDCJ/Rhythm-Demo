@@ -45,10 +45,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fdd2af234ef7cd34a969cbd857e16311, type: 3}
   - {fileID: 21300000, guid: 2d2e8b24e62adb24ba1d3fc64a28660b, type: 3}
   - {fileID: 21300000, guid: 22e2e2e4611c59843a05c4b8285ddd50, type: 3}
+  - {fileID: 21300000, guid: 7179ab86b28b8184e8b74e3a0b7fa821, type: 3}
+  - {fileID: 21300000, guid: f9f25bb6be8733f4894d60fe54097b1d, type: 3}
   - {fileID: 21300000, guid: 3c390a47d26495b48bd149f6e75d3f4e, type: 3}
   - {fileID: 21300000, guid: 321d1867cb1ed52468bc330dfa7a685d, type: 3}
   - {fileID: 21300000, guid: 9278709891e8354449394d5ed95ac6ca, type: 3}
   - {fileID: 21300000, guid: bb82ff9c6f83d42409f934c2e5573ef2, type: 3}
+  - {fileID: 21300000, guid: d856e7dd0e8555f4fb29db6352b3a822, type: 3}
   - {fileID: 21300000, guid: eb5f925e52ba2a944bd469303df8903a, type: 3}
   - {fileID: 21300000, guid: 867097dfc4af3b74b98c0da89704babb, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -58,10 +61,13 @@ SpriteAtlas:
   - arrow_left2
   - icon_pause
   - icon_play
+  - Blue outline gradient
+  - Green outline gradient
   - arrow_right2
   - icon_close
   - arrow_down2
   - icon_minus
+  - Red outline gradient
   - sound_on
   - icon_options
   m_RenderDataMap: {}

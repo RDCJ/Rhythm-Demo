@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Note;
+using Music;
 
 /// <summary>
 /// 长按
 /// 首判：正常判定，如果是bad则该note直接判为bad
 /// 尾判: 不提前松手
 /// </summary>
-public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
 {
     private HoldPolygonImage touch_area;
     private HoldPolygonImage icon;
@@ -22,30 +23,61 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     float hold_effect_time;
     float hold_effect_cd = 0.2f;
 
+    bool is_finger_down;
+
     public void OnPointerDown(PointerEventData eventData)
     {
+        Debug.Log("OnPointerDown " + eventData.pointerId);
         if (this.IsActive)
         {
             finger_count++;
-            start_time = GameMgr.Instance.CurrentTime;
-            Debug.Log("Hold start " + start_time);
-
-            start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
-            PlayEffect(start_judge_level);
-
-            ScoreMgr.Instance.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
-            if (start_judge_level == ScoreMgr.ScoreLevel.bad)
+            if (!is_finger_down)
             {
-                state = NoteState.Judged;
-                Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
-                ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
-                NotePoolManager.Instance.ReturnObject(this);
+                is_finger_down = true;
+                start_time = GameMgr.Instance.CurrentTime;
+                Debug.Log("Hold start " + start_time);
+
+                start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
+                PlayEffect(start_judge_level);
+
+                ScoreMgr.Instance.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
+                if (start_judge_level == ScoreMgr.ScoreLevel.bad)
+                {
+                    state = NoteState.Judged;
+                    Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
+                    ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
+                    NotePoolManager.Instance.ReturnObject(this);
+                }
+            }
+            
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("OnPointerEnter " + eventData.pointerId);
+        if (this.IsActive)
+        {
+            finger_count++;
+        }
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Debug.Log("OnPointerUp " + eventData.pointerId);
+        if (this.IsActive)
+        {
+            finger_count--;
+            if (!IsHolding)
+            {
+                EndJudge();
             }
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        Debug.Log("OnPointerExit " + eventData.pointerId);
         if (this.IsActive)
         {
             finger_count--;
@@ -55,19 +87,6 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             }
         }
     }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (this.IsActive)
-        {
-            finger_count--;
-            if (!IsHolding)
-            {
-                EndJudge();
-            }
-        }
-    }
-
 
     protected override void Awake()
     {
@@ -82,7 +101,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void Update()
     {
         base.Update();
-        if (IsHolding)
+        if (IsHolding && is_finger_down)
         {
             hold_effect_time -= Time.deltaTime;
             if (hold_effect_time < 0)
@@ -91,6 +110,12 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
                 hold_effect_time = hold_effect_cd;
             }
         }
+    }
+
+    public override void Init(NoteCfg _cfg, float delta_time)
+    {
+        base.Init(_cfg, delta_time);
+        is_finger_down = false;
     }
 
     /// <summary>
@@ -115,28 +140,30 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         rectTransform.localPosition = new Vector2(x, y);
     }
 
-    private void EndJudge()
+    protected override void EndJudge()
     {
-        state = NoteState.Judged;
-        end_time = GameMgr.Instance.CurrentTime;
-        end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
+        if (is_finger_down)
+        {
+            state = NoteState.Judged;
+            end_time = GameMgr.Instance.CurrentTime;
+            end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
 
-        Debug.Log("Hold end " + end_time);
-        ScoreMgr.ScoreLevel level;
-        if (start_judge_level == ScoreMgr.ScoreLevel.perfect && end_judge_level == ScoreMgr.ScoreLevel.perfect)
-            level = ScoreMgr.ScoreLevel.perfect;
-        else if (start_judge_level == ScoreMgr.ScoreLevel.bad || end_judge_level == ScoreMgr.ScoreLevel.bad)
-            level = ScoreMgr.ScoreLevel.bad;
-        else
-            level = ScoreMgr.ScoreLevel.good;
+            Debug.Log("Hold end " + end_time);
+            ScoreMgr.ScoreLevel level;
+            if (start_judge_level == ScoreMgr.ScoreLevel.perfect && end_judge_level == ScoreMgr.ScoreLevel.perfect)
+                level = ScoreMgr.ScoreLevel.perfect;
+            else if (start_judge_level == ScoreMgr.ScoreLevel.bad || end_judge_level == ScoreMgr.ScoreLevel.bad)
+                level = ScoreMgr.ScoreLevel.bad;
+            else
+                level = ScoreMgr.ScoreLevel.good;
 
-        Debug.Log("[判定] 类型: Hold, 结果: " + level);
-        ScoreMgr.Instance.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
-        ScoreMgr.Instance.AddScore(level);
-        PlayEffect(level);
-        NotePoolManager.Instance.ReturnObject(this);
+            Debug.Log("[判定] 类型: Hold, 结果: " + level);
+            ScoreMgr.Instance.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
+            ScoreMgr.Instance.AddScore(level);
+            PlayEffect(level);
+            NotePoolManager.Instance.ReturnObject(this);
+        }
     }
-
 
     protected override float TouchAreaLength
     {
