@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Note;
 using Music;
+using System.Collections.Generic;
 
 /// <summary>
 /// ³¤°´
@@ -24,6 +25,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     float hold_effect_cd = 0.2f;
 
     bool is_finger_down;
+    List<CheckPoint> checkPoints_cache;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -101,19 +103,50 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void Update()
     {
         base.Update();
-        if (IsHolding && is_finger_down)
+        double current_time = GameMgr.Instance.CurrentTime;
+
+        if (tail_handle.position.y > JudgeLine.PositionY)
         {
-            hold_effect_time -= Time.deltaTime;
-            if (hold_effect_time < 0)
+            if (IsHolding && is_finger_down)
             {
-                PlayEffect(start_judge_level);
-                hold_effect_time = hold_effect_cd;
+                hold_effect_time -= Time.deltaTime;
+                if (hold_effect_time < 0)
+                {
+                    PlayEffect(start_judge_level);
+                    hold_effect_time = hold_effect_cd;
+                }
             }
+        }
+            
+        if (!is_finger_down && cfg.FirstCheckPoint().time + GameConst.good_interval < current_time)
+        {
+            Miss();
+        }
+
+        if (head_handle.position.y < JudgeLine.PositionY)
+        {
+            //head_handle.position = new Vector3(GetCenterXOnJudgeLine, JudgeLine.PositionY, 0);
+            if (current_time > checkPoints_cache[1].time)
+            {
+                if (checkPoints_cache.Count > 2)
+                    checkPoints_cache.RemoveAt(0);
+            }
+            checkPoints_cache[0] = GetCheckPointOnJudgeLine;
+            Resize();
+            if (tail_handle.position.y > JudgeLine.PositionY)
+                rectTransform.position = Util.ChangeV3(rectTransform.position, 1, JudgeLine.PositionY + icon.Height / 2);
         }
     }
 
     public override void Init(NoteCfg _cfg, float delta_time)
     {
+        if (checkPoints_cache == null) checkPoints_cache = new List<CheckPoint>();
+        checkPoints_cache.Clear();
+        foreach (CheckPoint ckp in _cfg.checkPoints)
+        {
+            checkPoints_cache.Add(new CheckPoint(ckp));
+        }
+
         base.Init(_cfg, delta_time);
         is_finger_down = false;
     }
@@ -124,8 +157,8 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void Resize()
     {
         float drop_speed = DropSpeedFix.GetScaledDropSpeed;
-        icon.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width);
-        touch_area.SetCheckPoints(cfg.checkPoints, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
+        icon.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width);
+        touch_area.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
 
         head_handle.localPosition = icon.HeadCenter;
         head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, icon.HeadWidth / head_handle.localScale.x);
@@ -139,6 +172,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         float y = icon.Height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
         rectTransform.localPosition = new Vector2(x, y);
     }
+
 
     protected override void EndJudge()
     {
@@ -178,24 +212,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         get
         {
-            double time = GameMgr.Instance.CurrentTime;
-            int n = cfg.checkPoints.Count;
-            if (time < cfg.FirstCheckPoint().time)
-                return (float)cfg.FirstCheckPoint().Center() * Screen.width;
-            for (int i = 0; i < n - 1; i++)
-            {
-                var ckp1 = cfg.checkPoints[i];
-                var ckp2 = cfg.checkPoints[i + 1];
-                if (time >= ckp1.time && time <= ckp2.time)
-                {
-                    double k = (time - ckp1.time) / (ckp2.time - ckp1.time);
-                    double l = ckp1.position_l + k * (ckp2.position_l - ckp1.position_l);
-                    double r = ckp1.position_r + k * (ckp2.position_r - ckp1.position_r);
-                    return (float)(l + r) / 2 * Screen.width;
-                }
-            }
-            return (float)cfg.LastCheckPoint().Center() * Screen.width;
+            return (float)GetCheckPointOnJudgeLine.Center() * Screen.width;
         }
-        
     }
 }

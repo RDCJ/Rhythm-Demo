@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEditor;
+using Music;
 
 namespace Note
 {
@@ -31,11 +32,15 @@ namespace Note
 
         protected Music.NoteCfg cfg;
         protected RectTransform rectTransform;
+        protected RectTransform icon_rtf;
+        protected CanvasGroup icon_canvasGroup;
 
         protected bool is_move;
         protected int finger_count;
+        protected bool icon_is_fade;
         [HideInInspector] protected NoteState state;
         [HideInInspector] protected bool is_judged;
+
 
         public bool IsActive
         {
@@ -54,6 +59,8 @@ namespace Note
         protected virtual void Awake()
         {
             rectTransform = this.GetComponent<RectTransform>();
+            icon_rtf = transform.Find("icon").GetComponent<RectTransform>();
+            icon_canvasGroup = icon_rtf.GetComponent<CanvasGroup>();
 #if UNITY_EDITOR
             Image touch_img = this.GetComponent<Image>();
             if (GameConst.note_show_touch_area)
@@ -96,6 +103,12 @@ namespace Note
                         Miss();
                     }
                 }
+
+                if (!icon_is_fade && distance_to_judge_line < 0)
+                {
+                    icon_is_fade = true;
+                    IconFade();
+                }
             }
         }
 
@@ -110,6 +123,10 @@ namespace Note
             finger_count = 0;
             state = NoteState.Inactive;
             cfg = _cfg;
+
+            icon_is_fade = false;
+            icon_canvasGroup.DOKill();
+            icon_canvasGroup.alpha = 1.0f;
 
             Resize();
             ResetPosition(delta_time);
@@ -156,6 +173,11 @@ namespace Note
             is_move = true;
         }
 
+        protected virtual void IconFade()
+        {
+            icon_canvasGroup.DOFade(0.3f, 0.1f);
+        }
+
         protected virtual void EndJudge() { }
 
         public virtual void Miss() {
@@ -198,6 +220,32 @@ namespace Note
             get 
             { 
                 return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
+            }
+        }
+
+        protected virtual CheckPoint GetCheckPointOnJudgeLine
+        {
+            get
+            {
+                double time = GameMgr.Instance.CurrentTime;
+                int n = cfg.checkPoints.Count;
+                if (time < cfg.FirstCheckPoint().time)
+                {
+                    return new CheckPoint(cfg.FirstCheckPoint());
+                }
+                for (int i = 0; i < n - 1; i++)
+                {
+                    var ckp1 = cfg.checkPoints[i];
+                    var ckp2 = cfg.checkPoints[i + 1];
+                    if (time >= ckp1.time && time <= ckp2.time)
+                    {
+                        double k = (time - ckp1.time) / (ckp2.time - ckp1.time);
+                        double l = ckp1.position_l + k * (ckp2.position_l - ckp1.position_l);
+                        double r = ckp1.position_r + k * (ckp2.position_r - ckp1.position_r);
+                        return new CheckPoint(time, l, r);
+                    }
+                }
+                return new CheckPoint(cfg.LastCheckPoint());
             }
         }
 

@@ -107,6 +107,11 @@ public class GameMgr : MonoBehaviour
         get => current_note_idx >= note_count;
     }
 
+    public bool IsGamePause
+    {
+        get; private set;
+    }
+
     private void Awake()
     {
         instance = this;
@@ -257,6 +262,7 @@ public class GameMgr : MonoBehaviour
 
     public void Pause()
     {
+        IsGamePause = true;
         audioSource.Pause();
         musicBackground.Pause();
         pause_panel.SetActive(true);
@@ -265,6 +271,7 @@ public class GameMgr : MonoBehaviour
 
     public void Continue()
     {
+        IsGamePause = false;
         audioSource.Play();
         musicBackground.Play();
         pause_panel.SetActive(false);
