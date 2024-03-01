@@ -70,7 +70,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (this.IsActive)
         {
             finger_count--;
-            if (!IsHolding)
+            if (!IsHolding && is_move)
             {
                 EndJudge();
             }
@@ -83,7 +83,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         if (this.IsActive)
         {
             finger_count--;
-            if (!IsHolding)
+            if (!IsHolding && is_move)
             {
                 EndJudge();
             }
@@ -103,38 +103,15 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     protected override void Update()
     {
         base.Update();
-        double current_time = GameMgr.Instance.CurrentTime;
+        if (is_move)
+        {
+            CheckFirstCheckPointMiss();
 
-        if (tail_handle.position.y > JudgeLine.PositionY)
-        {
-            if (IsHolding && is_finger_down)
-            {
-                hold_effect_time -= Time.deltaTime;
-                if (hold_effect_time < 0)
-                {
-                    PlayEffect(start_judge_level);
-                    hold_effect_time = hold_effect_cd;
-                }
-            }
-        }
-            
-        if (!is_finger_down && cfg.FirstCheckPoint().time + GameConst.good_interval < current_time)
-        {
-            Miss();
-        }
+            CheckLastCheckPoint();
 
-        if (head_handle.position.y < JudgeLine.PositionY)
-        {
-            //head_handle.position = new Vector3(GetCenterXOnJudgeLine, JudgeLine.PositionY, 0);
-            if (current_time > checkPoints_cache[1].time)
-            {
-                if (checkPoints_cache.Count > 2)
-                    checkPoints_cache.RemoveAt(0);
-            }
-            checkPoints_cache[0] = GetCheckPointOnJudgeLine;
-            Resize();
-            if (tail_handle.position.y > JudgeLine.PositionY)
-                rectTransform.position = Util.ChangeV3(rectTransform.position, 1, JudgeLine.PositionY + icon.Height / 2);
+            PlayEffectOnHolding();
+
+            ModifyShapeOnReachJudgeLine();
         }
     }
 
@@ -196,6 +173,55 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             ScoreMgr.Instance.AddScore(level);
             PlayEffect(level);
             NotePoolManager.Instance.ReturnObject(this);
+        }
+    }
+
+    private void PlayEffectOnHolding()
+    {
+        if (tail_handle.position.y > JudgeLine.PositionY)
+        {
+            if (IsHolding && is_finger_down)
+            {
+                hold_effect_time -= Time.deltaTime;
+                if (hold_effect_time < 0)
+                {
+                    PlayEffect(start_judge_level);
+                    hold_effect_time = hold_effect_cd;
+                }
+            }
+        }
+    }
+
+    private void CheckFirstCheckPointMiss()
+    {
+        if (!is_finger_down && finger_count <= 0 && cfg.FirstCheckPoint().time + GameConst.good_interval < GameMgr.Instance.CurrentTime)
+        {
+            Miss();
+        }
+    }
+
+    private void CheckLastCheckPoint()
+    {
+        if (is_finger_down && finger_count > 0 && cfg.LastCheckPoint().time < GameMgr.Instance.CurrentTime)
+        {
+            EndJudge();
+        }
+    }
+
+    private void ModifyShapeOnReachJudgeLine()
+    {
+        if (head_handle.position.y < JudgeLine.PositionY)
+        {
+            //head_handle.position = new Vector3(GetCenterXOnJudgeLine, JudgeLine.PositionY, 0);
+            if (GameMgr.Instance.CurrentTime > checkPoints_cache[1].time)
+            {
+                if (checkPoints_cache.Count > 2)
+                    checkPoints_cache.RemoveAt(0);
+            }
+            checkPoints_cache[0] = GetCheckPointOnJudgeLine;
+            Resize();
+            if (tail_handle.position.y > JudgeLine.PositionY)
+                rectTransform.position = Util.ChangeV3(rectTransform.position, 1, JudgeLine.PositionY + icon.Height / 2);
         }
     }
 
