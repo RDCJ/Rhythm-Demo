@@ -50,7 +50,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 321d1867cb1ed52468bc330dfa7a685d, type: 3}
   - {fileID: 21300000, guid: 9278709891e8354449394d5ed95ac6ca, type: 3}
   - {fileID: 21300000, guid: bb82ff9c6f83d42409f934c2e5573ef2, type: 3}
+  - {fileID: 21300000, guid: e09e8bacc62aca34da975da1a2c56dfe, type: 3}
   - {fileID: 21300000, guid: d856e7dd0e8555f4fb29db6352b3a822, type: 3}
+  - {fileID: 21300000, guid: 350201ed40bdbf742945f08e44cb5fb6, type: 3}
   - {fileID: 21300000, guid: eb5f925e52ba2a944bd469303df8903a, type: 3}
   - {fileID: 21300000, guid: 867097dfc4af3b74b98c0da89704babb, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -66,7 +68,9 @@ SpriteAtlas:
   - icon_close
   - arrow_down2
   - icon_minus
+  - gray1
   - Red outline gradient
+  - gray2
   - sound_on
   - icon_options
   m_RenderDataMap: {}

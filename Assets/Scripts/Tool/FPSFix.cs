@@ -3,18 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainCanvas : MonoBehaviour
+public class FPSFix : MonoBehaviour
 {
-    private static MainCanvas instance;
-    public static MainCanvas Instance {  get { return instance; } }
-    private MainCanvas() { }
-
-
-    private void Awake()
-    {
-        instance = this;
-    }
-
     void Start()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -22,5 +12,6 @@ public class MainCanvas : MonoBehaviour
 #else
         Application.targetFrameRate = 144;
 #endif
+        Destroy(this);
     }
 }

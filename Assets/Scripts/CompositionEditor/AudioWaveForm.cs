@@ -71,7 +71,9 @@ public class AudioWaveForm : MonoBehaviour, IPointerDownHandler
                 audioClip = clip;
                 audioSource.clip = audioClip;
                 _rawImage.texture = BakeAudioWaveform();
-
+                audioSource.time = 0;
+                audioSource.Play();
+                audioSource.Pause();
                 callback?.Invoke();
             })
         );

@@ -23,11 +23,11 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// 水平线预制体
     /// </summary>
-    public GameObject horizontal_line;
+    public ObjectPool horizontal_line_pool;
     /// <summary>
     /// 小节号文本预制体
     /// </summary>
-    public GameObject bar_order_txt;
+    public ObjectPool bar_order_txt_pool;
     /// <summary>
     /// 小节号序列
     /// </summary>
@@ -51,6 +51,8 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     {
         instance = this;
         rect = GetComponent<RectTransform>();
+        horizontal_line_pool = new ObjectPool(50, "Prefabs/Editor/horizontal_line", this.transform);
+        bar_order_txt_pool = new ObjectPool(50, "Prefabs/Editor/bar_order_txt", bar_order_trans);
     }
 
     public void RefreshGridLine()
@@ -65,9 +67,9 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
             this.beatPerBar = beatPerBar;
             // 清空
             for (int i = 0; i < transform.childCount; i++)
-                Destroy(transform.GetChild(i).gameObject);
+                horizontal_line_pool.ReturnObject(transform.GetChild(i).gameObject);
             for (int i = 0; i < bar_order_trans.childCount; i++)
-                Destroy(bar_order_trans.GetChild(i).gameObject);
+                bar_order_txt_pool.ReturnObject(bar_order_trans.GetChild(i).gameObject);
             //
             float audio_time = AudioWaveForm.Instance.GetAudioLength;
             float bar_time = (float)(beatPerBar * 60.0 / BPM);
@@ -75,12 +77,13 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
 
             for (int i = 0; i < bar_count; i++)
             {
-                GameObject new_order_txt = Instantiate(bar_order_txt, bar_order_trans);
+                GameObject new_order_txt = bar_order_txt_pool.GetObject();//Instantiate(bar_order_txt, bar_order_trans);
                 new_order_txt.GetComponent<Text>().text = "# " + (i + 1).ToString();
-
+                new_order_txt.transform.SetAsLastSibling();
                 for (int j = 0; j < beatPerBar * grid_density; j++)
                 {
-                    GameObject new_line = Instantiate(horizontal_line, transform);
+                    GameObject new_line = horizontal_line_pool.GetObject();///Instantiate(horizontal_line, transform);
+                    new_line.transform.SetAsLastSibling();
                     if (j == 0)
                         new_line.GetComponent<Image>().color = Color.green;
                     else if (j % grid_density == 0)
@@ -153,6 +156,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         float min_delta = float.MaxValue;
         for (int i = 0; i < transform.childCount; ++i)
         {
+            if (!transform.GetChild(i).gameObject.activeSelf) continue;
             float delta = Mathf.Abs(transform.GetChild(i).position.y - y);
             if (delta < min_delta)
             {

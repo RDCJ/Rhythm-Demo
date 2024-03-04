@@ -12,8 +12,12 @@ public class FPSIndicator : MonoBehaviour
     float refresh_time;
     private void Awake()
     {
+#if UNITY_EDITOR
         txt = GetComponent<Text>();
         refresh_time = 0;
+#else
+        Destroy(this.gameObject);
+#endif
     }
     // Update is called once per frame
     void Update()
