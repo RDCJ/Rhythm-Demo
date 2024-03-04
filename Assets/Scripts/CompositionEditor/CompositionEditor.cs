@@ -335,7 +335,7 @@ public class CompositionEditor : MonoBehaviour
 
     public float GetVerticalScale
     {
-        get => vertical_scale.value * 2.5f + 0.5f;
+        get => vertical_scale.value * 4.5f + 0.5f;
     }
 
     public bool BPMHasValue
