@@ -195,6 +195,15 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void OnPointerMove(PointerEventData eventData)
     {
         if (!CompositionEditor.Instance.BPMHasValue) return;
+        if (eventData.pointerEnter.name != horizontal_grid_line.gameObject.name)
+        {
+            if (preview_note != null)
+            {
+                preview_note.gameObject.SetActive(false);
+            }
+            return;
+        }
+
         if (preview_note == null || preview_note.name != NoteSelector.Instance.GetNoteTypeStr)
         {
             for (int i = 0; i < preview_notes.childCount; i++)
@@ -206,11 +215,12 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
                     preview_note = child as RectTransform;
                 }
             }
-            preview_note.gameObject.SetActive(true);
         }
 
+        // ¸úËæ¹â±êÒÆ¶¯
         if (preview_note != null)
         {
+            preview_note.gameObject.SetActive(true);
             if (preview_note.name == Note.NoteType.Hold.ToString())
             {
                 NoteCfg cfg = horizontal_grid_line.GetNoteCfgFromPointer(eventData, (int)Note.NoteType.Hold);

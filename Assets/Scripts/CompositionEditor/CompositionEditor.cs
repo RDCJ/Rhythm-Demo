@@ -50,6 +50,8 @@ public class CompositionEditor : MonoBehaviour
     Button bg_import_btn;
     MusicBackground musicBackground;
 
+    Button delete_btn;
+
     string current_difficulty;
     string current_music_file_name;
 
@@ -77,10 +79,10 @@ public class CompositionEditor : MonoBehaviour
         import_music_btn = music_select.Find("import_music_btn").GetComponent<Button>();
         open_res_folder_btn = music_select.Find("open_res_folder_btn").GetComponent<Button>();
         vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
+        delete_btn = transform.Find("delete_btn").GetComponent<Button>();
 
         canvasScaler = transform.parent.GetComponent<CanvasScaler>();
 
-        
         musicBackground = transform.Find("BG_view").AddComponent<MusicBackground>();
         // 难度选项
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
@@ -226,6 +228,8 @@ public class CompositionEditor : MonoBehaviour
 #endif
             });
         });
+
+        delete_btn.onClick.AddListener(() => NoteSelector.Instance.DeleteNote());
 
         this.Close();
         Debug.Log("[CompositionEditor] init");

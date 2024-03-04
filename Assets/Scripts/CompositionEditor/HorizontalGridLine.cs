@@ -156,6 +156,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
         float min_delta = float.MaxValue;
         for (int i = 0; i < transform.childCount; ++i)
         {
+            if (!transform.GetChild(i).gameObject.activeSelf) continue;
             float delta = Mathf.Abs(transform.GetChild(i).position.y - y);
             if (delta < min_delta)
             {
