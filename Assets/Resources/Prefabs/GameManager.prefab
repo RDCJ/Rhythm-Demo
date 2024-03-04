@@ -290,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 61.80005, y: -63.5}
+  m_AnchoredPosition: {x: 61.800293, y: -63.5}
   m_SizeDelta: {x: 75.128174, y: 75.128174}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &547490919766815468
@@ -518,12 +518,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
-  bg_videoPlayer: {fileID: 0}
+  musicBackground: {fileID: 0}
   music_file_name: 
   difficulty: 
   current_note_idx: 0
   note_count: 0
-  current_time: 0
+  prepare_time: 0
   drop_duration: 0.72
 --- !u!1 &654311575168428622
 GameObject:
@@ -734,7 +734,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1120775183442321260}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
