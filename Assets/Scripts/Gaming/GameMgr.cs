@@ -99,7 +99,7 @@ public class GameMgr : MonoBehaviour
 
     public bool IsMusicEnd
     {
-        get => CurrentTime >= audioSource.clip.length;
+        get => (CurrentTime >= audioSource.clip.length) || (IsNoteEnd && CurrentTime == 0);
     }
 
     public bool IsNoteEnd
