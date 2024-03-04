@@ -56,7 +56,7 @@ public class CompositionEditor : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        Transform music_cfg_panel = transform.Find("music_cfg_panel");
+        Transform music_cfg_panel = transform.Find("Scroll View/Viewport/music_cfg_panel");
         cfg_panel_music_name = music_cfg_panel.Find("music_name").GetComponent<InputField>();
         cfg_panel_author = music_cfg_panel.Find("author").GetComponent<InputField>();
         difficulty = music_cfg_panel.Find("difficulty").GetComponent<Dropdown>();
@@ -65,9 +65,11 @@ public class CompositionEditor : MonoBehaviour
         cfg_prepare_time = music_cfg_panel.Find("prepare_time").GetComponent<InputField>();
         cfg_time_offset = music_cfg_panel.Find("time_offset").GetComponent <InputField>();
         grid_density = music_cfg_panel.Find("grid_density").GetComponent<Dropdown>();
+        bg_view_btn = music_cfg_panel.Find("music_bg/view_btn").GetComponent<Button>();
+        bg_import_btn = music_cfg_panel.Find("music_bg/import_btn").GetComponent<Button>();
 
-        save_btn = transform.Find("save_btn").GetComponent<Button>();
-        close_btn = transform.Find("close_btn").GetComponent<Button>();
+        save_btn = transform.Find("btns/save_btn").GetComponent<Button>();
+        close_btn = transform.Find("btns/close_btn").GetComponent<Button>();
 
         music_select = transform.Find("music_select");
         music_list = music_select.Find("music_list").GetComponent<Dropdown>();
@@ -78,8 +80,7 @@ public class CompositionEditor : MonoBehaviour
 
         canvasScaler = transform.parent.GetComponent<CanvasScaler>();
 
-        bg_view_btn = transform.Find("music_bg/view_btn").GetComponent<Button>();
-        bg_import_btn = transform.Find("music_bg/import_btn").GetComponent<Button>();
+        
         musicBackground = transform.Find("BG_view").AddComponent<MusicBackground>();
         // 难度选项
         foreach (KeyValuePair<int, string> keyValue in GameConst.DifficultyIndex)
