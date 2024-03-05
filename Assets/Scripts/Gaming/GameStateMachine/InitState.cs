@@ -12,6 +12,6 @@ public class InitState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        gameMgr.Init();
+        LoadingScreenManager.Instance.StartLoading(() => gameMgr.Init());
     }
 }

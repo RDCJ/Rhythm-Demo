@@ -22,15 +22,20 @@ public class GameMgr : MonoBehaviour
     #endregion
 
     #region component
+    Transform GameCanvas_tf;
+    Transform UICanvas_tf;
+    Transform BGCanvas_tf;
+
+    GameObject pause_panel;
     Button pause_btn;
     Button continue_btn;
     Button restart_btn;
     Button back_btn;
-    public AudioSource audioSource;
+    
     ScoreMgr scoreMgr;
-    GameObject pause_panel;
     Text time_txt;
 
+    public AudioSource audioSource;
     public MusicBackground musicBackground;
     #endregion
 
@@ -118,8 +123,9 @@ public class GameMgr : MonoBehaviour
         composition = new List<NoteCfg>();
         audioSource = transform.Find("music").GetComponent<AudioSource>();
 
-        Transform GameCanvas_tf = transform.Find("GameCanvas");
-        Transform UICanvas_tf = transform.Find("UICanvas");
+        GameCanvas_tf = transform.Find("GameCanvas");
+        UICanvas_tf = transform.Find("UICanvas");
+        BGCanvas_tf = transform.Find("BGCanvas");
         pause_btn = UICanvas_tf.Find("pause_btn").GetComponent<Button>();
         pause_panel = UICanvas_tf.Find("pause_panel").gameObject;
         time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
@@ -129,7 +135,7 @@ public class GameMgr : MonoBehaviour
         restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
 
-        musicBackground = transform.Find("BGCanvas").AddComponent<MusicBackground>();
+        musicBackground = BGCanvas_tf.AddComponent<MusicBackground>();
         
         stateMachine = new StateMachine();
         initState = new InitState(this, stateMachine);
@@ -173,6 +179,7 @@ public class GameMgr : MonoBehaviour
     public void StartInitGame(string music_file_name, string difficulty)
     {
         this.gameObject.SetActive(true);
+        CloseAllCanvas();
         this.music_file_name = music_file_name;
         this.difficulty = difficulty;
         music_cfg = MusicResMgr.GetCfg(music_file_name);
@@ -190,15 +197,17 @@ public class GameMgr : MonoBehaviour
         current_note_idx = 0;
 
         // 加载资源
-        if (!music_cfg.composition.ContainsKey(difficulty))
+        var _composition = music_cfg.GetComposition(difficulty);
+        if (_composition.Count <= 0)
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
-            Close();
+            LoadingScreenManager.Instance.EndLoading(_onFinishIdle: ()=> Close());
         }
         else
         {
+            OpenAllCanvas();
             // 加载谱面
-            composition = music_cfg.GetComposition(difficulty);
+            composition = _composition;
             note_count = composition.Count;
             // 初始化计分
             scoreMgr.Init(note_count);
@@ -221,11 +230,8 @@ public class GameMgr : MonoBehaviour
                 audioSource.Stop();
             }))
             .AddCoroutine(musicBackground.Init(this.music_file_name))
-            .StartAll(() =>{
-                Util.DelayOneFrame(this, () =>
-                {
-                        stateMachine.ChangeState(prepareState);
-                });
+            .StartAll(() => {
+                LoadingScreenManager.Instance.EndLoading(_onFinishHide: () => stateMachine.ChangeState(prepareState));
             });
         }
     }
@@ -292,5 +298,19 @@ public class GameMgr : MonoBehaviour
         this.gameObject.SetActive(false);
         NotePoolManager.Instance.Reload();
         MusicSelect.Instance?.RefreshRecord();
+    }
+
+    public void CloseAllCanvas()
+    {
+        UICanvas_tf.gameObject.SetActive(false);
+        BGCanvas_tf.gameObject.SetActive(false);
+        GameCanvas_tf.gameObject.SetActive(false);
+    }
+
+    public void OpenAllCanvas()
+    {
+        UICanvas_tf.gameObject.SetActive(true);
+        BGCanvas_tf.gameObject.SetActive(true);
+        GameCanvas_tf.gameObject.SetActive(true);
     }
 }
