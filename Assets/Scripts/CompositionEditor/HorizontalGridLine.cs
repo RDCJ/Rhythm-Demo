@@ -169,6 +169,29 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
+    /// 获取离y最近的水平线的index
+    /// </summary>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public int GetNearestLineActiveIndex(float y)
+    {
+        int index = -1;
+        float min_delta = float.MaxValue;
+        for (int i = 0; i < transform.childCount; ++i)
+        {
+            if (!transform.GetChild(i).gameObject.activeSelf) continue;
+            float delta = Mathf.Abs(transform.GetChild(i).position.y - y);
+            if (delta < min_delta)
+            {
+                min_delta = delta;
+            }
+            else break;
+            index++;
+        }
+        return index;
+    }
+
+    /// <summary>
     /// 获取离y最近的水平线的position.y
     /// </summary>
     /// <param name="y"></param>
@@ -186,7 +209,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     /// <returns></returns>
     public float GetNearestTime(float y)
     {
-        return GetNearestLineIndex(y) * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
+        return GetNearestLineActiveIndex(y) * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
     }
 
     public float GetPositionX(PointerEventData eventData)
