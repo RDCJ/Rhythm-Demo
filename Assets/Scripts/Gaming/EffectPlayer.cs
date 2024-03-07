@@ -42,17 +42,12 @@ public class EffectPlayer : MonoBehaviour
 
     public void PlayEffect(ScoreMgr.ScoreLevel level, Vector3 position)
     {
+        Debug.Log("[EffectPlayer.PlayEffect]: " + position);
         GameObject new_effect = pools[level].GetObject();
-        /*CanvasGroup canvasGroup = new_effect.GetComponent<CanvasGroup>();
-        new_effect.transform.position = position;
-        new_effect.transform.localScale = Vector3.one;
-        canvasGroup.alpha = 1;
-        new_effect.transform.DOScale(new Vector3(scale, scale, 1), effect_time);
-        canvasGroup.DOFade(0, effect_time).OnComplete(() =>
-        {
-            pools[level].ReturnObject(new_effect);
-        });*/
-        new_effect.transform.position = position;
+        new_effect.GetComponent<RectTransform>().anchoredPosition = position;
+        new_effect.transform.Find("Light").localScale = Vector3.one * scale;
+        new_effect.transform.Find("Star").localScale = Vector3.one * scale;
+
         Sequence seq = DOTween.Sequence();
         seq.AppendInterval(effect_time).AppendCallback(() => { pools[level].ReturnObject(new_effect); });
 

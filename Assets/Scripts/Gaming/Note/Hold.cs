@@ -29,10 +29,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("OnPointerDown " + eventData.pointerId);
+        finger_count++;
         if (this.IsActive)
         {
-            finger_count++;
             if (!is_finger_down)
             {
                 is_finger_down = true;
@@ -57,20 +56,15 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter " + eventData.pointerId);
-        if (this.IsActive)
-        {
-            finger_count++;
-        }
+        finger_count++;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Debug.Log("OnPointerUp " + eventData.pointerId);
+        finger_count--;
         if (this.IsActive)
         {
-            finger_count--;
-            if (!IsHolding && is_move)
+            if (is_finger_down && !IsHolding && is_move)
             {
                 EndJudge();
             }
@@ -79,11 +73,10 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("OnPointerExit " + eventData.pointerId);
+        finger_count--;
         if (this.IsActive)
         {
-            finger_count--;
-            if (!IsHolding && is_move)
+            if (is_finger_down && !IsHolding && is_move)
             {
                 EndJudge();
             }
@@ -105,7 +98,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         base.Update();
         if (is_move)
         {
-            CheckFirstCheckPointMiss();
+           CheckFirstCheckPointMiss();
 
             CheckLastCheckPoint();
 
@@ -194,7 +187,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     private void CheckFirstCheckPointMiss()
     {
-        if (!is_finger_down && finger_count <= 0 && cfg.FirstCheckPoint().time + GameConst.good_interval < GameMgr.Instance.CurrentTime)
+        if (!is_finger_down  && cfg.FirstCheckPoint().time + GameConst.good_interval < GameMgr.Instance.CurrentTime)
         {
             Miss();
         }
@@ -210,9 +203,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     private void ModifyShapeOnReachJudgeLine()
     {
+        //Debug.Log("[ModifyShapeOnReachJudgeLine]" + head_handle.position.y + " " + JudgeLine.PositionY);
         if (head_handle.position.y < JudgeLine.PositionY)
         {
-            //head_handle.position = new Vector3(GetCenterXOnJudgeLine, JudgeLine.PositionY, 0);
             if (GameMgr.Instance.CurrentTime > checkPoints_cache[1].time)
             {
                 if (checkPoints_cache.Count > 2)
@@ -221,7 +214,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             checkPoints_cache[0] = GetCheckPointOnJudgeLine;
             Resize();
             if (tail_handle.position.y > JudgeLine.PositionY)
-                rectTransform.position = Util.ChangeV3(rectTransform.position, 1, JudgeLine.PositionY + icon.Height / 2);
+            {
+                rectTransform.anchoredPosition = Util.ChangeV3(rectTransform.anchoredPosition, 1, JudgeLine.localPositionY + icon.Height * 0.5f);
+            }
         }
     }
 
@@ -238,7 +233,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
     {
         get
         {
-            return (float)GetCheckPointOnJudgeLine.Center() * Screen.width;
+            return ((float)GetCheckPointOnJudgeLine.Center() - 0.5f) * Screen.width;
         }
     }
 }

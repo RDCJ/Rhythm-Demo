@@ -85,7 +85,7 @@ namespace Note
                 float y = rectTransform.localPosition.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
                 rectTransform.localPosition = new Vector3(x, y, 0);
 
-                float distance_to_judge_line = rectTransform.position.y - JudgeLine.PositionY;
+                float distance_to_judge_line = rectTransform.localPosition.y + Screen.height * 0.5f - JudgeLine.localPositionY;
                 // note进入判定区
                 if (!IsActive)
                 {
@@ -200,9 +200,9 @@ namespace Note
         public void PlayEffect(ScoreMgr.ScoreLevel scoreLevel)
         {
             float x = GetCenterXOnJudgeLine;
-            if (x >=0 && x <= Screen.width)
+            if (Mathf.Abs(x) < Screen.width * 0.5f)
             {
-                float y = JudgeLine.Instance.transform.position.y;
+                float y = JudgeLine.localPositionY;
                 EffectPlayer.Instance.PlayEffect(scoreLevel, new Vector3(x, y, 0));
             }
             else
@@ -251,7 +251,7 @@ namespace Note
 
         protected virtual float GetCenterXOnJudgeLine
         {
-            get => this.transform.position.x;
+            get => this.transform.localPosition.x;
         }
     }
 }
