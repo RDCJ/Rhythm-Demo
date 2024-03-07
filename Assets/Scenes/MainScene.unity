@@ -2045,54 +2045,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 652980696}
-    - target: {fileID: 3520925732425993363, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3520925732425993363, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3520925732425993363, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3520925732425993363, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6565324041242164325, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6565324041242164325, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6565324041242164325, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6565324041242164325, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6570135540753400223, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6570135540753400223, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6570135540753400223, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6570135540753400223, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7136376428690432585, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
       propertyPath: m_Camera
       value: 

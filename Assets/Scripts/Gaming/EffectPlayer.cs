@@ -43,7 +43,7 @@ public class EffectPlayer : MonoBehaviour
     public void PlayEffect(ScoreMgr.ScoreLevel level, Vector3 position)
     {
         GameObject new_effect = pools[level].GetObject();
-        CanvasGroup canvasGroup = new_effect.GetComponent<CanvasGroup>();
+        /*CanvasGroup canvasGroup = new_effect.GetComponent<CanvasGroup>();
         new_effect.transform.position = position;
         new_effect.transform.localScale = Vector3.one;
         canvasGroup.alpha = 1;
@@ -51,6 +51,10 @@ public class EffectPlayer : MonoBehaviour
         canvasGroup.DOFade(0, effect_time).OnComplete(() =>
         {
             pools[level].ReturnObject(new_effect);
-        });
+        });*/
+        new_effect.transform.position = position;
+        Sequence seq = DOTween.Sequence();
+        seq.AppendInterval(effect_time).AppendCallback(() => { pools[level].ReturnObject(new_effect); });
+
     }
 }
