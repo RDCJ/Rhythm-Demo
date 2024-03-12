@@ -306,6 +306,7 @@ public class CompositionEditor : MonoBehaviour
     public void Open()
     {
         this.gameObject.SetActive(true);
+        CommonAnime.Scale(this.transform);
     }
 
     public void Close()

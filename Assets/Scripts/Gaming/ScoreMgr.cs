@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -62,14 +63,14 @@ public class ScoreMgr : MonoBehaviour
         score_txt = transform.Find("score_txt").GetComponent<Text>();
         combo_txt = transform.Find("combo_txt").GetComponent<Text>();
         final_score_panel = transform.Find("final_score_panel");
-        final_score_txt = final_score_panel.Find("score_txt").GetComponent<Text>();
-        final_acc_txt = final_score_panel.Find("accuracy").GetComponent<Text>();
-        final_perfect_count = final_score_panel.Find("perfect_count").GetComponent<Text>();
-        final_good_count = final_score_panel.Find("good_count").GetComponent<Text>();
-        final_bad_count = final_score_panel.Find("bad_count").GetComponent<Text>();
-        final_early_count = final_score_panel.Find("early_count").GetComponent<Text>();
-        final_late_count = final_score_panel.Find("late_count").GetComponent<Text>();
-        extra_tag = final_score_panel.Find("extra_tag").GetComponent<Text>();
+        final_score_txt = final_score_panel.Find("final_score/score_txt").GetComponent<Text>();
+        final_acc_txt = final_score_panel.Find("final_score/accuracy").GetComponent<Text>();
+        final_perfect_count = final_score_panel.Find("final_score/perfect_count").GetComponent<Text>();
+        final_good_count = final_score_panel.Find("final_score/good_count").GetComponent<Text>();
+        final_bad_count = final_score_panel.Find("final_score/bad_count").GetComponent<Text>();
+        final_early_count = final_score_panel.Find("final_score/early_count").GetComponent<Text>();
+        final_late_count = final_score_panel.Find("final_score/late_count").GetComponent<Text>();
+        extra_tag = final_score_panel.Find("final_score/extra_tag").GetComponent<Text>();
         restart_btn = final_score_panel.Find("restart_btn").GetComponent<Button>();
         back_btn = final_score_panel.Find("back_btn").GetComponent<Button>();
         restart_btn.onClick.AddListener(() =>
@@ -148,6 +149,8 @@ public class ScoreMgr : MonoBehaviour
 
     public void ShowFinalScore()
     {
+        CommonAnime.Scale(final_score_panel);
+
         score = Mathf.Round(score);
         float acc = GetAccuracy();
         Debug.Log("Score: " + score + " Accuracy: " + acc);

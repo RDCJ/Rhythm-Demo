@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -95,5 +96,15 @@ public class WaitForAllCoroutine
         }
 
         mono.StartCoroutine(_WaitForAll(coroutines));
+    }
+}
+
+public class CommonAnime
+{
+    public static void Scale(Transform tf, float duration = 0.5f, float start_scale = 0, float end_scale=1)
+    {
+        tf.DOKill();
+        tf.localScale = start_scale * Vector3.one;
+        tf.DOScale(end_scale, duration);
     }
 }

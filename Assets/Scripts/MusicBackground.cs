@@ -49,6 +49,7 @@ public class MusicBackground : MonoBehaviour
                     {
                         bg_img.sprite = null;
                         bg_img.color = Color.black;
+                        bg_img.gameObject.SetActive(false);
                     }
                 })
             );

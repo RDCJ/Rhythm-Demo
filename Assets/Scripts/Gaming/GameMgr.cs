@@ -34,6 +34,7 @@ public class GameMgr : MonoBehaviour
     
     ScoreMgr scoreMgr;
     Text time_txt;
+    Slider time_progress;
 
     public AudioSource audioSource;
     public MusicBackground musicBackground;
@@ -129,6 +130,7 @@ public class GameMgr : MonoBehaviour
         pause_btn = UICanvas_tf.Find("pause_btn").GetComponent<Button>();
         pause_panel = UICanvas_tf.Find("pause_panel").gameObject;
         time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
+        time_progress = UICanvas_tf.Find("time_progress").GetComponent<Slider>();
         scoreMgr = UICanvas_tf.Find("score_mgr").GetComponent<ScoreMgr>();
 
         continue_btn = pause_panel.transform.Find("btn/continue_btn").GetComponent<Button>();
@@ -157,6 +159,12 @@ public class GameMgr : MonoBehaviour
         back_btn.onClick.AddListener(() =>{
             Close();
         });
+
+#if UNITY_EDITOR
+        time_txt.gameObject.SetActive(true);
+#else
+        time_txt.gameObject.SetActive(false);
+#endif
     }
 
 
@@ -167,6 +175,7 @@ public class GameMgr : MonoBehaviour
         if (audioSource.clip != null)
         {
             time_txt.text = CurrentTime.ToString("N2") + " / " + audioSource.clip.length.ToString("N2");
+            time_progress.value = MathF.Max(0, (float)CurrentTime) / audioSource.clip.length;
         }
     }
 
