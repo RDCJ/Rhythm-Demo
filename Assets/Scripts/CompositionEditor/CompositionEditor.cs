@@ -74,10 +74,10 @@ public class CompositionEditor : MonoBehaviour
         close_btn = transform.Find("btns/close_btn").GetComponent<Button>();
 
         music_select = transform.Find("music_select");
-        music_list = music_select.Find("music_list").GetComponent<Dropdown>();
-        music_confirm_btn = music_select.Find("confirm_btn").GetComponent<Button>();
-        import_music_btn = music_select.Find("import_music_btn").GetComponent<Button>();
-        open_res_folder_btn = music_select.Find("open_res_folder_btn").GetComponent<Button>();
+        music_list = music_select.Find("BG/music_list").GetComponent<Dropdown>();
+        music_confirm_btn = music_select.Find("BG/confirm_btn").GetComponent<Button>();
+        import_music_btn = music_select.Find("BG/import_music_btn").GetComponent<Button>();
+        open_res_folder_btn = music_select.Find("BG/open_res_folder_btn").GetComponent<Button>();
         vertical_scale = transform.Find("display/vertical_scale").GetComponent<Slider>();
         delete_btn = transform.Find("delete_btn").GetComponent<Button>();
 

@@ -21,7 +21,8 @@ public class MusicSelect : MonoBehaviour
 
     [SerializeField]
     private CircularScrollingList _list;
-    private Toggle[] toggles;
+    Button difficulty_change_btn;
+    Text difficulty_txt;
     public GameObject game_mgr;
     Button play_btn;
     CanvasGroup record;
@@ -36,38 +37,36 @@ public class MusicSelect : MonoBehaviour
     {
         instance = this;
         play_btn = transform.Find("play_btn").GetComponent<Button>();
-        record = transform.Find("record").GetComponent<CanvasGroup>();
-        record_score_txt = transform.Find("record/score").GetComponent<Text>();
-        record_acc_txt = transform.Find("record/accuracy").GetComponent<Text>();
-        record_tag = transform.Find("record/tag").GetComponent<Text>();
+        difficulty_change_btn = transform.Find("difficulty_change").GetComponent<Button>();
+        difficulty_txt = difficulty_change_btn.transform.Find("Text").GetComponent<Text>();
+        record = transform.Find("record/BG").GetComponent<CanvasGroup>();
+        record_score_txt = record.transform.Find("score").GetComponent<Text>();
+        record_acc_txt = record.transform.Find("accuracy").GetComponent<Text>();
+        record_tag = record.transform.Find("tag").GetComponent<Text>();
 
         play_btn.onClick.AddListener(() =>
         {
             int current_id = _list.GetFocusingContentID();
             MusicListContent content =
             (MusicListContent)_list.ListBank.GetListContent(current_id);
-            GameMgr.Instance.StartInitGame(content.music_name, PlayerPrefs.GetString(SelectedDifficultyKW, "Easy"));
+            GameMgr.Instance.StartInitGame(content.music_name, GetSelectedDifficulty);
         });
 
-        toggles = new Toggle[3];
-        for (int i=0; i<3; i++)
+
+        difficulty_txt.text = GetSelectedDifficulty;
+        difficulty_change_btn.onClick.AddListener(() =>
         {
-            toggles[i] = transform.Find($"difficulty_toggle/Toggle ({i+1})").GetComponent<Toggle>();
-            Text difficulty_text = toggles[i].transform.Find("Background/Label").GetComponent<Text>();
-            if (difficulty_text.text == PlayerPrefs.GetString(SelectedDifficultyKW, "Easy"))
-                toggles[i].isOn = true;
-            else
-                toggles[i].isOn = false;
-            toggles[i].onValueChanged.AddListener((value) =>
-            {
-                if (value)
-                {
-                    PlayerPrefs.SetString(SelectedDifficultyKW, difficulty_text.text);
-                    PlayerPrefs.Save();
-                    RefreshRecord();
-                }
-            });
-        }
+            int k = PlayerPrefs.GetInt(SelectedDifficultyKW, 0);
+            PlayerPrefs.SetInt(SelectedDifficultyKW, (k + 1) % 3);
+            PlayerPrefs.Save();
+            difficulty_txt.text = GetSelectedDifficulty;
+            RefreshRecord();
+        });
+    }
+
+    public string GetSelectedDifficulty
+    {
+        get => GameConst.DifficultyIndex[PlayerPrefs.GetInt(SelectedDifficultyKW, 0)];
     }
 
     public void DisplayFocusingContent()
@@ -115,7 +114,7 @@ public class MusicSelect : MonoBehaviour
 
         MusicListContent content = (MusicListContent)_list.ListBank.GetListContent(current_id);
 
-        string difficulty = PlayerPrefs.GetString(SelectedDifficultyKW, "Easy");
+        string difficulty = GetSelectedDifficulty;
         int max_score = PlayerData.GetMaxScore(content.music_file_name, difficulty);
         float acc = PlayerData.GetMaxAccuracy(content.music_file_name, difficulty);
         string tag = PlayerData.GetTag(content.music_file_name, difficulty);
