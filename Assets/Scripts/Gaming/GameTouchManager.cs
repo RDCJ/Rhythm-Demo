@@ -2,37 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class DownEvent
+public enum TouchEventType
 {
-    public Vector2 down_position;
-    public float down_time;
-    public DownEvent(Vector2 down_position, float down_time)
+    Down,
+    Up,
+    Hold
+}
+
+public class TouchEvent
+{
+    public int finger_id;
+    public Vector2 position;
+    public float time;
+    public TouchEventType type;
+
+    public TouchEvent(int finger_id, Vector2 position, float time, TouchEventType type)
     {
-        this.down_position = down_position;
-        this.down_time = down_time;
+        this.finger_id = finger_id;
+        this.position = position;
+        this.time = time;
+        this.type = type;
     }
 }
 
-public class SlideEvent
-{
-    public Vector2 down_position;
-    public Vector2 up_position;
-    public float down_time;
-    public float up_time;
-    public SlideEvent(Vector2 down_position, Vector2 up_position, float down_time, float up_time)
-    {
-        this.down_position = down_position;
-        this.up_position = up_position;
-        this.down_time = down_time;
-        this.up_time = up_time;
-    }
-
-    public float duration => up_time - down_time;
-}
-
-public delegate void DownEventDelegate(DownEvent event_data);
-public delegate void SlideEventDelegate(SlideEvent event_data);
+public delegate void TouchEventDelegate(TouchEvent event_data);
 
 public class GameTouchManager : MonoBehaviour
 {
@@ -43,10 +36,9 @@ public class GameTouchManager : MonoBehaviour
     float up_time;
     float down_time;
 
-    private static DownEventDelegate onDown;
-    private static SlideEventDelegate onSlide;
+    private Dictionary<TouchEventType, TouchEventDelegate> event_handlers;
 
-    private void Start()
+/*    private void Start()
     {
         AddListener((SlideEvent event_data) =>
         {
@@ -59,7 +51,7 @@ public class GameTouchManager : MonoBehaviour
             if (PrintLog)
                 Debug.Log("OnDown: " + event_data.down_position);
         });
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
@@ -72,8 +64,8 @@ public class GameTouchManager : MonoBehaviour
                 is_finger_down = true;
                 down_position = touch.position;
                 down_time = Time.time;
-                var new_event = new DownEvent(down_position, down_time);
-                onDown?.Invoke(new_event);
+/*                var new_event = new DownEvent(touch.fingerId, down_position, down_time);
+                onDown?.Invoke(new_event);*/
             }
             else if (touch.phase == TouchPhase.Ended)
             {
@@ -82,32 +74,20 @@ public class GameTouchManager : MonoBehaviour
                     is_finger_down = false;
                     up_position = touch.position;
                     up_time = Time.time;
-                    var new_event = new SlideEvent(down_position, up_position, down_time, up_time);
-                    onSlide?.Invoke(new_event);
+/*                    var new_event = new SlideEvent(down_position, up_position, down_time, up_time);
+                    onSlide?.Invoke(new_event);*/
                 }
             }
         }
     }
 
-    public static void AddListener(SlideEventDelegate listener)
+    public void AddListener(TouchEventType type, TouchEventDelegate listener)
     {
-        onSlide += listener;
+        event_handlers[type] += listener;
     }
 
-    public static void RemoveListener(SlideEventDelegate listener)
+    public void RemoveListener(TouchEventType type, TouchEventDelegate listener)
     {
-        onSlide -= listener;
+        event_handlers[type] -= listener;
     }
-
-    public static void AddListener(DownEventDelegate listener)
-    {
-        onDown += listener;
-    }
-
-    public static void RemoveListener(DownEventDelegate listener)
-    {
-        onDown -= listener;
-    }
-
-
 }
