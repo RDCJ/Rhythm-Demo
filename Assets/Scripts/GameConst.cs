@@ -54,6 +54,10 @@ public class GameConst
     /// hold_note下落 [编辑器中有效]
     /// </summary>
     public static bool hold_note_drop => gameCFG.hold_note_drop;
+    /// <summary>
+    /// 启用测试模式
+    /// </summary>
+    public static bool enable_test_mode => gameCFG.enable_test_mode;
 
     public static float basic_score 
     { 

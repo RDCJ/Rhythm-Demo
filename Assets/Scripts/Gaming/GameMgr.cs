@@ -72,6 +72,10 @@ public class GameMgr : MonoBehaviour
     /// </summary>
     public double prepare_time;
     /// <summary>
+    /// note从生成点移动到判定线所需时间
+    /// </summary>
+    public float drop_duration;
+    /// <summary>
     /// 当前游戏时间
     /// </summary>
     public double CurrentTime
@@ -84,10 +88,10 @@ public class GameMgr : MonoBehaviour
                 return audioSource.time;
         }
     }
-    /// <summary>
-    /// note从生成点移动到判定线所需时间
-    /// </summary>
-    public float drop_duration;
+
+    public bool is_test_mode;
+    float test_mode_start_time;
+
     #region statemachine
     public StateMachine stateMachine;
     public InitState initState;
@@ -96,6 +100,7 @@ public class GameMgr : MonoBehaviour
     public PauseState pauseState;
     public RestartState restartState;
     public MusicEndState musicEndState;
+    public PrepareTestState prepareTestState;
     #endregion
 
     public MusicCfg GetMusicCfg
@@ -146,6 +151,7 @@ public class GameMgr : MonoBehaviour
         restartState = new RestartState(this, stateMachine);
         prepareState = new PrepareState(this, stateMachine);
         musicEndState = new MusicEndState(this, stateMachine);
+        prepareTestState = new PrepareTestState(this, stateMachine);
 
         pause_btn.onClick.AddListener(()=> {
             stateMachine.ChangeState(pauseState);        
@@ -185,12 +191,14 @@ public class GameMgr : MonoBehaviour
     }
 
     #region logic function
-    public void StartInitGame(string music_file_name, string difficulty)
+    public void StartInitGame(string music_file_name, string difficulty, bool test_mode=false, float start_time=0)
     {
         this.gameObject.SetActive(true);
         CloseAllCanvas();
         this.music_file_name = music_file_name;
         this.difficulty = difficulty;
+        this.is_test_mode = test_mode;
+        this.test_mode_start_time = start_time;
         music_cfg = MusicResMgr.GetCfg(music_file_name);
         music_cfg.prepare_time = Math.Max(0, music_cfg.prepare_time);
         stateMachine.Init(initState);
@@ -225,10 +233,6 @@ public class GameMgr : MonoBehaviour
             Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
 
-
-            float first_note_time = composition.Count > 0 ? (float)composition[0].checkPoints[0].time : float.MaxValue;
-            prepare_time = Mathf.Min(first_note_time - drop_duration, 0);
-
             // 加载音乐和背景
             WaitForAllCoroutine loading_task = new WaitForAllCoroutine(this);
             loading_task.AddCoroutine(MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
@@ -240,7 +244,14 @@ public class GameMgr : MonoBehaviour
             }))
             .AddCoroutine(musicBackground.Init(this.music_file_name))
             .StartAll(() => {
-                LoadingScreenManager.Instance.EndLoading(_onFinishHide: () => stateMachine.ChangeState(prepareState));
+                LoadingScreenManager.Instance.EndLoading(_onFinishHide: 
+                    () => {
+                        if (is_test_mode)
+                            stateMachine.ChangeState(prepareTestState);
+                        else
+                            stateMachine.ChangeState(prepareState); 
+                    }
+                );
             });
         }
     }
@@ -321,5 +332,31 @@ public class GameMgr : MonoBehaviour
         UICanvas_tf.gameObject.SetActive(true);
         BGCanvas_tf.gameObject.SetActive(true);
         GameCanvas_tf.gameObject.SetActive(true);
+    }
+
+    public void CalcPrepareTime()
+    {
+/*        float first_note_time = (composition.Count > 0 && !IsNoteEnd) ? (float)composition[current_note_idx].FirstCheckPoint().time : float.MaxValue;
+        prepare_time = 2 * drop_duration;//Mathf.Min(first_note_time - drop_duration, 0); */
+
+        float first_note_time = composition.Count > 0 ? (float)composition[0].FirstCheckPoint().time : float.MaxValue;
+        prepare_time = Mathf.Min(first_note_time - drop_duration, 0);
+    }
+
+    public void PrepareTestMode()
+    {
+        if (test_mode_start_time <= 0) return;
+
+        while (true)
+        {
+            if (IsNoteEnd) break;
+            double next_note_time = composition[current_note_idx].FirstCheckPoint().time;
+            if (next_note_time < test_mode_start_time)
+                current_note_idx++;
+            else
+                break;
+        }
+
+        audioSource.time = Mathf.Max(0, (float)composition[current_note_idx].FirstCheckPoint().time - 2 * drop_duration);
     }
 }

@@ -525,6 +525,7 @@ MonoBehaviour:
   note_count: 0
   prepare_time: 0
   drop_duration: 0.72
+  is_test_mode: 0
 --- !u!1 &625498316283719256
 GameObject:
   m_ObjectHideFlags: 0

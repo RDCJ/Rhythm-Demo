@@ -8,6 +8,12 @@ public class PrepareState: GameBaseState
     {
     }
 
+    public override void EnterState()
+    {
+        base.EnterState();
+        gameMgr.CalcPrepareTime();
+    }
+
     public override void ExitState()
     {
         base.ExitState();

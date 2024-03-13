@@ -30,6 +30,34 @@ public class MusicSelect : MonoBehaviour
     Text record_acc_txt;
     Text record_tag;
 
+    Toggle test_mode_switch;
+    InputField test_mode_start_time_input;
+    private bool IsTestMode
+    {
+        get => GameConst.enable_test_mode && test_mode_switch.isOn;
+    }
+
+    private float TestModeStartTime
+    {
+        get
+        {
+            if (test_mode_switch.isOn)
+            {
+                try
+                {
+                    float t = float.Parse(test_mode_start_time_input.text);
+                    return t;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+            else
+                return 0;
+        }
+    }
+
 
     public static string SelectedDifficultyKW = "SelectedDifficulty";
 
@@ -44,12 +72,17 @@ public class MusicSelect : MonoBehaviour
         record_acc_txt = record.transform.Find("accuracy").GetComponent<Text>();
         record_tag = record.transform.Find("tag").GetComponent<Text>();
 
+        Transform test_mode_cfg = transform.Find("test_mode");
+        test_mode_switch = test_mode_cfg.Find("Switch").GetComponent<Toggle>();
+        test_mode_start_time_input = test_mode_cfg.Find("StartTime").GetComponent<InputField>();
+        test_mode_cfg.gameObject.SetActive(GameConst.enable_test_mode);
+
         play_btn.onClick.AddListener(() =>
         {
             int current_id = _list.GetFocusingContentID();
             MusicListContent content =
             (MusicListContent)_list.ListBank.GetListContent(current_id);
-            GameMgr.Instance.StartInitGame(content.music_name, GetSelectedDifficulty);
+            GameMgr.Instance.StartInitGame(content.music_name, GetSelectedDifficulty, IsTestMode, TestModeStartTime);
         });
 
 
@@ -62,6 +95,8 @@ public class MusicSelect : MonoBehaviour
             difficulty_txt.text = GetSelectedDifficulty;
             RefreshRecord();
         });
+
+
     }
 
     public string GetSelectedDifficulty

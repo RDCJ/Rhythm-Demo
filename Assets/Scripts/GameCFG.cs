@@ -31,6 +31,8 @@ public class GameCFG : ScriptableObject
     public bool hold_note_drop;
     [Header("其他note下落 [编辑器中有效]")]
     public bool note_drop;
+    [Header("启用测试模式")]
+    public bool enable_test_mode;
     
 
 }
