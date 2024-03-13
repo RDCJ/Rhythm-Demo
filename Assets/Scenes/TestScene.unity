@@ -513,6 +513,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EffectPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 6379021754262823892, guid: 26c4875c8d500d5469fa71b889458b14, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26c4875c8d500d5469fa71b889458b14, type: 3}
 --- !u!1 &1544025951

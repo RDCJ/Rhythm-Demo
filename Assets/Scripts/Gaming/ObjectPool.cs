@@ -6,7 +6,7 @@ public class ObjectPool
 {
     Transform transform;
     GameObject prefab;
-    Stack<GameObject> pool;
+    HashSet<GameObject> pool;
 
     public delegate void DoAfterAddNew(ref GameObject obj);
     DoAfterAddNew addNewCallBack;
@@ -20,7 +20,7 @@ public class ObjectPool
     /// <param name="doAfterAddNew">×Ô¶¨Òå</param>
     public ObjectPool(int pool_size, string prefab_path, Transform transform, DoAfterAddNew doAfterAddNew=null)
     {
-        pool = new Stack<GameObject>();
+        pool = new HashSet<GameObject>();
         prefab = Resources.Load<GameObject>(prefab_path);
         this.transform = transform;
         addNewCallBack = doAfterAddNew;
@@ -39,7 +39,11 @@ public class ObjectPool
         {
             AddNewObj();
         }
-        GameObject obj = pool.Pop();
+
+        var iterator = pool.GetEnumerator();
+        iterator.MoveNext();
+        GameObject obj = iterator.Current;
+        pool.Remove(obj);
         obj.SetActive(true);
         return obj;
     }
@@ -49,14 +53,16 @@ public class ObjectPool
         GameObject obj = GameObject.Instantiate(prefab, this.transform);
         addNewCallBack?.Invoke(ref obj);
         obj.SetActive(false);
-        pool.Push(obj);
+        pool.Add(obj);
         return obj;
     }
 
     public void ReturnObject(GameObject obj)
     {
+        if (pool.Contains(obj))
+            return;
         obj.SetActive(false);
-        pool.Push(obj);
+        pool.Add(obj);
     }
 
     /// <summary>

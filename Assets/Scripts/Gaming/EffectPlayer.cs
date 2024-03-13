@@ -42,7 +42,7 @@ public class EffectPlayer : MonoBehaviour
 
     public void PlayEffect(ScoreMgr.ScoreLevel level, Vector3 position)
     {
-        Debug.Log("[EffectPlayer.PlayEffect]: " + position);
+        //Debug.Log("[EffectPlayer.PlayEffect]: " + position);
         GameObject new_effect = pools[level].GetObject();
         new_effect.GetComponent<RectTransform>().anchoredPosition = position;
         new_effect.transform.Find("Light").localScale = Vector3.one * scale;
@@ -50,6 +50,5 @@ public class EffectPlayer : MonoBehaviour
 
         Sequence seq = DOTween.Sequence();
         seq.AppendInterval(effect_time).AppendCallback(() => { pools[level].ReturnObject(new_effect); });
-
     }
 }

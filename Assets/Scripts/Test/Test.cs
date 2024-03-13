@@ -8,18 +8,23 @@ using UnityEngine.UI;
 
 namespace Test
 {
-    public class Test : MonoBehaviour, IPointerClickHandler
+    public class Test : MonoBehaviour
     {
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            EffectPlayer.Instance.PlayEffect(ScoreMgr.ScoreLevel.perfect, new Vector3(1, 1, 0));
-        }
+
 
 
         // Start is called before the first frame update
         void Start()
         {
-
+            HashSet<int> int_set = new();
+            for (int i=0; i<10; i++)
+                int_set.Add(i);
+            var itor = int_set.GetEnumerator();
+            itor.MoveNext();
+            int_set.Remove(itor.Current);
+            Debug.Log(itor.Current);
+            /*            while (itor.MoveNext())
+                            Debug.Log(itor.Current);*/
         }
 
         // Update is called once per frame
