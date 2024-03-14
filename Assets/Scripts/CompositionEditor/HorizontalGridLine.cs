@@ -130,7 +130,7 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     {
         NoteCfg cfg = new();
         double time = this.GetNearestTime(eventData.position.y);
-        double position = GetPositionX(eventData);
+        double position = VerticalGridLine.Instance.GetPositionX(eventData);
         cfg.note_type = note_type;
 
         if (cfg.note_type == (int)NoteType.Hold)
@@ -210,11 +210,6 @@ public class HorizontalGridLine : MonoBehaviour, IPointerClickHandler
     public float GetNearestTime(float y)
     {
         return GetNearestLineActiveIndex(y) * GetOneCellTime + CompositionEditor.Instance.GetTimeOffset;
-    }
-
-    public float GetPositionX(PointerEventData eventData)
-    {
-        return (eventData.position.x - (Screen.width -  CompositionEditor.Instance.EditorRealWidth) / 2) / CompositionEditor.Instance.GameWindowRealWidth;
     }
 
     /// <summary>

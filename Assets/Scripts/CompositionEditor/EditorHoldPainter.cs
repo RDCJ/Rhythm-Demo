@@ -112,7 +112,7 @@ public class EditorHoldPainter : EditorNotePainter
             double next_time = cfg.checkPoints[cfg.checkPoints.Count - 1].time;
             if (time >= next_time) return;
         }
-        double new_center = HorizontalGridLine.Instance.GetPositionX(eventData);
+        double new_center = VerticalGridLine.Instance.GetPositionX(eventData, false);
         double width = cfg.checkPoints[index].position_r - cfg.checkPoints[index].position_l;
 
         if (new_center - width * 0.5f < 0) return;
@@ -126,7 +126,7 @@ public class EditorHoldPainter : EditorNotePainter
 
     public void OnCheckPointDragLeft(PointerEventData eventData, int index)
     {
-        double x = HorizontalGridLine.Instance.GetPositionX(eventData);
+        double x = VerticalGridLine.Instance.GetPositionX(eventData, false);
         if (x > 1 || x < 0) return;
         if (x < cfg.checkPoints[index].position_r)
         {
@@ -137,7 +137,7 @@ public class EditorHoldPainter : EditorNotePainter
 
     public void OnCheckPointDragRight(PointerEventData eventData, int index)
     {
-        double x = HorizontalGridLine.Instance.GetPositionX(eventData);
+        double x = VerticalGridLine.Instance.GetPositionX(eventData, false);
         if (x > 1 || x < 0) return;
         if (x > cfg.checkPoints[index].position_l)
         {

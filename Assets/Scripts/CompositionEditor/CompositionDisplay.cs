@@ -231,7 +231,7 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else
             {
-                float x = eventData.position.x;
+                float x = CompositionEditor.Instance.NoteAbsorbIsOn ? VerticalGridLine.Instance.GetNearestLineX(eventData.position.x) : eventData.position.x;
                 float y = horizontal_grid_line.GetNearestLineY(eventData.position.y);
                 preview_note.position = new Vector3(x, y, 0);
             }

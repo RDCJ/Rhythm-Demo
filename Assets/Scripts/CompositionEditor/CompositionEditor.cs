@@ -33,6 +33,8 @@ public class CompositionEditor : MonoBehaviour
     InputField cfg_prepare_time;
     InputField cfg_time_offset;
     Dropdown grid_density;
+    InputField vertical_line_count;
+    Toggle note_absorb_switch;
 
     Button save_btn;
     Button close_btn;
@@ -69,6 +71,8 @@ public class CompositionEditor : MonoBehaviour
         grid_density = music_cfg_panel.Find("grid_density").GetComponent<Dropdown>();
         bg_view_btn = music_cfg_panel.Find("music_bg/view_btn").GetComponent<Button>();
         bg_import_btn = music_cfg_panel.Find("music_bg/import_btn").GetComponent<Button>();
+        vertical_line_count = music_cfg_panel.Find("vertical_line_count").GetComponent<InputField>();
+        note_absorb_switch = music_cfg_panel.Find("note_absorb_switch").GetComponent<Toggle>();
 
         save_btn = transform.Find("btns/save_btn").GetComponent<Button>();
         close_btn = transform.Find("btns/close_btn").GetComponent<Button>();
@@ -231,6 +235,16 @@ public class CompositionEditor : MonoBehaviour
 
         delete_btn.onClick.AddListener(() => NoteSelector.Instance.DeleteNote());
 
+        vertical_line_count.onValueChanged.AddListener(
+            (value) => {
+                int new_count = int.Parse(value);
+                if (new_count < 0)
+                    vertical_line_count.text = 0.ToString();
+                else
+                    VerticalGridLine.Instance.RefreshGridLine(new_count + 2);
+            });
+        vertical_line_count.text = 9.ToString();
+
         this.Close();
         Debug.Log("[CompositionEditor] init");
     }
@@ -377,6 +391,11 @@ public class CompositionEditor : MonoBehaviour
     public float EditorRealWidth
     {
         get => canvasScaler.referenceResolution.x * EditorCanvasScale;
+    }
+
+    public bool NoteAbsorbIsOn
+    {
+        get => note_absorb_switch.isOn;
     }
     #endregion
 }

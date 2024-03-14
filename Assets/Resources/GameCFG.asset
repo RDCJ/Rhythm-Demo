@@ -24,3 +24,4 @@ MonoBehaviour:
   note_show_touch_area: 0
   hold_note_drop: 1
   note_drop: 1
+  enable_test_mode: 1
