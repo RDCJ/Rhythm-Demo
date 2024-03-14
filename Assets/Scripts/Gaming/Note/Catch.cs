@@ -57,7 +57,7 @@ public class Catch : NoteBase, IPointerEnterHandler, IPointerMoveHandler, IPoint
     {
         get
         {
-            return DropSpeedFix.GetScaledDropSpeed * GameConst.good_interval * 2;
+            return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
         }
     }
        
