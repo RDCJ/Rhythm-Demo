@@ -1,21 +1,10 @@
+using NoteGesture;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GestureEvent
 {
-    public class EndMessage : IGestureMessage
-    {
-        public int fingerId;
-        public Vector2 position;
-
-        public EndMessage(int fingerId, Vector2 position)
-        {
-            this.fingerId = fingerId;
-            this.position = position;
-        }
-    }
-
     /// <summary>
     /// Detect a finger releasing
     /// </summary>
@@ -27,7 +16,7 @@ namespace GestureEvent
             if (!touchesInfo.phaseDic.ContainsKey(TouchPhase.Ended)) return;
             foreach (var touch in touchesInfo.phaseDic[TouchPhase.Ended])
             {
-                EndMessage message = new EndMessage(touch.fingerId, touch.position);
+                var message = new SimpleGestureMessage(touch.fingerId, touch.position, Util.RaycastFromBottom(touch.position));
                 DispatchEvent(message);
             }
         }

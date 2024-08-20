@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e510aa6db1416449a092be4352c466, type: 3}
   m_Name: MoveGestureRecognizer
   m_EditorClassIdentifier: 
-  PrintLog: 1
+  PrintLog: 0

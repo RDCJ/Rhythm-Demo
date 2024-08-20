@@ -36,11 +36,10 @@ namespace Note
         protected CanvasGroup icon_canvasGroup;
 
         protected bool is_move;
-        protected int finger_count;
         protected bool icon_is_fade;
         [HideInInspector] protected NoteState state;
         [HideInInspector] protected bool is_judged;
-
+        protected GestureEvent.GestureMgr gestureMgr;
 
         public bool IsActive
         {
@@ -49,11 +48,6 @@ namespace Note
         public bool IsJudged
         {
             get => state == NoteState.Judged;
-        }
-
-        public bool IsHolding
-        {
-            get => finger_count > 0;
         }
 
         protected virtual void Awake()
@@ -91,7 +85,7 @@ namespace Note
                 {
                     if (distance_to_judge_line > 0 && distance_to_judge_line < TouchAreaLength * 0.5f)
                     {
-                        state = NoteState.active;
+                        Activate();
                     }
                 }
                 // note离开判定区
@@ -117,12 +111,12 @@ namespace Note
         /// </summary>
         /// <param name="_cfg"></param>
         /// <param name="delta_time">初始化的时刻与理论时刻的偏差，用于修正位置</param>
-        public virtual void Init(Music.NoteCfg _cfg, float delta_time)
+        public virtual void Init(Music.NoteCfg _cfg, float delta_time, GestureEvent.GestureMgr gestureMgr)
         {
             is_move = false;
-            finger_count = 0;
             state = NoteState.Inactive;
             cfg = _cfg;
+            this.gestureMgr = gestureMgr;
 
             icon_is_fade = false;
             icon_canvasGroup.DOKill();
@@ -135,6 +129,8 @@ namespace Note
         public virtual void Activate()
         {
             state = NoteState.active;
+            if (gestureMgr != null)
+                RegisterGestureHandler();
         }
 
         /// <summary>
@@ -194,6 +190,8 @@ namespace Note
         {
             GameMgr.Instance.pause_action -= Pause;
             GameMgr.Instance.continue_action -= Continue;
+            if (gestureMgr != null)
+                UnregisterGestureHandler();
         }
 
 
@@ -253,6 +251,9 @@ namespace Note
         {
             get => this.transform.localPosition.x;
         }
+
+        protected virtual void RegisterGestureHandler() { }
+        protected virtual void UnregisterGestureHandler() { }
     }
 }
 

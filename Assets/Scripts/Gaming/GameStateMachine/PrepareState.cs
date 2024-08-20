@@ -12,6 +12,7 @@ public class PrepareState: GameBaseState
     {
         base.EnterState();
         gameMgr.CalcPrepareTime();
+        gameMgr.gestureMgr.enabled = true;
     }
 
     public override void ExitState()

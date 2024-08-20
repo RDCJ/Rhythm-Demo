@@ -1,19 +1,16 @@
+using NoteGesture;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GestureEvent
 {
-    public class MoveMessage:IGestureMessage
+    public class MoveMessage:SimpleGestureMessage
     {
-        public int fingerId;
-        public Vector2 position;
         public Vector2 delta_position;
 
-        public MoveMessage(int fingerId, Vector2 position, Vector2 delta_position)
+        public MoveMessage(int fingerId, Vector2 position, RaycastHit2D hit, Vector2 delta_position): base(fingerId, position, hit)
         {
-            this.fingerId = fingerId;
-            this.position = position;
             this.delta_position = delta_position;
         }
     }
@@ -26,7 +23,8 @@ namespace GestureEvent
             if (!touchesInfo.phaseDic.ContainsKey(TouchPhase.Moved)) return;
             foreach (var touch in touchesInfo.phaseDic[TouchPhase.Moved])
             {
-                DispatchEvent(new MoveMessage(touch.fingerId, touch.position, touch.deltaPosition));
+                var hit = Util.RaycastFromBottom(touch.position);
+                DispatchEvent(new MoveMessage(touch.fingerId, touch.position, hit, touch.deltaPosition));
             }
         }
     }

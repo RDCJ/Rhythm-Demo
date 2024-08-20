@@ -195,6 +195,7 @@ public class CompositionDisplay : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void OnPointerMove(PointerEventData eventData)
     {
         if (!CompositionEditor.Instance.BPMHasValue) return;
+        if (eventData.pointerEnter == null) return;
         if (eventData.pointerEnter.name != horizontal_grid_line.gameObject.name)
         {
             if (preview_note != null)

@@ -3,13 +3,16 @@ using UnityEngine.EventSystems;
 using Note;
 using Music;
 using System.Collections.Generic;
+using GestureEvent;
+using NoteGesture;
+using System.Reflection;
 
 /// <summary>
 /// 长按
 /// 首判：正常判定，如果是bad则该note直接判为bad
 /// 尾判: 不提前松手
 /// </summary>
-public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
+public class Hold : NoteBase
 {
     private HoldPolygonImage touch_area;
     private HoldPolygonImage icon;
@@ -26,10 +29,40 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     bool is_finger_down;
     List<CheckPoint> checkPoints_cache;
+    private HashSet<int> hold_fingers = new HashSet<int>();
+    private int FingerCount => hold_fingers.Count;
+    private bool IsHolding => FingerCount > 0;
 
-    public void OnPointerDown(PointerEventData eventData)
+    protected override void Awake()
     {
-        finger_count++;
+        base.Awake();
+        type = NoteType.Hold;
+        touch_area = this.GetComponent<HoldPolygonImage>();
+        icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
+        head_handle = transform.Find("icon/head_handle") as RectTransform;
+        tail_handle = transform.Find("icon/tail_handle") as RectTransform;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (is_move)
+        {
+            CheckFirstCheckPointMiss();
+
+            CheckLastCheckPoint();
+
+            PlayEffectOnHolding();
+
+            ModifyShapeOnReachJudgeLine();
+        }
+    }
+
+    public void OnPointerDown(IGestureMessage msg)
+    {
+        var message = msg as SimpleGestureMessage;
+        if (!touch_area.IsRaycastLocationValid(message.position, Camera.main)) return;
+        hold_fingers.Add(message.fingerId);
         if (this.IsActive)
         {
             if (!is_finger_down)
@@ -50,18 +83,39 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
                     NotePoolManager.Instance.ReturnObject(this);
                 }
             }
-            
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerStayOrMove(IGestureMessage msg)
     {
-        finger_count++;
+        var message = msg as SimpleGestureMessage;
+        bool isHit = touch_area.IsRaycastLocationValid(message.position, Camera.main);
+        if (hold_fingers.Contains(message.fingerId))
+        {
+            if (isHit) return;
+            // finger exit the touch area
+            hold_fingers.Remove(message.fingerId);
+            if (this.IsActive)
+            {
+                if (is_finger_down && !IsHolding && is_move)
+                {
+                    EndJudge();
+                }
+            }
+        }
+        else
+        {
+            if (!isHit) return;
+            // finger enter the touch area
+            hold_fingers.Add(message.fingerId);
+        }
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public void OnPointerUp(IGestureMessage msg)
     {
-        finger_count--;
+        var message = msg as SimpleGestureMessage;
+        if (!hold_fingers.Contains(message.fingerId)) return;
+        hold_fingers.Remove(message.fingerId);
         if (this.IsActive)
         {
             if (is_finger_down && !IsHolding && is_move)
@@ -71,44 +125,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        finger_count--;
-        if (this.IsActive)
-        {
-            if (is_finger_down && !IsHolding && is_move)
-            {
-                EndJudge();
-            }
-        }
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
-        type = NoteType.Hold;
-        touch_area = this.GetComponent<HoldPolygonImage>();
-        icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
-        head_handle = transform.Find("icon/head_handle") as RectTransform;
-        tail_handle = transform.Find("icon/tail_handle") as RectTransform;
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-        if (is_move)
-        {
-           CheckFirstCheckPointMiss();
-
-            CheckLastCheckPoint();
-
-            PlayEffectOnHolding();
-
-            ModifyShapeOnReachJudgeLine();
-        }
-    }
-
-    public override void Init(NoteCfg _cfg, float delta_time)
+    public override void Init(NoteCfg _cfg, float delta_time, GestureEvent.GestureMgr gestureMgr)
     {
         if (checkPoints_cache == null) checkPoints_cache = new List<CheckPoint>();
         checkPoints_cache.Clear();
@@ -117,8 +134,9 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
             checkPoints_cache.Add(new CheckPoint(ckp));
         }
 
-        base.Init(_cfg, delta_time);
+        base.Init(_cfg, delta_time, gestureMgr);
         is_finger_down = false;
+        hold_fingers.Clear();
     }
 
     /// <summary>
@@ -195,7 +213,7 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
 
     private void CheckLastCheckPoint()
     {
-        if (is_finger_down && finger_count > 0 && cfg.LastCheckPoint().time < GameMgr.Instance.CurrentTime)
+        if (is_finger_down && FingerCount > 0 && cfg.LastCheckPoint().time < GameMgr.Instance.CurrentTime)
         {
             EndJudge();
         }
@@ -235,5 +253,21 @@ public class Hold : NoteBase, IPointerDownHandler, IPointerUpHandler, IPointerEx
         {
             return ((float)GetCheckPointOnJudgeLine.Center() - 0.5f) * Screen.width;
         }
+    }
+
+    protected override void RegisterGestureHandler()
+    {
+        gestureMgr.AddListener<BeganGestureRecognizer>(OnPointerDown);
+        gestureMgr.AddListener<StationaryGestureRecognizer>(OnPointerStayOrMove);
+        gestureMgr.AddListener<MoveGestureRecognizer>(OnPointerStayOrMove);
+        gestureMgr.AddListener<EndGestureRecognizer>(OnPointerUp);
+    }
+
+    protected override void UnregisterGestureHandler()
+    {
+        gestureMgr.RemoveListener<BeganGestureRecognizer>(OnPointerDown);
+        gestureMgr.RemoveListener<StationaryGestureRecognizer>(OnPointerStayOrMove);
+        gestureMgr.RemoveListener<MoveGestureRecognizer>(OnPointerStayOrMove);
+        gestureMgr.RemoveListener<EndGestureRecognizer>(OnPointerUp);
     }
 }

@@ -14,5 +14,6 @@ public class MusicEndState : GameBaseState
         gameMgr.audioSource.Stop();
         gameMgr.musicBackground.Stop();
         ScoreMgr.Instance.ShowFinalScore();
+        gameMgr.gestureMgr.enabled = false;
     }
 }

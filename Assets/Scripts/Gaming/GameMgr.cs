@@ -6,6 +6,7 @@ using Music;
 using System;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using GestureEvent;
 
 public class GameMgr : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class GameMgr : MonoBehaviour
 
     public AudioSource audioSource;
     public MusicBackground musicBackground;
+    public GestureEvent.GestureMgr gestureMgr;
     #endregion
 
     private MusicCfg music_cfg;
@@ -143,6 +145,7 @@ public class GameMgr : MonoBehaviour
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
 
         musicBackground = BGCanvas_tf.AddComponent<MusicBackground>();
+        gestureMgr = GameCanvas_tf.Find("GestureMgr").GetComponent<GestureMgr>();
         
         stateMachine = new StateMachine();
         initState = new InitState(this, stateMachine);
@@ -233,6 +236,8 @@ public class GameMgr : MonoBehaviour
             Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
 
+            gestureMgr.enabled = false;
+
             // 加载音乐和背景
             WaitForAllCoroutine loading_task = new WaitForAllCoroutine(this);
             loading_task.AddCoroutine(MusicResMgr.GetMusic(this.music_file_name, (AudioClip clip) =>
@@ -267,7 +272,7 @@ public class GameMgr : MonoBehaviour
             Debug.Log("[GameMgr.GenerateNote] success: current_time: " + CurrentTime + " std_drop_time: " + next_drop_time);
             Note.NoteType type = (Note.NoteType)composition[current_note_idx].note_type;
             Note.NoteBase new_note = NotePoolManager.Instance.GetObject(type).GetComponent<Note.NoteBase>();
-            new_note.Init(composition[current_note_idx], (float)(next_drop_time - CurrentTime));
+            new_note.Init(composition[current_note_idx], (float)(next_drop_time - CurrentTime), gestureMgr);
 #if UNITY_EDITOR
             if (type == Note.NoteType.Hold)
             {
@@ -293,6 +298,7 @@ public class GameMgr : MonoBehaviour
         musicBackground.Pause();
         pause_panel.SetActive(true);
         pause_action?.Invoke();
+        gestureMgr.enabled = false;
     }
 
     public void Continue()
@@ -302,6 +308,7 @@ public class GameMgr : MonoBehaviour
         musicBackground.Play();
         pause_panel.SetActive(false);
         continue_action?.Invoke();
+        gestureMgr.enabled = true;
     }
 #endregion
 

@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276d01ff2a17a1045afa2677b8414308, type: 3}
   m_Name: BeganGestureRecognizer
   m_EditorClassIdentifier: 
+  PrintLog: 1

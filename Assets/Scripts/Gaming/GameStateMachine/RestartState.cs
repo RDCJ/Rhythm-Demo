@@ -12,6 +12,7 @@ public class RestartState : GameBaseState
     {
         base.EnterState();
         NotePoolManager.Instance.Reload();
+        gameMgr.gestureMgr.enabled = false;
         stateMachine.ChangeState(gameMgr.initState);
     }
 }

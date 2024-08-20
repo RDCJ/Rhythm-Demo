@@ -1,21 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using GestureEvent;
 using UnityEngine;
 
-namespace GestureEvent
+namespace NoteGesture
 {
-    public class StationaryMessage : IGestureMessage
-    {
-        public int fingerId;
-        public Vector2 position;
-
-        public StationaryMessage(int fingerId, Vector2 position)
-        {
-            this.fingerId = fingerId;
-            this.position = position;
-        }
-    }
-
     [CreateAssetMenu(fileName = "StationaryGestureRecognizer", menuName = "GestureRecognizer/StationaryGestureRecognizer")]
     public class StationaryGestureRecognizer : GestureRecognizer
     {
@@ -24,7 +11,7 @@ namespace GestureEvent
             if (!touchesInfo.phaseDic.ContainsKey(TouchPhase.Stationary)) return;
             foreach (var touch in touchesInfo.phaseDic[TouchPhase.Stationary])
             {
-                StationaryMessage message = new StationaryMessage(touch.fingerId, touch.position);
+                var message = new SimpleGestureMessage(touch.fingerId, touch.position, Util.RaycastFromBottom(touch.position));
                 DispatchEvent(message);
             }
         }
