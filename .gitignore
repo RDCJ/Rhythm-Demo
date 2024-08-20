@@ -74,3 +74,4 @@ Packages/packages-lock.json
 ProjectSettings/PackageManagerSettings.asset
 ProjectSettings/ProjectVersion.txt
 Assets/StreamingAssets/build_info
+/Rhythm_Demo_BurstDebugInformation_DoNotShip
