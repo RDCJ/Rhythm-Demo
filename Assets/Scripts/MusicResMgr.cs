@@ -152,7 +152,6 @@ public class MusicResMgr
     [MenuItem("Tools/生成音乐列表")]
     public static void StreamingAssetsMusicList()
     {
-        int k = 0;
         string data_dir = Path.Combine(Application.dataPath, "StreamingAssets", FileConst.music_data_path);
         string output_path = Application.dataPath + "/StreamingAssets" + "/music_list.json";
 

@@ -90,12 +90,14 @@ public class Home : MonoBehaviour
             Debug.Log("新建目录: " + out_dir);
         }
 
-        WWW _www = new WWW(resPath + "music_list.json");
-        yield return _www;
+        //UnityWebRequest _www = new UnityWebRequest(resPath + "music_list.json");
+        UnityWebRequest _www = UnityWebRequest.Get(System.IO.Path.Combine(resPath, "music_list.json"));
+        //WWW _www = new WWW(resPath + "music_list.json");
+        yield return _www.SendWebRequest();
         Dictionary<string, MusicFileExtension> tmp_music_list;
         if (_www.isDone && string.IsNullOrEmpty(_www.error))
         {
-            tmp_music_list = JsonMapper.ToObject<Dictionary<string, MusicFileExtension>>(_www.text);
+            tmp_music_list = JsonMapper.ToObject<Dictionary<string, MusicFileExtension>>(_www.downloadHandler.text);
         }
         else
         {
@@ -135,12 +137,12 @@ public class Home : MonoBehaviour
                 string out_file_path = System.IO.Path.Combine(out_music_folder, file);
                 if (Application.platform == RuntimePlatform.Android)
                 {
-                    WWW www = new WWW(in_file_path);
-                    yield return www;
+                    UnityWebRequest www = UnityWebRequest.Get(in_file_path);
+                    yield return www.SendWebRequest();
 
                     if (www.isDone && string.IsNullOrEmpty(www.error))
                     {
-                        File.WriteAllBytes(out_file_path, www.bytes);
+                        File.WriteAllBytes(out_file_path, www.downloadHandler.data);
                         Debug.Log("复制文件成功: " + out_file_path);
                     }
                     else
