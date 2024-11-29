@@ -235,15 +235,15 @@ public class CompositionEditor : MonoBehaviour
 
         delete_btn.onClick.AddListener(() => NoteSelector.Instance.DeleteNote());
 
-        vertical_line_count.onValueChanged.AddListener(
-            (value) => {
-                int new_count = int.Parse(value);
-                if (new_count < 0)
-                    vertical_line_count.text = 0.ToString();
-                else
-                    VerticalGridLine.Instance.RefreshGridLine(new_count + 2);
-            });
         vertical_line_count.text = 9.ToString();
+        vertical_line_count.onValueChanged.AddListener(
+        (value) => {
+            int new_count = int.Parse(value);
+            if (new_count < 0)
+                vertical_line_count.text = 0.ToString();
+            else
+                VerticalGridLine.Instance.RefreshGridLine(new_count + 2);
+        });
 
         this.Close();
         Debug.Log("[CompositionEditor] init");
