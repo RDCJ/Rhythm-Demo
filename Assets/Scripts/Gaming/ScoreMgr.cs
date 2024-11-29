@@ -63,14 +63,19 @@ public class ScoreMgr : MonoBehaviour
         score_txt = transform.Find("score_txt").GetComponent<Text>();
         combo_txt = transform.Find("combo_txt").GetComponent<Text>();
         final_score_panel = transform.Find("final_score_panel");
-        final_score_txt = final_score_panel.Find("final_score/score_txt").GetComponent<Text>();
-        final_acc_txt = final_score_panel.Find("final_score/accuracy").GetComponent<Text>();
-        final_perfect_count = final_score_panel.Find("final_score/perfect_count").GetComponent<Text>();
-        final_good_count = final_score_panel.Find("final_score/good_count").GetComponent<Text>();
-        final_bad_count = final_score_panel.Find("final_score/bad_count").GetComponent<Text>();
-        final_early_count = final_score_panel.Find("final_score/early_count").GetComponent<Text>();
-        final_late_count = final_score_panel.Find("final_score/late_count").GetComponent<Text>();
-        extra_tag = final_score_panel.Find("final_score/extra_tag").GetComponent<Text>();
+
+        Transform record_tf = final_score_panel.Find("final_score/Record");
+        final_score_txt = record_tf.Find("score_txt").GetComponent<Text>();
+        final_acc_txt = record_tf.Find("accuracy").GetComponent<Text>();
+        extra_tag = record_tf.Find("extra_tag").GetComponent<Text>();
+
+        Transform counter_tf = final_score_panel.Find("final_score/Counters");
+        final_perfect_count = counter_tf.Find("perfect_count").GetComponent<Text>();
+        final_good_count = counter_tf.Find("good_count").GetComponent<Text>();
+        final_bad_count = counter_tf.Find("bad_count").GetComponent<Text>();
+        final_early_count = counter_tf.Find("early_count").GetComponent<Text>();
+        final_late_count = counter_tf.Find("late_count").GetComponent<Text>();
+        
         restart_btn = final_score_panel.Find("restart_btn").GetComponent<Button>();
         back_btn = final_score_panel.Find("back_btn").GetComponent<Button>();
         restart_btn.onClick.AddListener(() =>
