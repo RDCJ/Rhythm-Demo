@@ -114,17 +114,16 @@ public class MusicSelect : MonoBehaviour
             int current_id = _list.GetFocusingContentID();
             MusicListContent content =
             (MusicListContent)_list.ListBank.GetListContent(current_id);
-            GameMgr.Instance.StartInitGame(content.music_name, GetSelectedDifficulty, IsTestMode, TestModeStartTime);
+            GameMgr.Instance.StartInitGame(content.music_name, SelectedDifficulty, IsTestMode, TestModeStartTime);
         });
 
-
-        difficulty_txt.text = GetSelectedDifficulty;
+        difficulty_txt.text = SelectedDifficulty;
         difficulty_change_btn.onClick.AddListener(() =>
         {
-            int k = PlayerPrefs.GetInt(SelectedDifficultyKW, 0);
-            PlayerPrefs.SetInt(SelectedDifficultyKW, (k + 1) % 3);
-            PlayerPrefs.Save();
-            difficulty_txt.text = GetSelectedDifficulty;
+            int k = PlayerPersonalSetting.SelectedDifficultIndex;
+            PlayerPersonalSetting.SelectedDifficultIndex = (k + 1) % 3;
+            
+            difficulty_txt.text = SelectedDifficulty;
             RefreshRecord();
         });
 
@@ -136,9 +135,9 @@ public class MusicSelect : MonoBehaviour
         JudgeTimeOffsetValueText.text = $"{PlayerPersonalSetting.JudgeTimeOffsetMS} ms";
     }
 
-    public string GetSelectedDifficulty
+    public string SelectedDifficulty
     {
-        get => GameConst.DifficultyIndex[PlayerPrefs.GetInt(SelectedDifficultyKW, 0)];
+        get => GameConst.DifficultyIndex[PlayerPersonalSetting.SelectedDifficultIndex];
     }
 
     public void DisplayFocusingContent()
@@ -186,7 +185,7 @@ public class MusicSelect : MonoBehaviour
 
         MusicListContent content = (MusicListContent)_list.ListBank.GetListContent(current_id);
 
-        string difficulty = GetSelectedDifficulty;
+        string difficulty = SelectedDifficulty;
         int max_score = PlayerData.GetMaxScore(content.music_file_name, difficulty);
         float acc = PlayerData.GetMaxAccuracy(content.music_file_name, difficulty);
         string tag = PlayerData.GetTag(content.music_file_name, difficulty);

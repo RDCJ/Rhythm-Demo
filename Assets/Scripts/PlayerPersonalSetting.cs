@@ -74,4 +74,24 @@ public class PlayerPersonalSetting
     /// </summary>
     public static float JudgeTimeOffset => JudgeTimeOffsetMS * 0.001f;
     #endregion
+
+    #region Selected Difficulty
+    private static int _SelectedDifficultIndex = -1;
+    public static int SelectedDifficultIndex
+    {
+        get
+        {
+            if (_SelectedDifficultIndex < 0)
+            {
+                _SelectedDifficultIndex = Load<int>("SelectedDifficultIndex", PersonalGlobalSettingFile, 0);
+            }
+            return _SelectedDifficultIndex;
+        }
+        set
+        {
+            _SelectedDifficultIndex = value;
+            Save("SelectedDifficultIndex", PersonalGlobalSettingFile, value);
+        }
+    }
+    #endregion
 }
