@@ -2508,8 +2508,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c24059acd6629eb4598d2b0ca44afec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _list: {fileID: 5794522008860774177}
   game_mgr: {fileID: 547490920701276522, guid: de572d20c55032b4b90d1704c6449f15, type: 3}
+  _list: {fileID: 5794522008860774177}
 --- !u!1 &5794522008860774188
 GameObject:
   m_ObjectHideFlags: 0
@@ -2890,7 +2890,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2946789172150307530}
-  - component: {fileID: 3714046746627604919}
   m_Layer: 5
   m_Name: judge_fix
   m_TagString: Untagged
@@ -2922,18 +2921,6 @@ RectTransform:
   m_AnchoredPosition: {x: 333, y: -50}
   m_SizeDelta: {x: 527.166, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3714046746627604919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5966748687280686437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1338a4a8f5e1dab45af173c392290cd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5982508254517349408
 GameObject:
   m_ObjectHideFlags: 0

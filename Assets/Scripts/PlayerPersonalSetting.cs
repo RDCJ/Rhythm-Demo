@@ -16,6 +16,7 @@ public class PlayerPersonalSetting
         ES3.Save(key, value, filePath, esSetting);
     }
 
+    #region Drop Speed
     private static float _NormalizedDropSpeedScale = -1;
     /// <summary>
     /// 标准化的下落速度系数，0~1
@@ -51,4 +52,26 @@ public class PlayerPersonalSetting
     {
         get => DropSpeedScale * GameConst.drop_speed;
     }
+    #endregion
+
+    #region Judge Time Offset
+    /// <summary>
+    /// 判定时间偏移(毫秒)
+    /// </summary>
+    public static int JudgeTimeOffsetMS
+    {
+        get
+        {
+            return Load<int>("JudgeTimeOffsetMS", PersonalGlobalSettingFile, 0);
+        }
+        set
+        {
+            Save("JudgeTimeOffsetMS", PersonalGlobalSettingFile, value);
+        }
+    }
+    /// <summary>
+    /// 判定时间偏移(秒)
+    /// </summary>
+    public static float JudgeTimeOffset => JudgeTimeOffsetMS * 0.001f;
+    #endregion
 }

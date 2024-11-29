@@ -31,6 +31,10 @@ public class MusicSelect : MonoBehaviour
     private Slider DropSpeedScaleSlider;
     private Text DropSpeedScaleText;
 
+    private Text JudgeTimeOffsetValueText;
+    private Button JudgeTimeOffsetAddBtn;
+    private Button JudgeTimeOffsetDecBtn;
+
     private Toggle test_mode_switch;
     private InputField test_mode_start_time_input;
     private bool IsTestMode
@@ -86,6 +90,20 @@ public class MusicSelect : MonoBehaviour
             DropSpeedScaleText.text = PlayerPersonalSetting.DropSpeedScale.ToString("N2");
         });
 
+        JudgeTimeOffsetValueText = gameConfigTf.Find("judge_fix/value_txt").GetComponent<Text>();
+        JudgeTimeOffsetAddBtn = gameConfigTf.Find("judge_fix/add_btn").GetComponent<Button>();
+        JudgeTimeOffsetDecBtn = gameConfigTf.Find("judge_fix/dec_btn").GetComponent<Button>();
+        RefreshJudgeTimeOffsetValueText();
+        JudgeTimeOffsetAddBtn.onClick.AddListener(() => {
+            PlayerPersonalSetting.JudgeTimeOffsetMS += 1;
+            RefreshJudgeTimeOffsetValueText();
+        });
+
+        JudgeTimeOffsetDecBtn.onClick.AddListener(() => {
+            PlayerPersonalSetting.JudgeTimeOffsetMS -= 1;
+            RefreshJudgeTimeOffsetValueText();
+        });
+
         Transform test_mode_cfg = rightUITf.Find("test_mode");
         test_mode_switch = test_mode_cfg.Find("Switch").GetComponent<Toggle>();
         test_mode_start_time_input = test_mode_cfg.Find("StartTime").GetComponent<InputField>();
@@ -111,6 +129,11 @@ public class MusicSelect : MonoBehaviour
         });
 
 
+    }
+
+    private void RefreshJudgeTimeOffsetValueText()
+    {
+        JudgeTimeOffsetValueText.text = $"{PlayerPersonalSetting.JudgeTimeOffsetMS} ms";
     }
 
     public string GetSelectedDifficulty

@@ -54,7 +54,7 @@ public class ScoreMgr : MonoBehaviour
     int early_count;
     int late_count;
 
-    float judge_fix;
+    float judgeTimeOffset;
     #endregion
 
     private void Awake()
@@ -99,7 +99,7 @@ public class ScoreMgr : MonoBehaviour
 
         score_level_count = new int[3] { 0, 0, 0 };
         final_score_panel.gameObject.SetActive(false);
-        judge_fix = JudgeFix.GetJudgeFix;
+        judgeTimeOffset = PlayerPersonalSetting.JudgeTimeOffset;
     }
 
     public void AddScore(ScoreLevel scoreLevel)
@@ -189,7 +189,7 @@ public class ScoreMgr : MonoBehaviour
     /// <returns></returns>
     public ScoreLevel JudgeClickTime(double click_time, double ref_time)
     {
-        double delta = System.Math.Abs(click_time + judge_fix - ref_time);
+        double delta = System.Math.Abs(click_time + judgeTimeOffset - ref_time);
         if (delta <= GameConst.perfect_interval)
             return ScoreLevel.perfect;
         else if (delta <= GameConst.good_interval)
@@ -201,7 +201,7 @@ public class ScoreMgr : MonoBehaviour
 
     public ScoreLevel JudgeHoldEnd(double click_time, double ref_time)
     {
-        double delta = ref_time - (click_time + judge_fix);
+        double delta = ref_time - (click_time + judgeTimeOffset);
         if (delta <= GameConst.perfect_interval)
             return ScoreLevel.perfect;
         else if (delta <= GameConst.good_interval)
@@ -212,9 +212,9 @@ public class ScoreMgr : MonoBehaviour
 
     public void CountEarlyOrLate(double click_time, double ref_time)
     {
-        if (click_time + judge_fix > ref_time)
+        if (click_time + judgeTimeOffset > ref_time)
             late_count += 1;
-        else if (click_time + judge_fix < ref_time)
+        else if (click_time + judgeTimeOffset < ref_time)
             early_count += 1;
     }
 }
