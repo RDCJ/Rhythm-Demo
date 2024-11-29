@@ -90,7 +90,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4012280480016329390}
   - component: {fileID: 1623070742016339970}
-  - component: {fileID: 2889783024862734774}
   m_Layer: 5
   m_Name: drop_speed
   m_TagString: Untagged
@@ -174,18 +173,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2889783024862734774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 398485365872399786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9089e0ce05d7eac4d8cdf980db438681, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &446089768893775155
 GameObject:
   m_ObjectHideFlags: 0

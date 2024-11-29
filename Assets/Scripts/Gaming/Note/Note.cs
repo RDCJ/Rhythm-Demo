@@ -76,7 +76,7 @@ namespace Note
             if (is_move)
             {
                 float x = rectTransform.localPosition.x;
-                float y = rectTransform.localPosition.y - Time.deltaTime * DropSpeedFix.GetScaledDropSpeed;
+                float y = rectTransform.localPosition.y - Time.deltaTime * PlayerPersonalSetting.ScaledDropSpeed;
                 rectTransform.localPosition = new Vector3(x, y, 0);
 
                 float distance_to_judge_line = rectTransform.localPosition.y + Screen.height * 0.5f - JudgeLine.localPositionY;
@@ -148,7 +148,7 @@ namespace Note
         protected virtual void ResetPosition(float delta_time)
         {
             float x = (float)(cfg.FirstCheckPoint().Center() - 0.5f) * Screen.width;
-            float y = delta_time * DropSpeedFix.GetScaledDropSpeed;
+            float y = delta_time * PlayerPersonalSetting.ScaledDropSpeed;
             rectTransform.localPosition = new Vector3(x, y, 0);
         }
 
@@ -217,7 +217,7 @@ namespace Note
         {
             get 
             { 
-                return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
+                return PlayerPersonalSetting.ScaledDropSpeed * GameConst.active_interval * 2;
             }
         }
 

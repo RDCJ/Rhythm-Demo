@@ -41,7 +41,7 @@ public class Catch : NoteBase
     {
         get
         {
-            return DropSpeedFix.GetScaledDropSpeed * GameConst.active_interval * 2;
+            return PlayerPersonalSetting.ScaledDropSpeed * GameConst.active_interval * 2;
         }
     }
 

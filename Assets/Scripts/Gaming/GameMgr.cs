@@ -232,8 +232,8 @@ public class GameMgr : MonoBehaviour
             // 初始化计分
             scoreMgr.Init(note_count);
             JudgeLine.Instance.Reset();
-            drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / DropSpeedFix.GetScaledDropSpeed;
-            Debug.Log("下落速度: " + DropSpeedFix.GetScaledDropSpeed);
+            drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / PlayerPersonalSetting.ScaledDropSpeed;
+            Debug.Log("下落速度: " + PlayerPersonalSetting.ScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
 
             gestureMgr.enabled = false;

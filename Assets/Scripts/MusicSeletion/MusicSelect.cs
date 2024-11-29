@@ -1,7 +1,5 @@
 using AirFishLab.ScrollingList;
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,20 +16,23 @@ public class MusicSelect : MonoBehaviour
         }
     }
     #endregion
+    public GameObject game_mgr;
 
     [SerializeField]
     private CircularScrollingList _list;
-    Button difficulty_change_btn;
-    Text difficulty_txt;
-    public GameObject game_mgr;
-    Button play_btn;
-    CanvasGroup record;
-    Text record_score_txt;
-    Text record_acc_txt;
-    Text record_tag;
+    private Button difficulty_change_btn;
+    private Text difficulty_txt;
+    private Button play_btn;
+    private CanvasGroup record;
+    private Text record_score_txt;
+    private Text record_acc_txt;
+    private Text record_tag;
 
-    Toggle test_mode_switch;
-    InputField test_mode_start_time_input;
+    private Slider DropSpeedScaleSlider;
+    private Text DropSpeedScaleText;
+
+    private Toggle test_mode_switch;
+    private InputField test_mode_start_time_input;
     private bool IsTestMode
     {
         get => GameConst.enable_test_mode && test_mode_switch.isOn;
@@ -72,6 +73,18 @@ public class MusicSelect : MonoBehaviour
         record_score_txt = record.transform.Find("score").GetComponent<Text>();
         record_acc_txt = record.transform.Find("accuracy").GetComponent<Text>();
         record_tag = record.transform.Find("tag").GetComponent<Text>();
+
+        Transform gameConfigTf = rightUITf.Find("game_config");
+
+        DropSpeedScaleSlider = gameConfigTf.Find("drop_speed").GetComponent<Slider>();
+        DropSpeedScaleText = DropSpeedScaleSlider.transform.Find("scale_txt").GetComponent<Text>();
+        DropSpeedScaleSlider.value = PlayerPersonalSetting.NormalizedDropSpeedScale;
+        DropSpeedScaleText.text = PlayerPersonalSetting.DropSpeedScale.ToString("N2");
+        DropSpeedScaleSlider.onValueChanged.AddListener((float value) =>
+        {
+            PlayerPersonalSetting.NormalizedDropSpeedScale = value;
+            DropSpeedScaleText.text = PlayerPersonalSetting.DropSpeedScale.ToString("N2");
+        });
 
         Transform test_mode_cfg = rightUITf.Find("test_mode");
         test_mode_switch = test_mode_cfg.Find("Switch").GetComponent<Toggle>();

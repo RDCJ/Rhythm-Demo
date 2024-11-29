@@ -144,7 +144,7 @@ public class Hold : NoteBase
     /// </summary>
     protected override void Resize()
     {
-        float drop_speed = DropSpeedFix.GetScaledDropSpeed;
+        float drop_speed = PlayerPersonalSetting.ScaledDropSpeed;
         icon.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width);
         touch_area.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
 
@@ -157,7 +157,7 @@ public class Hold : NoteBase
     protected override void ResetPosition(float delta_time)
     {
         float x = 0;
-        float y = icon.Height / 2 + delta_time * DropSpeedFix.GetScaledDropSpeed;
+        float y = icon.Height / 2 + delta_time * PlayerPersonalSetting.ScaledDropSpeed;
         rectTransform.localPosition = new Vector2(x, y);
     }
 
@@ -242,7 +242,7 @@ public class Hold : NoteBase
     {
         get
         {
-            return DropSpeedFix.GetScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration());
+            return PlayerPersonalSetting.ScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration());
         }
     }
 
