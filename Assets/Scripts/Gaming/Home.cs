@@ -71,9 +71,15 @@ public class Home : MonoBehaviour
                 }
            )
             
-        );    //启动释放协成 
+        );
     }
 
+    /// <summary>
+    /// 将StreamingAssets中的MusicData文件夹复制到persistentDataPath中
+    /// </summary>
+    /// <param name="callback1"></param>
+    /// <param name="callback2"></param>
+    /// <returns></returns>
     IEnumerator OnExtractResource(Action callback1=null, Action callback2=null)
     {
         Debug.Log("资源解包开始");
@@ -81,7 +87,7 @@ public class Home : MonoBehaviour
        
         string dataPath = Application.persistentDataPath;  //数据目录
         string resPath = AppContentPath; //游戏包资源目录
-
+         
         string in_dir = System.IO.Path.Combine(resPath, FileConst.music_data_path);
         string out_dir = System.IO.Path.Combine(dataPath, FileConst.music_data_path);
         if (!Directory.Exists(out_dir))
