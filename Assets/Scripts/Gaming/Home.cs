@@ -32,6 +32,11 @@ public class Home : MonoBehaviour
         editor_btn.onClick.AddListener(() => {
             CompositionEditor.Instance.Open();
         });
+#if (UNITY_EDITOR || UNITY_STANDALONE_WIN)
+        editor_btn.gameObject.SetActive(true);
+#else
+        editor_btn.gameObject.SetActive(false);
+#endif
 
         exit_btn.onClick.AddListener(() =>
         {
