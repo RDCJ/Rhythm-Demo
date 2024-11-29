@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerPersonalSetting
 {
-    public static ES3Settings esSetting = new ES3Settings(ES3.Location.File, ES3.Directory.DataPath);
+    public static ES3Settings esSetting = new ES3Settings(ES3.Location.File, ES3.Directory.PersistentDataPath);
     public static string PersonalGlobalSettingFile = "ES3SaveData/PersonalGlobalSettingFile.es3";
 
     public static T Load<T>(string key, string filePath, T defultValue = default)
