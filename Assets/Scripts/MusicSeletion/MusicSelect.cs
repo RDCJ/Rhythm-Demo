@@ -64,15 +64,16 @@ public class MusicSelect : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        play_btn = transform.Find("play_btn").GetComponent<Button>();
+        Transform rightUITf = transform.Find("RightUI");
+        play_btn = rightUITf.Find("play_btn").GetComponent<Button>();
         difficulty_change_btn = transform.Find("difficulty_change").GetComponent<Button>();
         difficulty_txt = difficulty_change_btn.transform.Find("Text").GetComponent<Text>();
-        record = transform.Find("record/BG").GetComponent<CanvasGroup>();
+        record = rightUITf.Find("record/BG").GetComponent<CanvasGroup>();
         record_score_txt = record.transform.Find("score").GetComponent<Text>();
         record_acc_txt = record.transform.Find("accuracy").GetComponent<Text>();
         record_tag = record.transform.Find("tag").GetComponent<Text>();
 
-        Transform test_mode_cfg = transform.Find("test_mode");
+        Transform test_mode_cfg = rightUITf.Find("test_mode");
         test_mode_switch = test_mode_cfg.Find("Switch").GetComponent<Toggle>();
         test_mode_start_time_input = test_mode_cfg.Find("StartTime").GetComponent<InputField>();
         test_mode_cfg.gameObject.SetActive(GameConst.enable_test_mode);
