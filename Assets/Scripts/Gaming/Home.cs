@@ -22,9 +22,9 @@ public class Home : MonoBehaviour
     private void Awake()
     {
         GameConst.gameCFG = Resources.Load<GameCFG>("GameCFG");
-        play_btn = transform.Find("play_btn").GetComponent<Button>();
-        editor_btn = transform.Find("editor_btn").GetComponent<Button>();
-        exit_btn = transform.Find("exit_btn").GetComponent<Button>();
+        play_btn = transform.Find("Btns/play_btn").GetComponent<Button>();
+        editor_btn = transform.Find("Btns/editor_btn").GetComponent<Button>();
+        exit_btn = transform.Find("Btns/exit_btn").GetComponent<Button>();
         play_btn.onClick.AddListener(() => {
             Instantiate(music_select, transform.parent);
         });
