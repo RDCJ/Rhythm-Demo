@@ -60,7 +60,7 @@ public class Util
 }
 
 /// <summary>
-/// 执行给定的多个Coroutine，所有Coroutine执行完毕后触发回调
+/// 同时开始执行给定的多个Coroutine，所有Coroutine执行完毕后触发回调
 /// </summary>
 public class WaitForAllCoroutine
 {
