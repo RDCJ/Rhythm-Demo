@@ -44,7 +44,8 @@ public class Tap : NoteBase
                 ScoreMgr.ScoreLevel level = ScoreMgr.Instance.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);
                 // 计分
                 Debug.Log("[判定] 类型: Tap, 结果: " + level);
-                ScoreMgr.Instance.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
+                if (level != ScoreMgr.ScoreLevel.perfect)
+                    ScoreMgr.Instance.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
                 ScoreMgr.Instance.AddScore(level);
                 // 点击效果
                 PlayEffect(level);

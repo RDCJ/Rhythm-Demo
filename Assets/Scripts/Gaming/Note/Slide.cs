@@ -59,7 +59,8 @@ public class Slide : NoteBase
                 }
                 Debug.Log("[判定] 类型: Slide, 结果: " + level);
                 ScoreMgr.Instance.AddScore(level);
-                ScoreMgr.Instance.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
+                if (level != ScoreMgr.ScoreLevel.perfect)
+                    ScoreMgr.Instance.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
                 PlayEffect(level);
 
                 NotePoolManager.Instance.ReturnObject(this);

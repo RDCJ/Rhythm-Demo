@@ -73,8 +73,8 @@ public class Hold : NoteBase
 
                 start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
                 PlayEffect(start_judge_level);
-
-                ScoreMgr.Instance.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
+                if (start_judge_level != ScoreMgr.ScoreLevel.perfect)
+                    ScoreMgr.Instance.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
                 if (start_judge_level == ScoreMgr.ScoreLevel.bad)
                 {
                     state = NoteState.Judged;
@@ -180,7 +180,8 @@ public class Hold : NoteBase
                 level = ScoreMgr.ScoreLevel.good;
 
             Debug.Log("[判定] 类型: Hold, 结果: " + level);
-            ScoreMgr.Instance.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
+            if (end_judge_level != ScoreMgr.ScoreLevel.perfect)
+                ScoreMgr.Instance.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
             ScoreMgr.Instance.AddScore(level);
             PlayEffect(level);
             NotePoolManager.Instance.ReturnObject(this);
