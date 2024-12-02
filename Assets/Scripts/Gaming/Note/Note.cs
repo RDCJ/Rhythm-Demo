@@ -155,10 +155,9 @@ namespace Note
         public virtual void Drop()
         {
             is_move = true;
-            GameMgr.Instance.pause_action += Pause;
-            GameMgr.Instance.continue_action += Continue;
+            GameMgr.Instance.OnGamePause += Pause;
+            GameMgr.Instance.OnGameContinue += Continue;
         }
-
 
         public virtual void Pause()
         {
@@ -188,8 +187,8 @@ namespace Note
         /// </summary>
         public void OnReturnPool()
         {
-            GameMgr.Instance.pause_action -= Pause;
-            GameMgr.Instance.continue_action -= Continue;
+            GameMgr.Instance.OnGamePause -= Pause;
+            GameMgr.Instance.OnGameContinue -= Continue;
             if (gestureMgr != null)
                 UnregisterGestureHandler();
         }

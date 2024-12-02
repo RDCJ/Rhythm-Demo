@@ -5,7 +5,6 @@ using Music;
 using System;
 using UnityEngine.UI;
 using GestureEvent;
-using static ScoreMgr;
 
 public class GameMgr : MonoBehaviour
 {
@@ -26,17 +25,6 @@ public class GameMgr : MonoBehaviour
     Transform UICanvas_tf;
     Transform BGCanvas_tf;
 
-    GameObject pause_panel;
-    Button pause_btn;
-    Button continue_btn;
-    Button restart_btn;
-    Button back_btn;
-    
-    
-    ScoreUI scoreUI;
-    Text time_txt;
-    Slider time_progress;
-
     public AudioSource audioSource;
     public MusicBackground musicBackground;
     public GestureEvent.GestureMgr gestureMgr;
@@ -46,15 +34,26 @@ public class GameMgr : MonoBehaviour
 
     private MusicCfg music_cfg;
     private List<NoteCfg> composition;
-
+    /// <summary>
+    /// 游戏初始化时调用action
+    /// </summary>
+    public Action OnGameInit;
     /// <summary>
     /// 游戏暂停时调用action
     /// </summary>
-    public Action pause_action;
+    public Action OnGamePause;
     /// <summary>
     /// 游戏继续时调用action
     /// </summary>
-    public Action continue_action;
+    public Action OnGameContinue;
+    /// <summary>
+    /// 游戏结束时调用action
+    /// </summary>
+    public Action<GameResultScore> OnGameEnd;
+    /// <summary>
+    /// 触发计分时调用action
+    /// </summary>
+    public Action<ScoreMgr.ScoreLevel, GameResultScore> OnAddScore;
     /// <summary>
     /// 当前加载的音乐文件名
     /// </summary>
@@ -107,11 +106,6 @@ public class GameMgr : MonoBehaviour
     public PrepareTestState prepareTestState;
     #endregion
 
-    public MusicCfg GetMusicCfg
-    {
-        get { return music_cfg; }
-    }
-
     public bool IsMusicEnd
     {
         get => (CurrentTime >= audioSource.clip.length) || (IsNoteEnd && CurrentTime == 0);
@@ -137,16 +131,7 @@ public class GameMgr : MonoBehaviour
         GameCanvas_tf = transform.Find("GameCanvas");
         UICanvas_tf = transform.Find("UICanvas");
         BGCanvas_tf = transform.Find("BGCanvas");
-        pause_btn = UICanvas_tf.Find("pause_btn").GetComponent<Button>();
-        pause_panel = UICanvas_tf.Find("pause_panel").gameObject;
-        time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
-        time_progress = UICanvas_tf.Find("time_progress").GetComponent<Slider>();
-        scoreUI = UICanvas_tf.Find("ScoreUI").GetComponent<ScoreUI>();
-
-        continue_btn = pause_panel.transform.Find("btn/continue_btn").GetComponent<Button>();
-        restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
-        back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
-
+        
         musicBackground = BGCanvas_tf.GetComponent<MusicBackground>();
         gestureMgr = GameCanvas_tf.Find("GestureMgr").GetComponent<GestureMgr>();
         
@@ -158,25 +143,6 @@ public class GameMgr : MonoBehaviour
         prepareState = new PrepareState(this, stateMachine);
         musicEndState = new MusicEndState(this, stateMachine);
         prepareTestState = new PrepareTestState(this, stateMachine);
-
-        pause_btn.onClick.AddListener(()=> {
-            stateMachine.ChangeState(pauseState);        
-        });
-        continue_btn.onClick.AddListener(()=> {
-            stateMachine.ChangeState(stateMachine.LastState);
-        });
-        restart_btn.onClick.AddListener(() => {
-            stateMachine.ChangeState(restartState);
-        });
-        back_btn.onClick.AddListener(() =>{
-            Close();
-        });
-
-#if UNITY_EDITOR
-        time_txt.gameObject.SetActive(true);
-#else
-        time_txt.gameObject.SetActive(false);
-#endif
     }
 
 
@@ -184,11 +150,6 @@ public class GameMgr : MonoBehaviour
     void Update()
     {
         stateMachine.CurrentState.FrameUpdate();
-        if (audioSource.clip != null)
-        {
-            time_txt.text = CurrentTime.ToString("N2") + " / " + audioSource.clip.length.ToString("N2");
-            time_progress.value = MathF.Max(0, (float)CurrentTime) / audioSource.clip.length;
-        }
     }
 
     private void FixedUpdate()
@@ -215,11 +176,7 @@ public class GameMgr : MonoBehaviour
     /// </summary>
     public void Init()
     {
-        pause_btn.gameObject.SetActive(true);
-        pause_panel.gameObject.SetActive(false);
-        current_note_idx = 0;
-
-        // 加载资源
+        // 加载谱面配置
         var _composition = music_cfg.GetComposition(difficulty);
         if (_composition.Count <= 0)
         {
@@ -232,15 +189,16 @@ public class GameMgr : MonoBehaviour
             // 加载谱面
             composition = _composition;
             note_count = composition.Count;
+            current_note_idx = 0;
             // 初始化计分
             scoreMgr.Init(note_count);
-            scoreUI.Init();
-            JudgeLine.Instance.Reset();
+
             drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / PlayerPersonalSetting.ScaledDropSpeed;
             Debug.Log("下落速度: " + PlayerPersonalSetting.ScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
 
             gestureMgr.enabled = false;
+            OnGameInit?.Invoke();
 
             // 加载音乐和背景
             WaitForAllCoroutine loading_task = new WaitForAllCoroutine(this);
@@ -300,8 +258,7 @@ public class GameMgr : MonoBehaviour
         IsGamePause = true;
         audioSource.Pause();
         musicBackground.Pause();
-        pause_panel.SetActive(true);
-        pause_action?.Invoke();
+        OnGamePause?.Invoke();
         gestureMgr.enabled = false;
     }
 
@@ -310,8 +267,7 @@ public class GameMgr : MonoBehaviour
         IsGamePause = false;
         audioSource.Play();
         musicBackground.Play();
-        pause_panel.SetActive(false);
-        continue_action?.Invoke();
+        OnGameContinue?.Invoke();
         gestureMgr.enabled = true;
     }
 #endregion
@@ -372,15 +328,7 @@ public class GameMgr : MonoBehaviour
     public void AddScore(ScoreMgr.ScoreLevel scoreLevel)
     {
         scoreMgr.AddScore(scoreLevel);
-        scoreUI.OnAddScore(scoreMgr.gameResultScore);
-        if (scoreMgr.gameResultScore.score_level_count[(int)ScoreLevel.bad] > 0)
-        {
-            JudgeLine.Instance.ChangeColor(0);
-        }
-        else if (scoreMgr.gameResultScore.score_level_count[(int)ScoreLevel.good] > 0)
-        {
-            JudgeLine.Instance.ChangeColor(1);
-        }
+        OnAddScore?.Invoke(scoreLevel, scoreMgr.gameResultScore);
     }
 
     public void EnterMusicEnd()
@@ -388,7 +336,7 @@ public class GameMgr : MonoBehaviour
         audioSource.Stop();
         musicBackground.Stop();
         scoreMgr.OnMusicEnd();
-        scoreUI.ShowFinalScore(scoreMgr.gameResultScore);
+        OnGameEnd?.Invoke(scoreMgr.gameResultScore);
         gestureMgr.enabled = false;
     }
 }

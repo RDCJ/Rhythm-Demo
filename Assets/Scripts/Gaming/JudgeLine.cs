@@ -24,6 +24,8 @@ public class JudgeLine : MonoBehaviour
         instance = this;
         line_img = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
+        GameMgr.Instance.OnGameInit += Reset;
+        GameMgr.Instance.OnAddScore += OnAddScore;
     }
 
 
@@ -41,4 +43,16 @@ public class JudgeLine : MonoBehaviour
 
     public static float localPositionY { get => instance.transform.localPosition.y; }
     public static float PositionY { get => instance.transform.position.y;}
+
+    private void OnAddScore(ScoreMgr.ScoreLevel scoreLevel, GameResultScore currentGameResultScore)
+    {
+        if (currentGameResultScore.score_level_count[(int)ScoreMgr.ScoreLevel.bad] > 0)
+        {
+            ChangeColor(0);
+        }
+        else if (currentGameResultScore.score_level_count[(int)ScoreMgr.ScoreLevel.good] > 0)
+        {
+            ChangeColor(1);
+        }
+    }
 }
