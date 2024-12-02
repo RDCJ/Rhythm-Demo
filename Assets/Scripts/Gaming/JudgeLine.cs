@@ -1,16 +1,19 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class JudgeLine : MonoBehaviour
+public class JudgeLine
 {
+    public Transform transform { get; private set; }
     private Image line_img;
     private RectTransform rectTransform;
 
     Color[] colors = new Color[3] { Color.white, new(107f/255, 226f/255, 1, 1), new(228f/255, 228f/255, 135f/255, 1)};
-    private void Awake()
+
+    public JudgeLine(Transform tf)
     {
-        line_img = GetComponent<Image>();
-        rectTransform = GetComponent<RectTransform>();
+        transform = tf;
+        line_img = transform.GetComponent<Image>();
+        rectTransform = transform.GetComponent<RectTransform>();
         GameMgr.Instance.OnGameInit += Reset;
         GameMgr.Instance.OnAddScore += OnAddScore;
     }

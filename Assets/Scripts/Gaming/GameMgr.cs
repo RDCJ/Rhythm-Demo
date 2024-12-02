@@ -23,12 +23,13 @@ public class GameMgr : MonoBehaviour
     Transform GameCanvas_tf;
     Transform UICanvas_tf;
     Transform BGCanvas_tf;
-    public JudgeLine judgeLine;
+    
     public AudioSource audioSource;
     public MusicBackground musicBackground;
     public GestureEvent.GestureMgr gestureMgr;
     #endregion
 
+    private JudgeLine judgeLine;
     public ScoreMgr scoreMgr { get; private set; }
 
     private MusicCfg music_cfg;
@@ -136,7 +137,7 @@ public class GameMgr : MonoBehaviour
         
         musicBackground = BGCanvas_tf.GetComponent<MusicBackground>();
         gestureMgr = GameCanvas_tf.Find("GestureMgr").GetComponent<GestureMgr>();
-        
+        judgeLine = new JudgeLine(GameCanvas_tf.Find("judge_line"));
         stateMachine = new StateMachine();
         initState = new InitState(this, stateMachine);
         playingState = new PlayingState(this, stateMachine);
