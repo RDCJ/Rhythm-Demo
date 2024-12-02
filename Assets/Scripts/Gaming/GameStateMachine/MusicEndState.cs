@@ -11,9 +11,6 @@ public class MusicEndState : GameBaseState
     public override void EnterState()
     {
         base.EnterState();
-        gameMgr.audioSource.Stop();
-        gameMgr.musicBackground.Stop();
-        ScoreMgr.Instance.ShowFinalScore();
-        gameMgr.gestureMgr.enabled = false;
+        gameMgr.EnterMusicEnd();
     }
 }

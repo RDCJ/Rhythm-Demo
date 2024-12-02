@@ -179,7 +179,7 @@ namespace Note
         public virtual void Miss() {
             Debug.Log(this.GetType().Name + " Miss");
             PlayEffect(ScoreMgr.ScoreLevel.bad);
-            ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
+            GameMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
             NotePoolManager.Instance.ReturnObject(this);
         }
 

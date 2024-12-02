@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LitJson;
 using Music;
 using System;
 using UnityEngine.UI;
-using Unity.VisualScripting;
 using GestureEvent;
+using static ScoreMgr;
 
 public class GameMgr : MonoBehaviour
 {
@@ -33,7 +32,8 @@ public class GameMgr : MonoBehaviour
     Button restart_btn;
     Button back_btn;
     
-    ScoreMgr scoreMgr;
+    
+    ScoreUI scoreUI;
     Text time_txt;
     Slider time_progress;
 
@@ -41,6 +41,8 @@ public class GameMgr : MonoBehaviour
     public MusicBackground musicBackground;
     public GestureEvent.GestureMgr gestureMgr;
     #endregion
+
+    public ScoreMgr scoreMgr { get; private set; }
 
     private MusicCfg music_cfg;
     private List<NoteCfg> composition;
@@ -128,6 +130,7 @@ public class GameMgr : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        scoreMgr = new ScoreMgr();
         composition = new List<NoteCfg>();
         audioSource = transform.Find("music").GetComponent<AudioSource>();
 
@@ -138,13 +141,13 @@ public class GameMgr : MonoBehaviour
         pause_panel = UICanvas_tf.Find("pause_panel").gameObject;
         time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
         time_progress = UICanvas_tf.Find("time_progress").GetComponent<Slider>();
-        scoreMgr = UICanvas_tf.Find("score_mgr").GetComponent<ScoreMgr>();
+        scoreUI = UICanvas_tf.Find("ScoreUI").GetComponent<ScoreUI>();
 
         continue_btn = pause_panel.transform.Find("btn/continue_btn").GetComponent<Button>();
         restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
 
-        musicBackground = BGCanvas_tf.AddComponent<MusicBackground>();
+        musicBackground = BGCanvas_tf.GetComponent<MusicBackground>();
         gestureMgr = GameCanvas_tf.Find("GestureMgr").GetComponent<GestureMgr>();
         
         stateMachine = new StateMachine();
@@ -231,6 +234,7 @@ public class GameMgr : MonoBehaviour
             note_count = composition.Count;
             // 初始化计分
             scoreMgr.Init(note_count);
+            scoreUI.Init();
             JudgeLine.Instance.Reset();
             drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / PlayerPersonalSetting.ScaledDropSpeed;
             Debug.Log("下落速度: " + PlayerPersonalSetting.ScaledDropSpeed);
@@ -317,8 +321,6 @@ public class GameMgr : MonoBehaviour
         stateMachine.CurrentState.FrameLateUpdate();
     }
 
-    
-
     public void Close()
     {
         audioSource.Stop();
@@ -365,5 +367,28 @@ public class GameMgr : MonoBehaviour
         }
 
         audioSource.time = Mathf.Max(0, (float)composition[current_note_idx].FirstCheckPoint().time - 2 * drop_duration);
+    }
+
+    public void AddScore(ScoreMgr.ScoreLevel scoreLevel)
+    {
+        scoreMgr.AddScore(scoreLevel);
+        scoreUI.OnAddScore(scoreMgr.gameResultScore);
+        if (scoreMgr.gameResultScore.score_level_count[(int)ScoreLevel.bad] > 0)
+        {
+            JudgeLine.Instance.ChangeColor(0);
+        }
+        else if (scoreMgr.gameResultScore.score_level_count[(int)ScoreLevel.good] > 0)
+        {
+            JudgeLine.Instance.ChangeColor(1);
+        }
+    }
+
+    public void EnterMusicEnd()
+    {
+        audioSource.Stop();
+        musicBackground.Stop();
+        scoreMgr.OnMusicEnd();
+        scoreUI.ShowFinalScore(scoreMgr.gameResultScore);
+        gestureMgr.enabled = false;
     }
 }

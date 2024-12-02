@@ -49,7 +49,7 @@ public class Slide : NoteBase
 
                 if ((message.delta_position.x < 0) == (direciton == SlideDirection.Left))
                 {
-                    level = ScoreMgr.Instance.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);
+                    level = GameMgr.Instance.scoreMgr.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);
                     //Debug.Log("sliding right " + eventData.position);
                 }
                 else
@@ -58,9 +58,9 @@ public class Slide : NoteBase
                     //Debug.Log("sliding wrong " + eventData.position);
                 }
                 Debug.Log("[判定] 类型: Slide, 结果: " + level);
-                ScoreMgr.Instance.AddScore(level);
+                GameMgr.Instance.AddScore(level);
                 if (level != ScoreMgr.ScoreLevel.perfect)
-                    ScoreMgr.Instance.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
+                    GameMgr.Instance.scoreMgr.CountEarlyOrLate(current_time, cfg.FirstCheckPoint().time);
                 PlayEffect(level);
 
                 NotePoolManager.Instance.ReturnObject(this);

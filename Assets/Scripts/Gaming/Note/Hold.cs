@@ -1,11 +1,9 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 using Note;
 using Music;
 using System.Collections.Generic;
 using GestureEvent;
 using NoteGesture;
-using System.Reflection;
 
 /// <summary>
 /// 长按
@@ -71,15 +69,15 @@ public class Hold : NoteBase
                 start_time = GameMgr.Instance.CurrentTime;
                 Debug.Log("Hold start " + start_time);
 
-                start_judge_level = ScoreMgr.Instance.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
+                start_judge_level = GameMgr.Instance.scoreMgr.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
                 PlayEffect(start_judge_level);
                 if (start_judge_level != ScoreMgr.ScoreLevel.perfect)
-                    ScoreMgr.Instance.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
+                    GameMgr.Instance.scoreMgr.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
                 if (start_judge_level == ScoreMgr.ScoreLevel.bad)
                 {
                     state = NoteState.Judged;
                     Debug.Log("[判定] 类型: Hold, 结果: " + start_judge_level);
-                    ScoreMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
+                    GameMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
                     NotePoolManager.Instance.ReturnObject(this);
                 }
             }
@@ -168,7 +166,7 @@ public class Hold : NoteBase
         {
             state = NoteState.Judged;
             end_time = GameMgr.Instance.CurrentTime;
-            end_judge_level = ScoreMgr.Instance.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
+            end_judge_level = GameMgr.Instance.scoreMgr.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
 
             Debug.Log("Hold end " + end_time);
             ScoreMgr.ScoreLevel level;
@@ -181,8 +179,8 @@ public class Hold : NoteBase
 
             Debug.Log("[判定] 类型: Hold, 结果: " + level);
             if (end_judge_level != ScoreMgr.ScoreLevel.perfect)
-                ScoreMgr.Instance.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
-            ScoreMgr.Instance.AddScore(level);
+                GameMgr.Instance.scoreMgr.CountEarlyOrLate(end_time, cfg.LastCheckPoint().time);
+            GameMgr.Instance.AddScore(level);
             PlayEffect(level);
             NotePoolManager.Instance.ReturnObject(this);
         }
