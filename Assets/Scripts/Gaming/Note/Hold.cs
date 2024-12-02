@@ -188,7 +188,7 @@ public class Hold : NoteBase
 
     private void PlayEffectOnHolding()
     {
-        if (tail_handle.position.y > JudgeLine.PositionY)
+        if (tail_handle.position.y > GameMgr.Instance.JudgeLinePositionY)
         {
             if (IsHolding && is_finger_down)
             {
@@ -221,7 +221,7 @@ public class Hold : NoteBase
     private void ModifyShapeOnReachJudgeLine()
     {
         //Debug.Log("[ModifyShapeOnReachJudgeLine]" + head_handle.position.y + " " + JudgeLine.PositionY);
-        if (head_handle.position.y < JudgeLine.PositionY)
+        if (head_handle.position.y < GameMgr.Instance.JudgeLinePositionY)
         {
             if (GameMgr.Instance.CurrentTime > checkPoints_cache[1].time)
             {
@@ -230,9 +230,9 @@ public class Hold : NoteBase
             }
             checkPoints_cache[0] = GetCheckPointOnJudgeLine;
             Resize();
-            if (tail_handle.position.y > JudgeLine.PositionY)
+            if (tail_handle.position.y > GameMgr.Instance.JudgeLinePositionY)
             {
-                rectTransform.anchoredPosition = Util.ChangeV3(rectTransform.anchoredPosition, 1, JudgeLine.localPositionY + icon.Height * 0.5f);
+                rectTransform.anchoredPosition = Util.ChangeV3(rectTransform.anchoredPosition, 1, GameMgr.Instance.JudgeLineLocalPositionY + icon.Height * 0.5f);
             }
         }
     }
@@ -244,7 +244,6 @@ public class Hold : NoteBase
             return PlayerPersonalSetting.ScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration());
         }
     }
-
 
     protected override float GetCenterXOnJudgeLine
     {

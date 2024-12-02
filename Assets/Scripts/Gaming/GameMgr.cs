@@ -24,7 +24,7 @@ public class GameMgr : MonoBehaviour
     Transform GameCanvas_tf;
     Transform UICanvas_tf;
     Transform BGCanvas_tf;
-
+    public JudgeLine judgeLine;
     public AudioSource audioSource;
     public MusicBackground musicBackground;
     public GestureEvent.GestureMgr gestureMgr;
@@ -105,6 +105,9 @@ public class GameMgr : MonoBehaviour
     public MusicEndState musicEndState;
     public PrepareTestState prepareTestState;
     #endregion
+
+    public float JudgeLineLocalPositionY => judgeLine.transform.localPosition.y;
+    public float JudgeLinePositionY => judgeLine.transform.position.y;
 
     public bool IsMusicEnd
     {
@@ -193,7 +196,7 @@ public class GameMgr : MonoBehaviour
             // 初始化计分
             scoreMgr.Init(note_count);
 
-            drop_duration = (Screen.height / 2 - JudgeLine.localPositionY) / PlayerPersonalSetting.ScaledDropSpeed;
+            drop_duration = (Screen.height / 2 - JudgeLineLocalPositionY) / PlayerPersonalSetting.ScaledDropSpeed;
             Debug.Log("下落速度: " + PlayerPersonalSetting.ScaledDropSpeed);
             Debug.Log("下落时间: " + drop_duration);
 
