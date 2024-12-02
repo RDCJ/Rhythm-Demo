@@ -25,7 +25,7 @@ public class GameMgrUIController : MonoBehaviour
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
         time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
         time_progress = UICanvas_tf.Find("time_progress").GetComponent<Slider>();
-        scoreUI = UICanvas_tf.Find("ScoreUI").GetComponent<ScoreUI>();
+        scoreUI = new ScoreUI(UICanvas_tf.Find("ScoreUI"));
 
         pause_btn.onClick.AddListener(() => {
             gameMgr.stateMachine.ChangeState(gameMgr.pauseState);

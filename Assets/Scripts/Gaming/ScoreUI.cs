@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ScoreUI : MonoBehaviour
+public class ScoreUI
 {
     #region component
+    Transform transform;
     Text score_txt;
     Text combo_txt;
     Transform final_score_panel;
@@ -20,8 +21,9 @@ public class ScoreUI : MonoBehaviour
     Button back_btn;
     #endregion
 
-    private void Awake()
+    public ScoreUI(Transform tf)
     {
+        transform = tf;
         score_txt = transform.Find("score_txt").GetComponent<Text>();
         combo_txt = transform.Find("combo_txt").GetComponent<Text>();
         final_score_panel = transform.Find("final_score_panel");
