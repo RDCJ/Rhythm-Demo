@@ -31,6 +31,7 @@ public class ScoreMgr : MonoBehaviour
     Transform final_score_panel;
     Text final_score_txt;
     Text final_acc_txt;
+    Text final_maxCombo_txt;
     Text final_perfect_count;
     Text final_good_count;
     Text final_bad_count;
@@ -70,6 +71,7 @@ public class ScoreMgr : MonoBehaviour
         extra_tag = record_tf.Find("extra_tag").GetComponent<Text>();
 
         Transform counter_tf = final_score_panel.Find("final_score/Counters");
+        final_maxCombo_txt = counter_tf.Find("maxCombo_count").GetComponent<Text>();
         final_perfect_count = counter_tf.Find("perfect_count").GetComponent<Text>();
         final_good_count = counter_tf.Find("good_count").GetComponent<Text>();
         final_bad_count = counter_tf.Find("bad_count").GetComponent<Text>();
@@ -162,6 +164,7 @@ public class ScoreMgr : MonoBehaviour
         final_score_panel.gameObject.SetActive(true);
         final_score_txt.text = ((int)score).ToString().PadLeft(7, '0');
         final_acc_txt.text = (acc * 100).ToString("N2") + "%";
+        final_maxCombo_txt.text = max_combo.ToString();
         final_perfect_count.text = score_level_count[(int)ScoreLevel.perfect].ToString();
         final_good_count.text = score_level_count[(int)ScoreLevel.good].ToString();
         final_bad_count.text = score_level_count[(int)ScoreLevel.bad].ToString();
