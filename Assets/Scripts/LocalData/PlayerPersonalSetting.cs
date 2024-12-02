@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class PlayerPersonalSetting
 {
     public static ES3Settings esSetting = new ES3Settings(ES3.Location.File, ES3.Directory.PersistentDataPath);

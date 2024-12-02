@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Music;
 using System;
-using UnityEngine.UI;
 using GestureEvent;
 
 public class GameMgr : MonoBehaviour
