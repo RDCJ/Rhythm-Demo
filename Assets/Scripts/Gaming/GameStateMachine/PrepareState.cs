@@ -2,45 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrepareState: GameBaseState
+public partial class GameMgr: MonoBehaviour
 {
-    public PrepareState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+    private void OnEnterPrepareState(int lastState)
     {
+        CalcPrepareTime();
+        gestureMgr.enabled = true;
     }
 
-    public override void EnterState()
+    private void OnExitPrepareState(int nextState)
     {
-        base.EnterState();
-        gameMgr.CalcPrepareTime();
-        gameMgr.gestureMgr.enabled = true;
+        audioSource.time = (float)prepare_time;
+        musicBackground.bg_videoPlayer.time = (float)prepare_time;
     }
 
-    public override void ExitState()
+    private void OnUpdatePrepareState(float time, float elapsedTime)
     {
-        base.ExitState();
-        gameMgr.audioSource.time = (float)gameMgr.prepare_time;
-        gameMgr.musicBackground.bg_videoPlayer.time = (float)gameMgr.prepare_time;
-    }
+        if (prepare_time < 0)
+            prepare_time += time;
+        if (!IsMusicEnd)
+            GenerateNote();
 
-    public override void FrameUpdate()
-    {
-        base.FrameUpdate();
-        if (gameMgr.prepare_time < 0)
-            gameMgr.prepare_time += Time.deltaTime;
-        if (!gameMgr.IsMusicEnd)
-            gameMgr.GenerateNote();
-    }
-
-    public override void PhysicsUpdate()
-    {
-        base.PhysicsUpdate();
-    }
-
-    public override void FrameLateUpdate()
-    {
-        if (gameMgr.prepare_time >= 0)
+        if (prepare_time >= 0)
         {
-            stateMachine.ChangeState(gameMgr.playingState);
+            FSM.TriggerAnyTransition((int)GameState.Playing);
         }
     }
 }

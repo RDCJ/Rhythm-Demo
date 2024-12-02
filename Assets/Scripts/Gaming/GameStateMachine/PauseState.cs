@@ -1,16 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PauseState : GameBaseState
+public partial class GameMgr : MonoBehaviour
 {
-    public PauseState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
-    {
-    }
 
-    public override void EnterState()
+    private void OnEnterPauseState(int lastState)
     {
-        base.EnterState();
-        gameMgr.Pause();
+        Pause();
     }
 }

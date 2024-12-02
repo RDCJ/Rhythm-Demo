@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RestartState : GameBaseState
+public partial class GameMgr : MonoBehaviour
 {
-    public RestartState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+
+    private void OnEnterRestartState(int lastState)
     {
+        NotePoolManager.Instance.Reload();
+        gestureMgr.enabled = false;
+        
     }
 
-    public override void EnterState()
+    private void OnUpdateRestartState(float deltaTime, float elapsedTime)
     {
-        base.EnterState();
-        NotePoolManager.Instance.Reload();
-        gameMgr.gestureMgr.enabled = false;
-        stateMachine.ChangeState(gameMgr.initState);
+        FSM.TriggerAnyTransition((int)GameState.Init);
     }
 }

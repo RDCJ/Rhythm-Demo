@@ -1,17 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class InitState : GameBaseState
+public partial class GameMgr : MonoBehaviour
 {
-    public InitState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+    private void OnEnterInitState(int lastState)
     {
-
-    }
-
-    public override void EnterState()
-    {
-        base.EnterState();
-        LoadingScreenManager.Instance.StartLoading(() => gameMgr.Init());
+        LoadingScreenManager.Instance.StartLoading(() => Init());
     }
 }

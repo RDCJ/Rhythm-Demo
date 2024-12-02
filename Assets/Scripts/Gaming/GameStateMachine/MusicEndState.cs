@@ -1,16 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class MusicEndState : GameBaseState
+public partial class GameMgr : MonoBehaviour
 {
-    public MusicEndState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+    private void OnEnterMusicEndState(int lastState)
     {
-    }
-
-    public override void EnterState()
-    {
-        base.EnterState();
-        gameMgr.EnterMusicEnd();
+        EnterMusicEnd();
     }
 }

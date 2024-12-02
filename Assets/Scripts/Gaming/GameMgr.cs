@@ -4,8 +4,9 @@ using UnityEngine;
 using Music;
 using System;
 using GestureEvent;
+using SimpleFSM;
 
-public class GameMgr : MonoBehaviour
+public partial class GameMgr : MonoBehaviour
 {
     #region Singleton
     private GameMgr() { }
@@ -96,14 +97,19 @@ public class GameMgr : MonoBehaviour
     float test_mode_start_time;
 
     #region statemachine
-    public StateMachine stateMachine;
-    public InitState initState;
-    public PrepareState prepareState;
-    public PlayingState playingState;
-    public PauseState pauseState;
-    public RestartState restartState;
-    public MusicEndState musicEndState;
-    public PrepareTestState prepareTestState;
+
+    public SimpleFSM.SimpleFSM FSM { get; private set; }
+
+    public enum GameState
+    {
+        Init,
+        Prepare,
+        Playing,
+        Pause,
+        MusicEnd,
+        Restart,
+        PrepareTest
+    }
     #endregion
 
     public float JudgeLineLocalPositionY => judgeLine.transform.localPosition.y;
@@ -138,26 +144,27 @@ public class GameMgr : MonoBehaviour
         musicBackground = BGCanvas_tf.GetComponent<MusicBackground>();
         gestureMgr = GameCanvas_tf.Find("GestureMgr").GetComponent<GestureMgr>();
         judgeLine = new JudgeLine(GameCanvas_tf.Find("judge_line"));
-        stateMachine = new StateMachine();
-        initState = new InitState(this, stateMachine);
-        playingState = new PlayingState(this, stateMachine);
-        pauseState = new PauseState(this, stateMachine);
-        restartState = new RestartState(this, stateMachine);
-        prepareState = new PrepareState(this, stateMachine);
-        musicEndState = new MusicEndState(this, stateMachine);
-        prepareTestState = new PrepareTestState(this, stateMachine);
+
+        CreateFSM();
     }
 
+    private void CreateFSM()
+    {
+        FSM = new SimpleFSM.SimpleFSM();
+        FSM.AddState((int)GameState.Init, OnEnterInitState, null, null);
+        FSM.AddState((int)GameState.Prepare, OnEnterPrepareState, OnExitPrepareState, OnUpdatePrepareState);
+        FSM.AddState((int)GameState.Playing, OnEnterPlayingState, null, OnUpdatePlayingState);
+        FSM.AddState((int)GameState.Pause, OnEnterPauseState, null, null);
+        FSM.AddState((int)GameState.MusicEnd, OnEnterMusicEndState, null, null);
+        FSM.AddState((int)GameState.Restart, OnEnterRestartState, null, OnUpdateRestartState);
+        FSM.AddState((int)GameState.PrepareTest, OnEnterPrepareTestState, null, OnUpdatePrepareTestState);
+    }
 
     // Update is called once per frame
     void Update()
     {
-        stateMachine.CurrentState.FrameUpdate();
-    }
-
-    private void FixedUpdate()
-    {
-        stateMachine.CurrentState.PhysicsUpdate();
+        //stateMachine.CurrentState.FrameUpdate();
+        FSM.Update(Time.deltaTime);
     }
 
     #region logic function
@@ -171,20 +178,20 @@ public class GameMgr : MonoBehaviour
         this.test_mode_start_time = start_time;
         music_cfg = MusicResMgr.GetCfg(music_file_name);
         music_cfg.prepare_time = Math.Max(0, music_cfg.prepare_time);
-        stateMachine.Init(initState);
+        FSM.Start((int)GameState.Init);
     }
 
     /// <summary>
     /// 初始化，加载音乐和谱面
     /// </summary>
-    public void Init()
+    private void Init()
     {
         // 加载谱面配置
         var _composition = music_cfg.GetComposition(difficulty);
         if (_composition.Count <= 0)
         {
             Debug.Log("difficulty: " + difficulty + " is invalid");
-            LoadingScreenManager.Instance.EndLoading(_onFinishIdle: ()=> Close());
+            LoadingScreenManager.Instance.EndLoading(_onFinishIdle: () => Close());
         }
         else
         {
@@ -214,12 +221,12 @@ public class GameMgr : MonoBehaviour
             }))
             .AddCoroutine(musicBackground.Init(this.music_file_name))
             .StartAll(() => {
-                LoadingScreenManager.Instance.EndLoading(_onFinishHide: 
+                LoadingScreenManager.Instance.EndLoading(_onFinishHide:
                     () => {
                         if (is_test_mode)
-                            stateMachine.ChangeState(prepareTestState);
+                            FSM.TriggerAnyTransition((int)GameState.PrepareTest);
                         else
-                            stateMachine.ChangeState(prepareState); 
+                            FSM.TriggerAnyTransition((int)GameState.Prepare);
                     }
                 );
             });
@@ -274,11 +281,6 @@ public class GameMgr : MonoBehaviour
         gestureMgr.enabled = true;
     }
 #endregion
-
-    private void LateUpdate()
-    {
-        stateMachine.CurrentState.FrameLateUpdate();
-    }
 
     public void Close()
     {

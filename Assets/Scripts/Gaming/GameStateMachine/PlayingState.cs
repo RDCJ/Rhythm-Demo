@@ -1,25 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayingState : GameBaseState
+public partial class GameMgr : MonoBehaviour
 {
-    public PlayingState(GameMgr gameMgr, StateMachine stateMachine) : base(gameMgr, stateMachine)
+    private void OnEnterPlayingState(int lastState)
     {
+        Continue();
     }
 
-    public override void EnterState()
+    private void OnUpdatePlayingState(float deltaTime, float elapsedTime)
     {
-        base.EnterState();
-        gameMgr.Continue();
-    }
-
-    public override void FrameUpdate()
-    {
-        base.FrameUpdate();
-        if (!gameMgr.IsMusicEnd)
-            gameMgr.GenerateNote();
+        if (!IsMusicEnd)
+            GenerateNote();
         else
-            stateMachine.ChangeState(gameMgr.musicEndState);
+            FSM.TriggerAnyTransition((int)GameState.MusicEnd);
     }
 }
