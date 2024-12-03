@@ -47,6 +47,8 @@ namespace Note
             get => state == NoteState.Judged;
         }
 
+        public JudgeInterval JudgeIntervalConfig => GameConst.JudgeIntervalConfigs[type];
+
         protected virtual void Awake()
         {
             rectTransform = this.GetComponent<RectTransform>();
@@ -213,7 +215,7 @@ namespace Note
         {
             get 
             { 
-                return PlayerPersonalSetting.ScaledDropSpeed * GameConst.active_interval * 2;
+                return PlayerPersonalSetting.ScaledDropSpeed * JudgeIntervalConfig.active_interval * 2;
             }
         }
 

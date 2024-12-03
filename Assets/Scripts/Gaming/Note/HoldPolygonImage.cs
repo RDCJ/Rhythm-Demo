@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class HoldPolygonImage : Image
 {
-    private Vector3[] mesh_points;
+    public Vector3[] mesh_points { get; private set; }
     public int checkpoint_count;
     private float screen_width;
 

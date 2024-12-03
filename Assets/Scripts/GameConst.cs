@@ -15,21 +15,13 @@ public class GameConst
     /// </summary>
     public static float drop_speed => gameCFG.drop_speed;
     /// <summary>
+    /// 判定区间配置
+    /// </summary>
+    public static Dictionary<Note.NoteType, JudgeInterval> JudgeIntervalConfigs => gameCFG.JudgeIntervalConfigs;
+    /// <summary>
     /// 判定线的位置
     /// </summary>
     public static float judge_line_y => gameCFG.judge_line_y;
-    /// <summary>
-    /// perfect判定区间
-    /// </summary>
-    public static float perfect_interval => gameCFG.perfect_interval;
-    /// <summary>
-    /// good判定区间
-    /// </summary>
-    public static float good_interval => gameCFG.good_interval;
-    /// <summary>
-    /// 可判定区间
-    /// </summary>
-    public static float active_interval => gameCFG.active_interval;
     /// <summary>
     /// 游戏总分
     /// </summary>

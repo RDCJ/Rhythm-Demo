@@ -21,6 +21,7 @@ public class Home : MonoBehaviour
     private void Awake()
     {
         GameConst.gameCFG = Resources.Load<GameCFG>("GameCFG");
+        GameConst.gameCFG.LoadJudgeIntervalConfigs();
         play_btn = transform.Find("Btns/play_btn").GetComponent<Button>();
         editor_btn = transform.Find("Btns/editor_btn").GetComponent<Button>();
         exit_btn = transform.Find("Btns/exit_btn").GetComponent<Button>();

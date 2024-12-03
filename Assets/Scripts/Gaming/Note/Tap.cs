@@ -41,7 +41,7 @@ public class Tap : NoteBase
                 double current_time = GameMgr.Instance.CurrentTime;
                 //Debug.Log("tap: " + current_time + " cfg_time: " + cfg.time);
 
-                ScoreMgr.ScoreLevel level = GameMgr.Instance.scoreMgr.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);
+                ScoreMgr.ScoreLevel level = GameMgr.Instance.scoreMgr.JudgeClickTime(this.JudgeIntervalConfig, current_time, cfg.FirstCheckPoint().time);
                 // 计分
                 Debug.Log("[判定] 类型: Tap, 结果: " + level);
                 if (level != ScoreMgr.ScoreLevel.perfect)

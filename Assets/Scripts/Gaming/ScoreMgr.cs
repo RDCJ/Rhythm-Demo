@@ -99,23 +99,23 @@ public class ScoreMgr
     /// <param name="click_time"></param>
     /// <param name="ref_time"></param>
     /// <returns></returns>
-    public ScoreLevel JudgeClickTime(double click_time, double ref_time)
+    public ScoreLevel JudgeClickTime(JudgeInterval JudgeIntervalConfig, double click_time, double ref_time)
     {
         double delta = System.Math.Abs(click_time + judgeTimeOffset - ref_time);
-        if (delta <= GameConst.perfect_interval)
+        if (delta <= JudgeIntervalConfig.perfect_interval)
             return ScoreLevel.perfect;
-        else if (delta <= GameConst.good_interval)
+        else if (delta <= JudgeIntervalConfig.good_interval)
             return ScoreLevel.good;
         else
             return ScoreLevel.bad;
     }
 
-    public ScoreLevel JudgeHoldEnd(double click_time, double ref_time)
+    public ScoreLevel JudgeHoldEnd(JudgeInterval JudgeIntervalConfig, double click_time, double ref_time)
     {
         double delta = ref_time - (click_time + judgeTimeOffset);
-        if (delta <= GameConst.perfect_interval)
+        if (delta <= JudgeIntervalConfig.perfect_interval)
             return ScoreLevel.perfect;
-        else if (delta <= GameConst.good_interval)
+        else if (delta <= JudgeIntervalConfig.good_interval)
             return ScoreLevel.good;
         else
             return ScoreLevel.bad;

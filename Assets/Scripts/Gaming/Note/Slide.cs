@@ -49,7 +49,7 @@ public class Slide : NoteBase
 
                 if ((message.delta_position.x < 0) == (direciton == SlideDirection.Left))
                 {
-                    level = GameMgr.Instance.scoreMgr.JudgeClickTime(current_time, cfg.FirstCheckPoint().time);
+                    level = GameMgr.Instance.scoreMgr.JudgeClickTime(this.JudgeIntervalConfig, current_time, cfg.FirstCheckPoint().time);
                     //Debug.Log("sliding right " + eventData.position);
                 }
                 else

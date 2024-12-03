@@ -16,6 +16,7 @@ public class Hold : NoteBase
     private HoldPolygonImage icon;
     private RectTransform head_handle;
     private RectTransform tail_handle;
+    private new PolygonCollider2D collider2D;
 
     double start_time;
     double end_time;
@@ -36,6 +37,7 @@ public class Hold : NoteBase
         base.Awake();
         type = NoteType.Hold;
         touch_area = this.GetComponent<HoldPolygonImage>();
+        collider2D = this.GetComponent<PolygonCollider2D>();
         icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
         head_handle = transform.Find("icon/head_handle") as RectTransform;
         tail_handle = transform.Find("icon/tail_handle") as RectTransform;
@@ -61,6 +63,7 @@ public class Hold : NoteBase
         var message = msg as SimpleGestureMessage;
         if (!touch_area.IsRaycastLocationValid(message.position, Camera.main)) return;
         hold_fingers.Add(message.fingerId);
+        if (message.hit.collider != this.collider2D) return;
         if (this.IsActive)
         {
             if (!is_finger_down)
@@ -69,7 +72,7 @@ public class Hold : NoteBase
                 start_time = GameMgr.Instance.CurrentTime;
                 Debug.Log("Hold start " + start_time);
 
-                start_judge_level = GameMgr.Instance.scoreMgr.JudgeClickTime(start_time, cfg.FirstCheckPoint().time);
+                start_judge_level = GameMgr.Instance.scoreMgr.JudgeClickTime(this.JudgeIntervalConfig, start_time, cfg.FirstCheckPoint().time);
                 PlayEffect(start_judge_level);
                 if (start_judge_level != ScoreMgr.ScoreLevel.perfect)
                     GameMgr.Instance.scoreMgr.CountEarlyOrLate(start_time, cfg.FirstCheckPoint().time);
@@ -144,8 +147,8 @@ public class Hold : NoteBase
     {
         float drop_speed = PlayerPersonalSetting.ScaledDropSpeed;
         icon.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width);
-        touch_area.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, GameConst.active_interval);
-
+        touch_area.SetCheckPoints(checkPoints_cache, drop_speed, Screen.width, GameConst.hold_touch_area_width_extend, JudgeIntervalConfig.active_interval);
+        ReshapeCollider(touch_area.mesh_points);
         head_handle.localPosition = icon.HeadCenter;
         head_handle.sizeDelta = Util.ChangeV2(head_handle.sizeDelta, 0, icon.HeadWidth / head_handle.localScale.x);
         tail_handle.localPosition = icon.TailCenter;
@@ -166,7 +169,7 @@ public class Hold : NoteBase
         {
             state = NoteState.Judged;
             end_time = GameMgr.Instance.CurrentTime;
-            end_judge_level = GameMgr.Instance.scoreMgr.JudgeHoldEnd(end_time, cfg.LastCheckPoint().time);
+            end_judge_level = GameMgr.Instance.scoreMgr.JudgeHoldEnd(this.JudgeIntervalConfig, end_time, cfg.LastCheckPoint().time);
 
             Debug.Log("Hold end " + end_time);
             ScoreMgr.ScoreLevel level;
@@ -204,7 +207,7 @@ public class Hold : NoteBase
 
     private void CheckFirstCheckPointMiss()
     {
-        if (!is_finger_down  && cfg.FirstCheckPoint().time + GameConst.good_interval < GameMgr.Instance.CurrentTime)
+        if (!is_finger_down  && cfg.FirstCheckPoint().time + this.JudgeIntervalConfig.good_interval < GameMgr.Instance.CurrentTime)
         {
             Miss();
         }
@@ -216,6 +219,26 @@ public class Hold : NoteBase
         {
             EndJudge();
         }
+    }
+
+    private void ReshapeCollider(Vector3[] mesh_points)
+    {
+        Vector2[] colliderPoints = new Vector2[mesh_points.Length];
+        int index = 0;
+        for (int i=0; i<mesh_points.Length / 2; i++)
+        {
+            colliderPoints[index].x = mesh_points[i * 2].x;
+            colliderPoints[index].y = mesh_points[i * 2].y;
+            index++;    
+
+        }
+        for (int i= mesh_points.Length / 2 - 1; i>=0; i--)
+        {
+            colliderPoints[index].x = mesh_points[i * 2 + 1].x;
+            colliderPoints[index].y = mesh_points[i * 2 + 1].y;
+            index++;
+        }
+        collider2D.SetPath(0, colliderPoints);
     }
 
     private void ModifyShapeOnReachJudgeLine()
@@ -241,7 +264,7 @@ public class Hold : NoteBase
     {
         get
         {
-            return PlayerPersonalSetting.ScaledDropSpeed * (GameConst.active_interval * 2 + (float)cfg.Duration());
+            return PlayerPersonalSetting.ScaledDropSpeed * (JudgeIntervalConfig.active_interval * 2 + (float)cfg.Duration());
         }
     }
 

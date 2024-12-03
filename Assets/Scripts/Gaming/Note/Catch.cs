@@ -41,7 +41,7 @@ public class Catch : NoteBase
     {
         get
         {
-            return PlayerPersonalSetting.ScaledDropSpeed * GameConst.active_interval * 2;
+            return PlayerPersonalSetting.ScaledDropSpeed * JudgeIntervalConfig.active_interval * 2;
         }
     }
 
