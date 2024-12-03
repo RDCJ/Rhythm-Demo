@@ -71,11 +71,6 @@ namespace SimpleFSM
                 Debug.LogError($"[SimpleFSM.AddTransition] state should not be negative");
                 return false;
             }
-            if (RegisteredTransitions.ContainsKey(triggerCode))
-            {
-                Debug.LogWarning($"[SimpleFSM.AddTransition] triggerCode {triggerCode} already exists");
-                return false;
-            }
             if (!RegisteredStates.ContainsKey(fromState))
             {
                 Debug.LogWarning($"[SimpleFSM.AddTransition] fromState {fromState} not exists");
