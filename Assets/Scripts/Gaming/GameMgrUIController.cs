@@ -34,7 +34,7 @@ public class GameMgrUIController : MonoBehaviour
             gameMgr.FSM.TriggerAnyTransition(gameMgr.FSM.LastState);
         });
         restart_btn.onClick.AddListener(() => {
-            gameMgr.FSM.TriggerAnyTransition((int)GameMgr.GameState.Restart);
+            gameMgr.FSM.TriggerAnyTransition((int)GameMgr.GameState.Init);
         });
         back_btn.onClick.AddListener(() => {
             gameMgr.Close();

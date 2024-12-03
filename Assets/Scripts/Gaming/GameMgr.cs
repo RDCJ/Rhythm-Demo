@@ -107,7 +107,6 @@ public partial class GameMgr : MonoBehaviour
         Playing,
         Pause,
         MusicEnd,
-        Restart,
         PrepareTest
     }
     #endregion
@@ -156,7 +155,6 @@ public partial class GameMgr : MonoBehaviour
         FSM.AddState((int)GameState.Playing, OnEnterPlayingState, null, OnUpdatePlayingState);
         FSM.AddState((int)GameState.Pause, OnEnterPauseState, null, null);
         FSM.AddState((int)GameState.MusicEnd, OnEnterMusicEndState, null, null);
-        FSM.AddState((int)GameState.Restart, OnEnterRestartState, null, OnUpdateRestartState);
         FSM.AddState((int)GameState.PrepareTest, OnEnterPrepareTestState, null, OnUpdatePrepareTestState);
     }
 
@@ -336,7 +334,7 @@ public partial class GameMgr : MonoBehaviour
         OnAddScore?.Invoke(scoreLevel, scoreMgr.gameResultScore);
     }
 
-    public void EnterMusicEnd()
+    public void GameEnd()
     {
         audioSource.Stop();
         musicBackground.Stop();
