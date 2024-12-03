@@ -10,24 +10,33 @@ public class FPSIndicator : MonoBehaviour
     string prefix = "FPS: ";
     float refresh_cd = 0.1f;
     float refresh_time;
-    private void Awake()
+    int lastFrame;
+
+    private void Start()
     {
-#if UNITY_EDITOR
-        txt = GetComponent<Text>();
-        refresh_time = 0;
-#else
-        Destroy(this.gameObject);
-#endif
+        if (GameConst.enable_test_mode)
+        {
+            txt = GetComponent<Text>();
+            refresh_time = 0;
+            lastFrame = Time.frameCount;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
+
     // Update is called once per frame
     void Update()
     {
         refresh_time -= Time.deltaTime;
         if (refresh_time < 0)
         {
-            float fps = (1f / Time.deltaTime);
-            txt.text = prefix + ((int)fps).ToString();
+            int currentFrame = Time.frameCount;
+            float fps = ((currentFrame - lastFrame) / refresh_cd);
+            txt.text = $"{prefix}{(int)fps}";
             refresh_time = refresh_cd;
+            lastFrame = currentFrame;
         }
     }
 }

@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class FPSFix : MonoBehaviour
 {
+    public int PCMaxFPS;
+    public int MobileMaxFPS;
+
     void Start()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = MobileMaxFPS;
 #else
-        Application.targetFrameRate = 144;
+        Application.targetFrameRate = PCMaxFPS;
 #endif
         Destroy(this);
     }
