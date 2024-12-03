@@ -21,6 +21,10 @@ public class NotePoolManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
         pools = new Dictionary<NoteType, ObjectPool>
         {
             {
