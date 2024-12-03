@@ -103,11 +103,18 @@ public partial class GameMgr : MonoBehaviour
     public enum GameState
     {
         Init,
-        Prepare,
         Playing,
         Pause,
-        MusicEnd,
-        PrepareTest
+        MusicEnd
+    }
+
+    public enum GameStateTransitionEvent
+    {
+        GameInit,
+        GameStart,
+        GameRestart,
+        GamePause,
+        GameEnd
     }
     #endregion
 
@@ -151,11 +158,15 @@ public partial class GameMgr : MonoBehaviour
     {
         FSM = new SimpleFSM.SimpleFSM();
         FSM.AddState((int)GameState.Init, OnEnterInitState, null, null);
-        FSM.AddState((int)GameState.Prepare, OnEnterPrepareState, OnExitPrepareState, OnUpdatePrepareState);
         FSM.AddState((int)GameState.Playing, OnEnterPlayingState, null, OnUpdatePlayingState);
         FSM.AddState((int)GameState.Pause, OnEnterPauseState, null, null);
         FSM.AddState((int)GameState.MusicEnd, OnEnterMusicEndState, null, null);
-        FSM.AddState((int)GameState.PrepareTest, OnEnterPrepareTestState, null, OnUpdatePrepareTestState);
+
+        FSM.AddTransition((int)GameState.Init, (int)GameState.Playing, (int)GameStateTransitionEvent.GameStart);
+        FSM.AddTransition((int)GameState.Pause, (int)GameState.Init, (int)GameStateTransitionEvent.GameRestart);
+        FSM.AddTransition((int)GameState.MusicEnd, (int)GameState.Init, (int)GameStateTransitionEvent.GameRestart);
+        FSM.AddTransition((int)GameState.Playing, (int)GameState.Pause, (int)GameStateTransitionEvent.GamePause);
+        FSM.AddTransition((int)GameState.Playing, (int)GameState.MusicEnd, (int)GameStateTransitionEvent.GameEnd);
     }
 
     // Update is called once per frame
@@ -221,10 +232,7 @@ public partial class GameMgr : MonoBehaviour
             .StartAll(() => {
                 LoadingScreenManager.Instance.EndLoading(_onFinishHide:
                     () => {
-                        if (is_test_mode)
-                            FSM.TriggerAnyTransition((int)GameState.PrepareTest);
-                        else
-                            FSM.TriggerAnyTransition((int)GameState.Prepare);
+                        FSM.TriggerTransition((int)GameStateTransitionEvent.GameStart);
                     }
                 );
             });
@@ -283,6 +291,7 @@ public partial class GameMgr : MonoBehaviour
     public void Close()
     {
         audioSource.Stop();
+        FSM.Stop();
         this.gameObject.SetActive(false);
         NotePoolManager.Instance.Reload();
         MusicSelect.Instance?.RefreshRecord();
@@ -304,28 +313,30 @@ public partial class GameMgr : MonoBehaviour
 
     public void CalcPrepareTime()
     {
-/*        float first_note_time = (composition.Count > 0 && !IsNoteEnd) ? (float)composition[current_note_idx].FirstCheckPoint().time : float.MaxValue;
-        prepare_time = 2 * drop_duration;//Mathf.Min(first_note_time - drop_duration, 0); */
-
         float first_note_time = composition.Count > 0 ? (float)composition[0].FirstCheckPoint().time : float.MaxValue;
         prepare_time = Mathf.Min(first_note_time - drop_duration, 0);
     }
 
     public void PrepareTestMode()
     {
-        if (test_mode_start_time <= 0) return;
-
-        while (true)
+        if (test_mode_start_time <= 0)
         {
-            if (IsNoteEnd) break;
-            double next_note_time = composition[current_note_idx].FirstCheckPoint().time;
-            if (next_note_time < test_mode_start_time)
-                current_note_idx++;
-            else
-                break;
+            audioSource.time = 0;
         }
+        else
+        {
+            while (true)
+            {
+                if (IsNoteEnd) break;
+                double next_note_time = composition[current_note_idx].FirstCheckPoint().time;
+                if (next_note_time < test_mode_start_time)
+                    current_note_idx++;
+                else
+                    break;
+            }
 
-        audioSource.time = Mathf.Max(0, (float)composition[current_note_idx].FirstCheckPoint().time - 2 * drop_duration);
+            audioSource.time = Mathf.Max(0, (float)composition[current_note_idx].FirstCheckPoint().time - 2 * drop_duration);
+        }
     }
 
     public void AddScore(ScoreMgr.ScoreLevel scoreLevel)

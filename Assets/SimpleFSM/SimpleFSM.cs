@@ -34,7 +34,7 @@ namespace SimpleFSM
     public class SimpleFSM : IFSM
     {
         private Dictionary<int, StateInfo> RegisteredStates;
-        private Dictionary<int, TransitionInfo> RegisteredTransitions;
+        private Dictionary<int, List<TransitionInfo>> RegisteredTransitions;
         public int LastState { get; private set; }
         public const int StopState = -1;
         public bool IsRunning => CurrentState >= 0;
@@ -43,7 +43,7 @@ namespace SimpleFSM
         {
             CurrentState = -1;
             RegisteredStates = new Dictionary<int, StateInfo>();
-            RegisteredTransitions = new Dictionary<int, TransitionInfo>();
+            RegisteredTransitions = new Dictionary<int, List<TransitionInfo>>();
         }
 
         public int CurrentState { get; private set; }
@@ -90,7 +90,11 @@ namespace SimpleFSM
             {
                 Debug.LogWarning($"[SimpleFSM.AddTransition] fromState is equal to toState {toState}. Please ensure it is what you want.");
             }
-            RegisteredTransitions[triggerCode] = new TransitionInfo(fromState, toState);
+            if (!RegisteredTransitions.ContainsKey(triggerCode))
+            {
+                RegisteredTransitions[triggerCode] = new List<TransitionInfo>();
+            }
+            RegisteredTransitions[triggerCode].Add(new TransitionInfo(fromState, toState));
             return true;
         }
 
@@ -112,36 +116,44 @@ namespace SimpleFSM
                 Debug.LogWarning("[SimpleFSM.TriggerTransition] FSM is not running");
                 return false;
             }
-            if (!RegisteredTransitions.TryGetValue(triggerCode, out var transitionInfo))
+            if (!RegisteredTransitions.TryGetValue(triggerCode, out var transitionInfos))
             {
                 Debug.LogWarning($"[SimpleFSM.TriggerTransition] triggerCode {triggerCode} not exists");
                 return false;
             }
-            if (!RegisteredStates.TryGetValue(transitionInfo.fromState, out var fromStateInfo))
+            bool success = false;
+            List<TransitionInfo> invalid_transitions = new List<TransitionInfo>();
+            foreach (var transitionInfo in transitionInfos)
             {
-                Debug.LogWarning($"[SimpleFSM.TriggerTransition] fromState {transitionInfo.fromState} not exists");
-                RegisteredTransitions.Remove(triggerCode);
-                return false;
-            }
-            if (!RegisteredStates.TryGetValue(transitionInfo.toState, out var toStateInfo))
-            {
-                Debug.LogWarning($"[SimpleFSM.TriggerTransition] toState {transitionInfo.toState} not exists");
-                RegisteredTransitions.Remove(triggerCode);
-                return false;
-            }
-            if (transitionInfo.fromState != CurrentState)
-            {
-                Debug.LogWarning($"[SimpleFSM.TriggerTransition] transitionInfo.fromState {transitionInfo.fromState} != CurrentState {CurrentState}");
-                return false;
-            }
+                if (!RegisteredStates.TryGetValue(transitionInfo.fromState, out var fromStateInfo))
+                {
+                    Debug.LogWarning($"[SimpleFSM.TriggerTransition] fromState {transitionInfo.fromState} not exists");
+                    invalid_transitions.Add(transitionInfo);
+                    continue;
+                }
+                if (transitionInfo.fromState != CurrentState) continue;
+                if (!RegisteredStates.TryGetValue(transitionInfo.toState, out var toStateInfo))
+                {
+                    Debug.LogWarning($"[SimpleFSM.TriggerTransition] toState {transitionInfo.toState} not exists");
+                    invalid_transitions.Add(transitionInfo);
+                    break;
+                }
 
-            LastState = CurrentState;
-            fromStateInfo.onExit?.Invoke(transitionInfo.toState);
-            CurrentState = transitionInfo.toState;
-            toStateInfo.onEnter?.Invoke(LastState);
-            
-            toStateInfo.elapsedTime = 0;
-            return true;
+                LastState = CurrentState;
+                fromStateInfo.onExit?.Invoke(transitionInfo.toState);
+                CurrentState = transitionInfo.toState;
+                toStateInfo.onEnter?.Invoke(LastState);
+
+                toStateInfo.elapsedTime = 0;
+                success = true;
+                break;
+            }
+            if (invalid_transitions.Count > 0)
+            {
+                foreach (var transitionInfo in invalid_transitions)
+                    transitionInfos.Remove(transitionInfo);
+            }
+            return success;
         }
 
 

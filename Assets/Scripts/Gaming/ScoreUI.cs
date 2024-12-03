@@ -45,7 +45,7 @@ public class ScoreUI
         back_btn = final_score_panel.Find("back_btn").GetComponent<Button>();
         restart_btn.onClick.AddListener(() =>
         {
-            GameMgr.Instance.FSM.TriggerAnyTransition((int)GameMgr.GameState.Init);
+            GameMgr.Instance.FSM.TriggerTransition((int)GameMgr.GameStateTransitionEvent.GameRestart);
         });
         back_btn.onClick.AddListener(() =>
         {

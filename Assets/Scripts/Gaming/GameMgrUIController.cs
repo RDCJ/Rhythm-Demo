@@ -28,13 +28,13 @@ public class GameMgrUIController : MonoBehaviour
         scoreUI = new ScoreUI(UICanvas_tf.Find("ScoreUI"));
 
         pause_btn.onClick.AddListener(() => {
-            gameMgr.FSM.TriggerAnyTransition((int)GameMgr.GameState.Pause);
+            gameMgr.FSM.TriggerTransition((int)GameMgr.GameStateTransitionEvent.GamePause);
         });
         continue_btn.onClick.AddListener(() => {
             gameMgr.FSM.TriggerAnyTransition(gameMgr.FSM.LastState);
         });
         restart_btn.onClick.AddListener(() => {
-            gameMgr.FSM.TriggerAnyTransition((int)GameMgr.GameState.Init);
+            gameMgr.FSM.TriggerTransition((int)GameMgr.GameStateTransitionEvent.GameRestart);
         });
         back_btn.onClick.AddListener(() => {
             gameMgr.Close();
