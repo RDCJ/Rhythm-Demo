@@ -35,7 +35,7 @@ public class Home : MonoBehaviour
 #if (UNITY_EDITOR || UNITY_STANDALONE_WIN)
         editor_btn.gameObject.SetActive(true);
 #else
-        editor_btn.gameObject.SetActive(false);
+        editor_btn.gameObject.SetActive(GameConst.gameCFG.enable_test_mode);
 #endif
 
         exit_btn.onClick.AddListener(() =>

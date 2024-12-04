@@ -21,7 +21,8 @@ public class Catch : NoteBase
         if (this.IsActive && !this.IsJudged)
         {
             var message = msg as SimpleGestureMessage;
-            if (message.hit.collider == collider2D)
+            float gestureLocalPositionX = message.position.x - Screen.width / 2;
+            if (gestureLocalPositionX > TouchAreaLeftBoundX && gestureLocalPositionX < TouchAreaRightBoundX)
             {
                 state = NoteState.Judged;
 

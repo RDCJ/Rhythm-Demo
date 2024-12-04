@@ -415,7 +415,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &1847137506637285357
 GameObject:
   m_ObjectHideFlags: 0

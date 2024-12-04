@@ -12,6 +12,7 @@ public class GameMgrUIController : MonoBehaviour
     private Button restart_btn;
     private Button back_btn;
     private Text time_txt;
+    private Text touchCount_txt;
     private Slider time_progress;
     private ScoreUI scoreUI;
 
@@ -24,6 +25,7 @@ public class GameMgrUIController : MonoBehaviour
         restart_btn = pause_panel.transform.Find("btn/restart_btn").GetComponent<Button>();
         back_btn = pause_panel.transform.Find("btn/back_btn").GetComponent<Button>();
         time_txt = UICanvas_tf.Find("time_txt").GetComponent<Text>();
+        touchCount_txt = UICanvas_tf.Find("touchCount").GetComponent <Text>();
         time_progress = UICanvas_tf.Find("time_progress").GetComponent<Slider>();
         scoreUI = new ScoreUI(UICanvas_tf.Find("ScoreUI"));
 
@@ -48,8 +50,10 @@ public class GameMgrUIController : MonoBehaviour
 
 #if UNITY_EDITOR
         time_txt.gameObject.SetActive(true);
+        touchCount_txt.gameObject.SetActive(true);
 #else
-        time_txt.gameObject.SetActive(false);
+        time_txt.gameObject.SetActive(GameConst.enable_test_mode);
+        touchCount_txt.gameObject.SetActive(GameConst.enable_test_mode);
 #endif
     }
 
@@ -60,6 +64,7 @@ public class GameMgrUIController : MonoBehaviour
             time_txt.text = gameMgr.CurrentTime.ToString("N2") + " / " + gameMgr.audioSource.clip.length.ToString("N2");
             time_progress.value = MathF.Max(0, (float)gameMgr.CurrentTime) / gameMgr.audioSource.clip.length;
         }
+        touchCount_txt.text = $"Touch Count: {gameMgr.gestureMgr.touchCount}";
     }
 
     public void OnGameInit()

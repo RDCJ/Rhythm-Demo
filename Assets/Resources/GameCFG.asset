@@ -13,38 +13,38 @@ MonoBehaviour:
   m_Name: GameCFG
   m_EditorClassIdentifier: 
   editor_drop_speed: 300
-  drop_speed: 1200
+  drop_speed: 1500
   judge_line_y: 0.167
   judgeIntervalConfigs:
   - noteType: 0
     judgeInterval:
       perfect_interval: 0.05
-      good_interval: 0.2
-      active_interval: 0.25
+      good_interval: 0.15
+      active_interval: 0.2
   - noteType: 1
     judgeInterval:
       perfect_interval: 0.05
-      good_interval: 0.2
-      active_interval: 0.25
+      good_interval: 0.15
+      active_interval: 0.2
   - noteType: 2
     judgeInterval:
       perfect_interval: 0.05
-      good_interval: 0.2
-      active_interval: 0.25
+      good_interval: 0.15
+      active_interval: 0.2
   - noteType: 3
     judgeInterval:
       perfect_interval: 0.05
-      good_interval: 0.2
-      active_interval: 0.25
+      good_interval: 0.15
+      active_interval: 0.2
   - noteType: 4
     judgeInterval:
-      perfect_interval: 0.1
-      good_interval: 0.1
-      active_interval: 0.1
+      perfect_interval: 0.07
+      good_interval: 0.07
+      active_interval: 0.07
   total_score: 1000000
   basic_score_percent: 0.95
   hold_touch_area_width_extend: 50
-  note_show_touch_area: 0
+  note_show_touch_area: 1
   hold_note_drop: 1
   note_drop: 1
   enable_test_mode: 1

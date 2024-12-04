@@ -219,6 +219,8 @@ namespace Note
             }
         }
 
+        protected virtual float TouchAreaWidth => rectTransform.rect.width;
+
         protected virtual CheckPoint GetCheckPointOnJudgeLine
         {
             get
@@ -245,10 +247,16 @@ namespace Note
             }
         }
 
+        /// <summary>
+        /// note中心的x坐标（屏幕中心为坐标原点）
+        /// </summary>
         protected virtual float GetCenterXOnJudgeLine
         {
             get => this.transform.localPosition.x;
         }
+
+        protected float TouchAreaLeftBoundX => GetCenterXOnJudgeLine - 0.5f * TouchAreaWidth;
+        protected float TouchAreaRightBoundX => GetCenterXOnJudgeLine + 0.5f * TouchAreaWidth;
 
         protected virtual void RegisterGestureHandler() { }
         protected virtual void UnregisterGestureHandler() { }

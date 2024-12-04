@@ -12,14 +12,9 @@ namespace GestureEvent
 
     public class GestureMgr : MonoBehaviour
     {
-        private static GestureMgr inst;
-        public static GestureMgr Inst => inst;
         public List<GestureRecognizer> gestureRecognizers;
         private TouchesInfo touchesInfo = new();
-        private void Awake()
-        {
-            inst = this;
-        }
+        public int touchCount => touchesInfo == null ? 0 : touchesInfo.touchCount;
         private void Update()
         {
             touchesInfo.touchCount = Input.touchCount;
@@ -50,6 +45,12 @@ namespace GestureEvent
             var recognizer = gestureRecognizers.Find((x) => x is T);
             if (recognizer == null) return;
             recognizer.RemoveListener(action);
+        }
+
+        private void OnDisable()
+        {
+            touchesInfo.touchCount = 0;
+            touchesInfo.phaseDic.Clear();
         }
     }
 }
