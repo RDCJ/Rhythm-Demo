@@ -178,6 +178,7 @@ namespace Note
             Debug.Log(this.GetType().Name + " Miss");
             PlayEffect(ScoreMgr.ScoreLevel.bad);
             GameMgr.Instance.AddScore(ScoreMgr.ScoreLevel.bad);
+            GameMgr.Instance.scoreMgr.CountEarlyOrLate(double.MaxValue, 0);
             NotePoolManager.Instance.ReturnObject(this);
         }
 
