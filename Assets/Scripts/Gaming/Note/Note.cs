@@ -31,6 +31,7 @@ namespace Note
         protected RectTransform rectTransform;
         protected RectTransform icon_rtf;
         protected CanvasGroup icon_canvasGroup;
+        protected new Collider2D collider2D;
 
         protected bool is_move;
         protected bool icon_is_fade;
@@ -54,6 +55,7 @@ namespace Note
             rectTransform = this.GetComponent<RectTransform>();
             icon_rtf = transform.Find("icon").GetComponent<RectTransform>();
             icon_canvasGroup = icon_rtf.GetComponent<CanvasGroup>();
+            GetCollider();
 #if UNITY_EDITOR
             Image touch_img = this.GetComponent<Image>();
             if (GameConst.note_show_touch_area)
@@ -138,6 +140,12 @@ namespace Note
         protected virtual void Resize()
         {
             rectTransform.sizeDelta = Util.ChangeV2(rectTransform.sizeDelta, 1, TouchAreaLength);
+            (collider2D as BoxCollider2D).size = rectTransform.rect.size;
+        }
+
+        protected virtual void GetCollider()
+        {
+            collider2D = this.GetComponent<BoxCollider2D>();
         }
 
         /// <summary>

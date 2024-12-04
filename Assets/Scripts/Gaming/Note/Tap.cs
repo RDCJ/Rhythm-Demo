@@ -12,12 +12,10 @@ using NoteGesture;
 /// </summary>
 public class Tap : NoteBase
 {
-    new BoxCollider2D collider2D;
     protected override void Awake()
     {
         base.Awake();
         type = NoteType.Tap;
-        collider2D = GetComponent<BoxCollider2D>();
     }
 
     protected override void RegisterGestureHandler()

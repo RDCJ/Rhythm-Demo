@@ -8,7 +8,6 @@ using NoteGesture;
 /// </summary>
 public class Slide : NoteBase
 {
-    new BoxCollider2D collider2D;
     public enum SlideDirection
     {
         Left,
@@ -23,7 +22,6 @@ public class Slide : NoteBase
             type = NoteType.LeftSlide;
         else
             type = NoteType.RightSlide;
-        collider2D = GetComponent<BoxCollider2D>();
     }
 
     protected override void RegisterGestureHandler()

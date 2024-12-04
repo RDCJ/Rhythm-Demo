@@ -8,12 +8,10 @@ using GestureEvent;
 /// </summary>
 public class Catch : NoteBase
 {
-    new BoxCollider2D collider2D;
     protected override void Awake()
     {
         base.Awake();
         type = NoteType.Catch;
-        collider2D = GetComponent<BoxCollider2D>();
     }
 
     private void OnPointerAction(IGestureMessage msg)

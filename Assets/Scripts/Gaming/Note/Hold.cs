@@ -4,6 +4,7 @@ using Music;
 using System.Collections.Generic;
 using GestureEvent;
 using NoteGesture;
+using System;
 
 /// <summary>
 /// ³¤°´
@@ -16,7 +17,6 @@ public class Hold : NoteBase
     private HoldPolygonImage icon;
     private RectTransform head_handle;
     private RectTransform tail_handle;
-    private new PolygonCollider2D collider2D;
 
     double start_time;
     double end_time;
@@ -37,7 +37,6 @@ public class Hold : NoteBase
         base.Awake();
         type = NoteType.Hold;
         touch_area = this.GetComponent<HoldPolygonImage>();
-        collider2D = this.GetComponent<PolygonCollider2D>();
         icon = transform.Find("icon").GetComponent<HoldPolygonImage>();
         head_handle = transform.Find("icon/head_handle") as RectTransform;
         tail_handle = transform.Find("icon/tail_handle") as RectTransform;
@@ -162,6 +161,10 @@ public class Hold : NoteBase
         rectTransform.localPosition = new Vector2(x, y);
     }
 
+    protected override void GetCollider()
+    {
+        collider2D = this.GetComponent<PolygonCollider2D>();
+    }
 
     protected override void EndJudge()
     {
@@ -223,22 +226,17 @@ public class Hold : NoteBase
 
     private void ReshapeCollider(Vector3[] mesh_points)
     {
-        Vector2[] colliderPoints = new Vector2[mesh_points.Length];
-        int index = 0;
-        for (int i=0; i<mesh_points.Length / 2; i++)
+        int pathCount = mesh_points.Length / 2 - 1;
+        (collider2D as PolygonCollider2D).pathCount = pathCount;
+        for (int element_idx=0; element_idx<pathCount; element_idx++)
         {
-            colliderPoints[index].x = mesh_points[i * 2].x;
-            colliderPoints[index].y = mesh_points[i * 2].y;
-            index++;    
-
+            Vector2[] colliderPoints = new Vector2[4];
+            colliderPoints[0] = mesh_points[element_idx * 2];
+            colliderPoints[1] = mesh_points[element_idx * 2 + 1];
+            colliderPoints[2] = mesh_points[element_idx * 2 + 3];
+            colliderPoints[3] = mesh_points[element_idx * 2 + 2];
+            (collider2D as PolygonCollider2D).SetPath(element_idx, colliderPoints);
         }
-        for (int i= mesh_points.Length / 2 - 1; i>=0; i--)
-        {
-            colliderPoints[index].x = mesh_points[i * 2 + 1].x;
-            colliderPoints[index].y = mesh_points[i * 2 + 1].y;
-            index++;
-        }
-        collider2D.SetPath(0, colliderPoints);
     }
 
     private void ModifyShapeOnReachJudgeLine()
