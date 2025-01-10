@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3842132176423365909}
   - component: {fileID: 5438072493466108410}
   - component: {fileID: 2395867213140515427}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: TapNote
   m_TagString: Note
   m_Icon: {fileID: 0}
@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 8679130535738966898}
   - component: {fileID: 4276745032831555510}
   - component: {fileID: 6302537572205394184}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -205,7 +205,7 @@ GameObject:
   - component: {fileID: 8245597188900668427}
   - component: {fileID: 4489743974529673407}
   - component: {fileID: 546932479357843168}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

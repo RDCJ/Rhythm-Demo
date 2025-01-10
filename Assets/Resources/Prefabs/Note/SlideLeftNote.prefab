@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1170567243153699134}
   - component: {fileID: 6965456233171034912}
   - component: {fileID: 1170567243153699132}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: SlideLeftNote
   m_TagString: Note
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1644346119788534321}
   - component: {fileID: 1065046809605497663}
   - component: {fileID: 5866314793239243288}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

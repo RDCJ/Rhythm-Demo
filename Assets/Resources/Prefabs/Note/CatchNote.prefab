@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3033890830601049020}
   - component: {fileID: 1983509378351106855}
   - component: {fileID: 6116528519769980247}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: CatchNote
   m_TagString: Note
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 7864775396254300834}
   - component: {fileID: 2379504937027556886}
   - component: {fileID: 4054771025403587967}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

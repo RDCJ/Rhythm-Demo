@@ -52,10 +52,11 @@ public class Util
         mono.StartCoroutine(_DelayOneFrame());
     }
 
+    public static int NoteLayerMask = 1 << LayerMask.NameToLayer("Note");
     public static RaycastHit2D RaycastFromBottom(Vector2 screen_pos)
     {
         Vector2 world_pos = Camera.main.ScreenToWorldPoint(new Vector2(screen_pos.x, 0));
-        return Physics2D.Raycast(world_pos, Vector2.up);
+        return Physics2D.Raycast(world_pos, Vector2.up, float.MaxValue, NoteLayerMask);
     }
 }
 
